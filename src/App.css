@@ -1,0 +1,36 @@
+/* ========================= */
+/* MAIN LAYOUT */
+/* ========================= */
+
+.mainLayout {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+
+  background: linear-gradient(to bottom, #081225, #0b1730);
+}
+/* ========================= */
+/* RIGHT SIDE */
+/* ========================= */
+
+.contentRight {
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+}
+
+/* ========================= */
+/* DASHBOARD CONTENT */
+/* ========================= */
+
+.dashboardContent {
+  flex: 1;
+
+  padding: 20px;
+
+  overflow-y: auto;
+}
