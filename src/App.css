@@ -9,18 +9,37 @@
   display: flex;
 
   background: linear-gradient(to bottom, #081225, #0b1730);
+
+  overflow: hidden;
 }
+
 /* ========================= */
 /* RIGHT SIDE */
 /* ========================= */
 
-.contentRight {
+.mainContainer {
   flex: 1;
 
   display: flex;
   flex-direction: column;
 
   overflow: hidden;
+
+  transition: all 0.3s ease;
+}
+
+/* ========================= */
+/* HEADER FIX */
+/* ========================= */
+
+.mainContainer .header {
+  position: sticky;
+
+  top: 0;
+
+  width: 100%;
+
+  z-index: 100;
 }
 
 /* ========================= */
@@ -33,4 +52,34 @@
   padding: 20px;
 
   overflow-y: auto;
+
+ 
+}
+
+/* ========================= */
+/* SCROLLBAR */
+/* ========================= */
+
+.dashboardContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dashboardContent::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+
+  border-radius: 30px;
+}
+
+.dashboardContent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .dashboardContent {
+    padding: 14px;
+  }
 }

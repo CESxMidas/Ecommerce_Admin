@@ -1,42 +1,43 @@
+import { useState } from "react";
+
+import Header from "./components/Header";
+import SideBar from "./components/SideBar";
+import Dashboard from "./pages/Dashboard";
+
 import "./App.css";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+function App() {
+  const [isSidebarOpen, setIsSidebarOpen] =
+    useState(true);
 
-import Header from "./Components/Header";
-import SideBar from "./Components/SideBar";
-
-function DashboardLayout() {
   return (
-    <section className="mainLayout">
+    <div className="mainLayout">
       {/* SIDEBAR */}
-      <SideBar />
+      <SideBar
+        isSidebarOpen={isSidebarOpen}
+      />
 
-      {/* RIGHT SIDE */}
-      <div className="contentRight">
-        <Header />
+      {/* RIGHT */}
+      <div
+        className={`mainContainer ${
+          isSidebarOpen
+            ? "sidebarOpen"
+            : "sidebarClosed"
+        }`}
+      >
+        <Header
+          isSidebarOpen={isSidebarOpen}
+          setIsSidebarOpen={
+            setIsSidebarOpen
+          }
+        />
 
         <div className="dashboardContent">
-          <h1 className="text-white text-4xl font-bold">
-            Dashboard
-          </h1>
+          <Dashboard />
         </div>
       </div>
-    </section>
+    </div>
   );
-}
-
-function App() {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <DashboardLayout />,
-    },
-  ]);
-
-  return <RouterProvider router={router} />;
 }
 
 export default App;

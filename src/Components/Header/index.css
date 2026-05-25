@@ -11,7 +11,8 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid
+    rgba(255, 255, 255, 0.06);
 
   display: flex;
   align-items: center;
@@ -21,8 +22,6 @@
   top: 0;
   z-index: 100;
 
-  transition: all 0.3s ease;
-
   padding-top: 10px;
   padding-bottom: 10px;
 }
@@ -31,7 +30,7 @@
 /* LEFT */
 /* ========================= */
 
-.headerLeft {
+.header .headerLeft {
   display: flex;
   align-items: center;
   gap: 18px;
@@ -41,42 +40,36 @@
 /* LOGO */
 /* ========================= */
 
-.logoBox {
+.header .logoBox {
   width: 44px;
   height: 44px;
 
   border-radius: 14px;
 
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  color: #fff;
+  color: white;
 
   font-size: 20px;
   font-weight: 700;
-
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.35);
-
-  transition: all 0.3s ease;
 }
 
-.logoBox:hover {
-  transform: translateY(-2px);
-}
-
-.logoText {
-  color: #fff;
+.header .logoText {
+  color: white;
 
   font-size: 20px;
   font-weight: 700;
-
-  letter-spacing: 0.5px;
 }
 
-.logoSubText {
+.header .logoSubText {
   color: #94a3b8;
 
   font-size: 13px;
@@ -85,76 +78,60 @@
 }
 
 /* ========================= */
-/* BUTTONS */
+/* BUTTON */
 /* ========================= */
 
-.menuBtn,
-.iconBtn {
+.header .menuBtn,
+.header .iconBtn {
   width: 42px !important;
   min-width: 42px !important;
   height: 42px !important;
 
   border-radius: 14px !important;
 
-  background: rgba(255, 255, 255, 0.04) !important;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.04
+  ) !important;
 
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid
+    rgba(255, 255, 255, 0.05) !important;
 
-  color: #fff !important;
-
-  transition: all 0.3s ease !important;
-
-  backdrop-filter: blur(10px);
+  color: white !important;
 }
 
-.menuBtn:hover,
-.iconBtn:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-
-  transform: translateY(-2px);
-
-  border-color: rgba(255, 255, 255, 0.08) !important;
-}
-
-/* ========================= */
-/* RIGHT */
-/* ========================= */
-
-.headerRight {
+.header .headerRight {
   display: flex;
   align-items: center;
   gap: 14px;
 }
-.MuiMenu-list {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
+
 /* ========================= */
 /* SEARCH */
 /* ========================= */
 
-.searchBox {
+.header .searchBox {
   width: 260px;
   height: 44px;
-
-  background: rgba(255, 255, 255, 0.04);
-
-  border: 1px solid rgba(255, 255, 255, 0.05);
 
   border-radius: 14px;
 
   overflow: hidden;
 
-  transition: all 0.3s ease;
+  background: rgba(
+    255,
+    255,
+    255,
+    0.04
+  );
 
-  backdrop-filter: blur(10px);
+  border: 1px solid
+    rgba(255, 255, 255, 0.05);
 }
 
-.searchBox:hover {
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.searchBox input {
+.header .searchBox input {
   width: 100%;
   height: 100%;
 
@@ -163,207 +140,43 @@
   border: none;
   outline: none;
 
-  padding: 0px 16px;
+  padding: 0 16px;
 
-  color: #fff;
-
-  font-size: 14px;
-}
-
-.searchBox input::placeholder {
-  color: #64748b;
+  color: white;
 }
 
 /* ========================= */
-/* USER INFO */
+/* USER */
 /* ========================= */
 
-.userInfo {
+.header .userInfo {
   padding: 20px;
 
   display: flex;
   align-items: center;
   gap: 14px;
-
-  background: rgba(255, 255, 255, 0.02);
 }
 
-.userAvatar {
+.header .userAvatar {
   width: 58px;
   height: 58px;
 
   border-radius: 100%;
 
-  background: rgba(255, 255, 255, 0.05);
-
-  border: 1px solid rgba(255, 255, 255, 0.06);
-
   display: flex;
   align-items: center;
   justify-content: center;
 
+  background: rgba(
+    255,
+    255,
+    255,
+    0.05
+  );
+
   color: white;
-
-  transition: all 0.3s ease;
 }
 
-.userAvatar:hover {
-  transform: scale(1.05);
-}
-
-.userInfo h3 {
-  color: white;
-
-  font-size: 17px;
-  font-weight: 700;
-}
-
-.userInfo p {
-  color: #94a3b8;
-
-  font-size: 14px;
-
-  margin-top: 4px;
-}
-
-/* ========================= */
-/* MENU ITEM */
-/* ========================= */
-
-.menuItem {
+.header .menuItem {
   gap: 12px !important;
-
-  padding: 0 16px;
-
-  color: #94a3b8 !important;
-
-  font-size: 15px !important;
-
-  transition: all 0.3s ease !important;
-}
-
-.menuItem svg {
-  font-size: 20px;
-}
-
-.menuItem:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-
-  color: #fff !important;
-}
-
-/* ========================= */
-/* MUI MENU FIX */
-/* ========================= */
-
-.MuiPaper-root.MuiMenu-paper {
-  width: 260px !important;
-
-  background: linear-gradient(to bottom, #081225, #0b1730) !important;
-
-  color: #fff !important;
-
-  border-radius: 20px !important;
-
-  margin-top: 14px !important;
-
-  border: 1px solid rgba(255, 255, 255, 0.06) !important;
-
-  overflow: hidden !important;
-
-  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.45) !important;
-
-  backdrop-filter: blur(12px) !important;
-}
-
-.MuiPaper-root .MuiDivider-root {
-  background: rgba(255, 255, 255, 0.06) !important;
-}
-
-.MuiPaper-root .MuiMenuItem-root {
-  gap: 24px !important;
-
-  padding: 32px 16px !important;
-  color: #94a3b8 !important;
-
-  font-size: 15px !important;
-
-  transition: all 0.3s ease !important;
-}
-
-.MuiPaper-root .MuiMenuItem-root:hover {
-  background: rgba(255, 255, 255, 0.05) !important;
-
-  color: white !important;
-}
-
-/* ========================= */
-/* SCROLLBAR */
-/* ========================= */
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-
-  border-radius: 30px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
-
-@media (max-width: 992px) {
-  .searchBox {
-    width: 220px;
-  }
-}
-
-@media (max-width: 768px) {
-  .header {
-    height: 70px;
-  }
-
-  .headerLeft {
-    gap: 12px;
-  }
-
-  .logoText {
-    font-size: 18px;
-  }
-
-  .searchBox {
-    display: none;
-  }
-}
-
-@media (max-width: 576px) {
-  .header {
-    padding-left: 14px !important;
-    padding-right: 14px !important;
-  }
-
-  .logoBox {
-    width: 40px;
-    height: 40px;
-
-    font-size: 18px;
-  }
-
-  .menuBtn,
-  .iconBtn {
-    width: 38px !important;
-    min-width: 38px !important;
-    height: 38px !important;
-  }
-
-  .headerRight {
-    gap: 10px;
-  }
 }

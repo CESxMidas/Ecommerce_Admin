@@ -1,3 +1,182 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ========================= */
+/* DASHBOARD */
+/* ========================= */
+
+.dashboardBoxes {
+  width: 100%;
+}
+
+/* ========================= */
+/* WELCOME BOX */
+/* ========================= */
+
+.dashboardBoxes .welcomeBox {
+  width: 100%;
+  min-height: 340px;
+
+  padding: 45px 50px;
+
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed,
+    #2563eb
+  );
+
+  position: relative;
+}
+
+/* ========================= */
+/* BG EFFECT */
+/* ========================= */
+
+.dashboardBoxes .welcomeBox .circleOne {
+  width: 320px;
+  height: 320px;
+
+  border-radius: 100%;
+
+  background: rgba(255, 255, 255, 0.08);
+
+  position: absolute;
+
+  top: -80px;
+  right: 180px;
+}
+
+.dashboardBoxes .welcomeBox .circleTwo {
+  width: 220px;
+  height: 220px;
+
+  border-radius: 100%;
+
+  background: rgba(255, 255, 255, 0.06);
+
+  position: absolute;
+
+  bottom: -80px;
+  right: -40px;
+}
+
+/* ========================= */
+/* LEFT */
+/* ========================= */
+
+.dashboardBoxes .welcomeBox .info {
+  max-width: 550px;
+}
+
+.dashboardBoxes .welcomeBox .info .badge {
+  display: inline-block;
+
+  background: rgba(255, 255, 255, 0.15);
+
+  backdrop-filter: blur(10px);
+
+  padding: 8px 16px;
+
+  border-radius: 30px;
+
+  color: #fff;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  margin-bottom: 22px;
+}
+
+.dashboardBoxes .welcomeBox .info .title {
+  font-size: 54px;
+  line-height: 64px;
+
+  font-weight: 800;
+
+  color: #fff;
+
+  margin-bottom: 22px;
+}
+
+.dashboardBoxes .welcomeBox .info .desc {
+  font-size: 18px;
+  line-height: 32px;
+
+  color: rgba(255, 255, 255, 0.8);
+
+  margin-bottom: 35px;
+
+  max-width: 500px;
+}
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+
+.dashboardBoxes .welcomeBox .info .addBtn {
+  border: none;
+  outline: none;
+
+  background: #fff;
+  color: #111827;
+
+  padding: 16px 28px;
+
+  border-radius: 16px;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.dashboardBoxes .welcomeBox .info .addBtn:hover {
+  transform: translateY(-3px);
+
+  background: #f3f4f6;
+}
+
+/* ========================= */
+/* RIGHT */
+/* ========================= */
+
+.dashboardBoxes .welcomeBox .imageWrapper {
+  width: 420px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboardBoxes .welcomeBox .imageWrapper img {
+  width: 100%;
+
+  object-fit: contain;
+
+  filter: drop-shadow(
+    0px 20px 40px rgba(0, 0, 0, 0.2)
+  );
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 992px) {
+  .dashboardBoxes .welcomeBox {
+    flex-direction: column;
+
+    text-align: center;
+
+    gap: 40px;
+  }
+
+  .dashboardBoxes .welcomeBox .info .title {
+    font-size: 42px;
+    line-height: 52px;
+  }
+
+  .dashboardBoxes .welcomeBox .imageWrapper {
+    width: 280px;
+  }
+}
