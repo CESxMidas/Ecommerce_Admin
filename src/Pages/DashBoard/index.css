@@ -14,14 +14,9 @@
   width: 100%;
   min-height: 340px;
 
-  padding: 45px 50px;
+  padding: 28px 28px 36px;
 
-  background: linear-gradient(
-    135deg,
-    #4f46e5,
-    #7c3aed,
-    #2563eb
-  );
+  background: linear-gradient(135deg, #4f46e5, #7c3aed, #2563eb);
 
   position: relative;
 }
@@ -82,27 +77,24 @@
   font-size: 14px;
   font-weight: 500;
 
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .dashboardBoxes .welcomeBox .info .title {
-  font-size: 54px;
-  line-height: 64px;
-
+  font-size: 30px;
+  line-height: 30px;
   font-weight: 800;
-
   color: #fff;
-
-  margin-bottom: 22px;
+  margin-bottom: 18px;
 }
 
 .dashboardBoxes .welcomeBox .info .desc {
   font-size: 18px;
-  line-height: 32px;
+  line-height: 30px;
 
   color: rgba(255, 255, 255, 0.8);
 
-  margin-bottom: 35px;
+  margin-bottom: 18px;
 
   max-width: 500px;
 }
@@ -141,7 +133,7 @@
 /* ========================= */
 
 .dashboardBoxes .welcomeBox .imageWrapper {
-  width: 420px;
+  width: 280px;
 
   display: flex;
   align-items: center;
@@ -153,9 +145,7 @@
 
   object-fit: contain;
 
-  filter: drop-shadow(
-    0px 20px 40px rgba(0, 0, 0, 0.2)
-  );
+  filter: drop-shadow(0px 20px 40px rgba(0, 0, 0, 0.2));
 }
 
 /* ========================= */

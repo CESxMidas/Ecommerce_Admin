@@ -11,14 +11,11 @@ import {
   MdOutlineLayers,
   MdOutlineImage,
 } from "react-icons/md";
-
 import {
   FaBloggerB,
   FaProductHunt,
 } from "react-icons/fa";
-
 import "./index.css";
-
 const SideBar = ({ isSidebarOpen }) => {
   const [subMenuIndex, setSubMenuIndex] =
     useState(null);
@@ -33,9 +30,8 @@ const SideBar = ({ isSidebarOpen }) => {
 
   return (
     <aside
-      className={`sidebar ${
-        isSidebarOpen ? "open" : "close"
-      }`}
+      className={`sidebar ${isSidebarOpen ? "open" : "close"
+        }`}
     >
       {/* LOGO */}
       <div className="logoWrapper">
@@ -59,11 +55,10 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* HOME SLIDES */}
         <li>
           <div
-            className={`menuItem ${
-              subMenuIndex === 0
-                ? "opened"
-                : ""
-            }`}
+            className={`menuItem ${subMenuIndex === 0
+              ? "opened"
+              : ""
+              }`}
             onClick={() =>
               isOpenSubMenu(0)
             }
@@ -83,11 +78,10 @@ const SideBar = ({ isSidebarOpen }) => {
           </div>
 
           <div
-            className={`subMenuWrapper ${
-              subMenuIndex === 0
-                ? "show"
-                : ""
-            }`}
+            className={`subMenuWrapper ${subMenuIndex === 0
+              ? "show"
+              : ""
+              }`}
           >
             <ul className="subMenu">
               <li>Home slide list</li>
@@ -102,11 +96,10 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* CATEGORY */}
         <li>
           <div
-            className={`menuItem ${
-              subMenuIndex === 1
-                ? "opened"
-                : ""
-            }`}
+            className={`menuItem ${subMenuIndex === 1
+              ? "opened"
+              : ""
+              }`}
             onClick={() =>
               isOpenSubMenu(1)
             }
@@ -126,11 +119,10 @@ const SideBar = ({ isSidebarOpen }) => {
           </div>
 
           <div
-            className={`subMenuWrapper ${
-              subMenuIndex === 1
-                ? "show"
-                : ""
-            }`}
+            className={`subMenuWrapper ${subMenuIndex === 1
+              ? "show"
+              : ""
+              }`}
           >
             <ul className="subMenu">
               <li>Category List</li>
@@ -144,11 +136,10 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* PRODUCTS */}
         <li>
           <div
-            className={`menuItem ${
-              subMenuIndex === 2
-                ? "opened"
-                : ""
-            }`}
+            className={`menuItem ${subMenuIndex === 2
+              ? "opened"
+              : ""
+              }`}
             onClick={() =>
               isOpenSubMenu(2)
             }
@@ -168,11 +159,10 @@ const SideBar = ({ isSidebarOpen }) => {
           </div>
 
           <div
-            className={`subMenuWrapper ${
-              subMenuIndex === 2
-                ? "show"
-                : ""
-            }`}
+            className={`subMenuWrapper ${subMenuIndex === 2
+              ? "show"
+              : ""
+              }`}
           >
             <ul className="subMenu">
               <li>Product List</li>
@@ -201,11 +191,10 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* BANNERS */}
         <li>
           <div
-            className={`menuItem ${
-              subMenuIndex === 3
-                ? "opened"
-                : ""
-            }`}
+            className={`menuItem ${subMenuIndex === 3
+              ? "opened"
+              : ""
+              }`}
             onClick={() =>
               isOpenSubMenu(3)
             }
@@ -225,11 +214,10 @@ const SideBar = ({ isSidebarOpen }) => {
           </div>
 
           <div
-            className={`subMenuWrapper ${
-              subMenuIndex === 3
-                ? "show"
-                : ""
-            }`}
+            className={`subMenuWrapper ${subMenuIndex === 3
+              ? "show"
+              : ""
+              }`}
           >
             <ul className="subMenu">
               <li>All Banners</li>
@@ -242,11 +230,10 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* BLOGS */}
         <li>
           <div
-            className={`menuItem ${
-              subMenuIndex === 4
-                ? "opened"
-                : ""
-            }`}
+            className={`menuItem ${subMenuIndex === 4
+              ? "opened"
+              : ""
+              }`}
             onClick={() =>
               isOpenSubMenu(4)
             }
@@ -266,11 +253,10 @@ const SideBar = ({ isSidebarOpen }) => {
           </div>
 
           <div
-            className={`subMenuWrapper ${
-              subMenuIndex === 4
-                ? "show"
-                : ""
-            }`}
+            className={`subMenuWrapper ${subMenuIndex === 4
+              ? "show"
+              : ""
+              }`}
           >
             <ul className="subMenu">
               <li>All Blogs</li>
