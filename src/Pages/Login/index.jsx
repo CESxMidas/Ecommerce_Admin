@@ -1,6 +1,6 @@
 import React from "react";
 import "./index.css";
- 
+
 import { FaGoogle, FaSteam, FaXbox } from "react-icons/fa";
 
 import { MdVpnKey, MdSecurity } from "react-icons/md";
@@ -33,7 +33,7 @@ const Login = () => {
             <button>
               <FaSteam />
               Continue with Steam
-            </button> 
+            </button>
             <button>
               <FaGoogle />
               Continue with Google
@@ -49,7 +49,7 @@ const Login = () => {
               <label>Email</label>
               <input type="email" placeholder="Enter your email" />
             </div>
-             
+
 
             {/* CHECK */}
             <div className="checkRow">
@@ -75,7 +75,7 @@ const Login = () => {
       {/* RIGHT */}
       <div className="loginRight">
         <div className="heroContent">
-          <h2>The easiest way to manage your digital key business.</h2>
+          <h1>The easiest way to manage your digital key business.</h1>
 
           <p>
             Track orders, manage inventory, monitor sales and deliver game keys

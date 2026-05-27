@@ -1,21 +1,21 @@
-/* ========================= */
-/* LOGIN PAGE */
-/* ========================= */
+/* =========================================
+   LOGIN PAGE
+========================================= */
 
 .loginPage {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
 
   display: flex;
 
-  overflow: hidden;
-
   background: #f4f7ff;
+
+  overflow: hidden;
 }
 
-/* ========================= */
-/* LEFT */
-/* ========================= */
+/* =========================================
+   LEFT
+========================================= */
 
 .loginLeft {
   width: 42%;
@@ -23,121 +23,140 @@
   background: white;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
-  padding: 50px 70px;
+  padding: 24px 40px;
+
+  overflow-y: auto;
 }
 
 .leftContent {
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
 }
 
-/* ========================= */
-/* LOGO */
-/* ========================= */
+/* =========================================
+   RIGHT
+========================================= */
+
+.loginRight {
+  flex: 1;
+
+  background: #eef2ff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px 40px;
+
+  overflow-y: auto;
+}
+
+.heroContent {
+  width: 100%;
+  max-width: 760px;
+
+  text-align: center;
+}
+
+/* =========================================
+   LOGO
+========================================= */
 
 .logoRow {
   display: flex;
-margin: 16px 0;
   align-items: center;
+
   gap: 14px;
+
+  margin-bottom: 20px;
 }
 
 .logoBox {
-  width: 52px;
-  height: 52px;
+  width: 46px;
+  height: 46px;
 
-  border-radius: 16px;
+  border-radius: 14px;
 
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #4f46e5
-  );
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
   color: white;
 
-  font-size: 28px;
+  font-size: 22px;
+
+  flex-shrink: 0;
 }
 
 .logoRow span {
-  font-size: 28px;
-margin: 16px 0
-;
+  font-size: 22px;
   font-weight: 800;
 
   color: #111827;
 }
 
-/* ========================= */
-/* TEXT */
-/* ========================= */
+/* =========================================
+   TEXT
+========================================= */
 
-.leftContent h1 {
-  font-size: 58px;
-
-  line-height: 68px;
+.leftContent h1,
+.heroContent h1,
+.heroContent h2 {
+  font-size: 42px;
+  line-height: 52px;
 
   font-weight: 800;
 
   color: #111827;
 
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
-.leftContent p {
-  font-size: 18px;
-
-  line-height: 34px;
+.leftContent p,
+.heroContent p {
+  font-size: 15px;
+  line-height: 26px;
 
   color: #6b7280;
 
-  margin-bottom: 38px;
+  margin-bottom: 18px;
 }
 
-/* ========================= */
-/* SOCIAL */
-/* ========================= */
+/* =========================================
+   SOCIAL
+========================================= */
 
 .socialRow {
   display: flex;
 
-  gap: 16px;
+  gap: 12px;
 
-  margin-bottom: 34px;
+  margin-bottom: 16px;
 }
 
 .socialRow button {
   flex: 1;
 
-  height: 58px;
+  height: 48px;
 
-  border-radius: 16px;
+  border-radius: 14px;
 
   border: 1px solid #e5e7eb;
 
   background: white;
 
   display: flex;
-
   align-items: center;
-
   justify-content: center;
 
-  gap: 12px;
+  gap: 10px;
 
-  font-size: 15px;
-
+  font-size: 14px;
   font-weight: 600;
 
   cursor: pointer;
@@ -151,50 +170,45 @@ margin: 16px 0
   color: #2563eb;
 }
 
-/* ========================= */
-/* FORM */
-/* ========================= */
+/* =========================================
+   FORM
+========================================= */
 
 .loginForm {
   width: 100%;
 }
 
-
-
 .inputGroup {
-  flex: 1;
-
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
 .inputGroup label {
   display: block;
 
-  font-size: 14px;
-
+  font-size: 13px;
   font-weight: 600;
 
   color: #374151;
 
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .inputGroup input {
   width: 100%;
 
-  height: 60px;
+  height: 48px;
 
-  border-radius: 16px;
+  border-radius: 14px;
 
   border: 1px solid #dbe2f0;
 
   background: #f8fbff;
 
-  padding: 0 18px;
+  padding: 0 16px;
 
   outline: none;
 
-  font-size: 15px;
+  font-size: 14px;
 
   transition: all 0.3s ease;
 }
@@ -204,32 +218,31 @@ margin: 16px 0
 
   background: white;
 
-  box-shadow: 0 0 0 4px
-    rgba(37, 99, 235, 0.08);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
 }
 
-/* ========================= */
-/* OPTIONS */
-/* ========================= */
+/* =========================================
+   OPTIONS
+========================================= */
 
 .checkRow {
   display: flex;
 
   align-items: center;
-
   justify-content: space-between;
 
-  margin-bottom: 28px;
+  gap: 12px;
+
+  margin-bottom: 18px;
 }
 
 .checkRow label {
   display: flex;
-
   align-items: center;
 
-  gap: 10px;
+  gap: 8px;
 
-  font-size: 14px;
+  font-size: 13px;
 
   color: #6b7280;
 }
@@ -241,36 +254,31 @@ margin: 16px 0
 
   color: #2563eb;
 
-  font-size: 14px;
+  font-size: 13px;
 
   font-weight: 600;
 
   cursor: pointer;
 }
 
-/* ========================= */
-/* BUTTON */
-/* ========================= */
+/* =========================================
+   BUTTON
+========================================= */
 
 .loginBtn {
   width: 100%;
 
-  height: 62px;
+  height: 50px;
 
   border: none;
 
-  border-radius: 18px;
+  border-radius: 16px;
 
-  background: linear-gradient(
-    135deg,
-    #2563eb,
-    #4f46e5
-  );
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
 
   color: white;
 
-  font-size: 17px;
-
+  font-size: 15px;
   font-weight: 700;
 
   cursor: pointer;
@@ -281,18 +289,17 @@ margin: 16px 0
 .loginBtn:hover {
   transform: translateY(-2px);
 
-  box-shadow: 0 14px 30px
-    rgba(37, 99, 235, 0.2);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.2);
 }
 
 .bottomText {
   text-align: center;
 
-  margin-top: 24px;
+  margin-top: 16px;
 
   color: #6b7280;
 
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .bottomText span {
@@ -303,92 +310,44 @@ margin: 16px 0
   cursor: pointer;
 }
 
-/* ========================= */
-/* RIGHT */
-/* ========================= */
-
-.loginRight {
-  flex: 1;
-
-  background: #eef2ff;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 50px;
-
-  overflow: hidden;
-}
-
-.heroContent {
-  width: 100%;
-
-  max-width: 820px;
-
-  text-align: center;
-}
-
-.heroContent h2 {
-  font-size: 56px;
-
-  line-height: 70px;
-
-  font-weight: 800;
-
-  color: #111827;
-
-  margin-bottom: 20px;
-}
-
-.heroContent p {
-  font-size: 18px;
-
-  line-height: 34px;
-
-  color: #6b7280;
-
-  margin-bottom: 50px;
-}
-
-/* ========================= */
-/* DASHBOARD */
-/* ========================= */
+/* =========================================
+   DASHBOARD
+========================================= */
 
 .dashboardPreview {
   position: relative;
 
   width: 100%;
 
-  padding: 40px;
+  padding: 22px;
 
-  border-radius: 36px;
+  border-radius: 28px;
 
   background: white;
 
   box-shadow:
-    0 20px 60px
-      rgba(0, 0, 0, 0.08),
-    inset 0 1px 0
-      rgba(255, 255, 255, 0.5);
+    0 20px 60px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
+
+/* =========================================
+   TOP
+========================================= */
 
 .previewTop {
   display: flex;
 
-  gap: 20px;
+  gap: 14px;
 
-  margin-bottom: 30px;
+  margin-bottom: 16px;
 }
 
 .miniCard {
   flex: 1;
 
-  padding: 24px;
+  padding: 16px;
 
-  border-radius: 24px;
+  border-radius: 18px;
 
   background: #f8fbff;
 
@@ -398,17 +357,17 @@ margin: 16px 0
 }
 
 .miniCard span {
-  font-size: 14px;
+  font-size: 12px;
 
   color: #6b7280;
 }
 
 .miniCard h3 {
-  font-size: 34px;
+  font-size: 24px;
 
   font-weight: 800;
 
-  margin: 12px 0;
+  margin: 8px 0;
 
   color: #111827;
 }
@@ -416,27 +375,27 @@ margin: 16px 0
 .miniCard p {
   margin: 0;
 
-  font-size: 14px;
+  font-size: 12px;
 
   color: #22c55e;
 }
 
-/* ========================= */
-/* MAIN */
-/* ========================= */
+/* =========================================
+   MAIN
+========================================= */
 
 .previewMain {
   display: flex;
 
-  gap: 24px;
+  gap: 14px;
 }
 
 .chartBox {
   flex: 1;
 
-  height: 340px;
+  height: 220px;
 
-  border-radius: 28px;
+  border-radius: 22px;
 
   background: #f8fbff;
 
@@ -456,141 +415,162 @@ margin: 16px 0
 }
 
 .chartLine.one {
-  top: 140px;
+  top: 90px;
 
   left: -20px;
 
-  background: linear-gradient(
-    to right,
-    #ec4899,
-    #8b5cf6
-  );
+  background: linear-gradient(to right, #ec4899, #8b5cf6);
 
   transform: rotate(-8deg);
 }
 
 .chartLine.two {
-  top: 210px;
+  top: 150px;
 
   left: -30px;
 
-  background: linear-gradient(
-    to right,
-    #2563eb,
-    #06b6d4
-  );
+  background: linear-gradient(to right, #2563eb, #06b6d4);
 
   transform: rotate(10deg);
 }
 
-/* ========================= */
-/* ACTIVITY */
-/* ========================= */
+/* =========================================
+   ACTIVITY
+========================================= */
 
 .activityBox {
-  width: 250px;
+  width: 210px;
 
-  padding: 24px;
+  padding: 16px;
 
-  border-radius: 28px;
+  border-radius: 22px;
 
-  background: #ffffff;
+  background: white;
 
   border: 1px solid #edf2ff;
 
-  box-shadow: 0 10px 30px
-    rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 
   text-align: left;
 }
 
 .activityBox h4 {
-  font-size: 18px;
+  font-size: 15px;
 
   font-weight: 700;
 
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 
   color: #111827;
 }
 
 .activityItem {
-  height: 56px;
+  height: 42px;
 
-  border-radius: 16px;
+  border-radius: 12px;
 
   background: #f8fbff;
 
   display: flex;
-
   align-items: center;
 
-  gap: 14px;
+  gap: 10px;
 
-  padding: 0 16px;
+  padding: 0 12px;
 
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 
-  font-size: 14px;
-
+  font-size: 12px;
   font-weight: 600;
 
   color: #374151;
 }
 
-/* ========================= */
-/* FLOAT CARD */
-/* ========================= */
+/* =========================================
+   FLOAT CARD
+========================================= */
 
 .floatingCard {
   position: absolute;
 
-  top: -30px;
-  left: -40px;
+  top: -14px;
+  left: -14px;
 
-  width: 240px;
+  width: 180px;
 
-  padding: 22px;
+  padding: 14px;
 
-  border-radius: 24px;
+  border-radius: 18px;
 
   background: white;
 
-  box-shadow: 0 20px 40px
-    rgba(0, 0, 0, 0.12);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 
   text-align: left;
 }
 
 .floatingCard h5 {
-  font-size: 14px;
+  font-size: 12px;
 
   color: #6b7280;
 
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .floatingCard strong {
   display: block;
 
-  font-size: 24px;
+  font-size: 20px;
 
   color: #111827;
 
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .floatingCard span {
   color: #22c55e;
 
-  font-size: 14px;
+  font-size: 12px;
 
   font-weight: 700;
 }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+/*
+  1400px → Desktop lớn
+  1200px → Laptop / Nest Hub
+  1024px → Tablet / iPad
+  768px  → Mobile / iPhone / Android
+  480px  → Mobile nhỏ / iPhone SE
+*/
+
+/* =========================================
+   1400px
+========================================= */
+
+@media (max-width: 1400px) {
+  .loginLeft {
+    width: 50%;
+  }
+
+  .leftContent h1,
+  .heroContent h1,
+  .heroContent h2 {
+    font-size: 36px;
+    line-height: 46px;
+  }
+
+  .chartBox {
+    height: 200px;
+  }
+}
+
+/* =========================================
+   1200px
+========================================= */
 
 @media (max-width: 1200px) {
   .loginRight {
@@ -600,19 +580,109 @@ margin: 16px 0
   .loginLeft {
     width: 100%;
   }
+
+  .leftContent {
+    max-width: 600px;
+  }
 }
 
-@media (max-width: 768px) {
-  .loginLeft {
-    padding: 30px;
-  }
-  .leftContent h1 {
-    font-size: 42px;
+/* =========================================
+   1024px
+========================================= */
 
-    line-height: 54px;
+@media (max-width: 1024px) {
+  .leftContent {
+    max-width: 100%;
+  }
+
+  .leftContent h1 {
+    font-size: 34px;
+    line-height: 44px;
+  }
+}
+
+/* =========================================
+   768px
+========================================= */
+
+@media (max-width: 768px) {
+  .loginPage {
+    display: block;
+
+    min-height: 100vh;
+  }
+
+  .loginLeft {
+    width: 100%;
+
+    padding: 20px;
+
+    align-items: flex-start;
+  }
+
+  .leftContent h1 {
+    font-size: 28px;
+    line-height: 38px;
+  }
+
+  .leftContent p {
+    font-size: 14px;
+    line-height: 24px;
+  }
+
+  .logoRow span {
+    font-size: 20px;
   }
 
   .socialRow {
     flex-direction: column;
+  }
+
+  .checkRow {
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+  .socialRow button,
+  .loginBtn {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   480px
+========================================= */
+
+@media (max-width: 480px) {
+  .loginLeft {
+    padding: 16px;
+  }
+
+  .leftContent h1 {
+    font-size: 24px;
+    line-height: 34px;
+  }
+
+  .leftContent p {
+    font-size: 13px;
+    line-height: 22px;
+  }
+
+  .logoBox {
+    width: 40px;
+    height: 40px;
+
+    font-size: 18px;
+  }
+
+  .logoRow span {
+    font-size: 18px;
+  }
+
+  .socialRow button,
+  .inputGroup input,
+  .loginBtn {
+    height: 44px;
   }
 }
