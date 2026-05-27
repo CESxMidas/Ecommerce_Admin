@@ -5,12 +5,8 @@
 .mainLayout {
   width: 100%;
   min-height: 100vh;
-
   display: flex;
-
   background: linear-gradient(to bottom, #081225, #0b1730);
-
-  overflow: hidden;
 }
 
 /* ========================= */
@@ -19,12 +15,8 @@
 
 .mainContainer {
   flex: 1;
-
   display: flex;
   flex-direction: column;
-
-  overflow: hidden;
-
   transition: all 0.3s ease;
 }
 
