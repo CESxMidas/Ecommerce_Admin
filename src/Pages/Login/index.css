@@ -606,7 +606,6 @@ margin: 16px 0
   .loginLeft {
     padding: 30px;
   }
-
   .leftContent h1 {
     font-size: 42px;
 
@@ -616,5 +615,4 @@ margin: 16px 0
   .socialRow {
     flex-direction: column;
   }
-
 }

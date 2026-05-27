@@ -49,6 +49,8 @@ const Login = () => {
               <label>Email</label>
               <input type="email" placeholder="Enter your email" />
             </div>
+             
+
             {/* CHECK */}
             <div className="checkRow">
               <label>
@@ -79,6 +81,7 @@ const Login = () => {
             Track orders, manage inventory, monitor sales and deliver game keys
             instantly.
           </p>
+
           {/* DASHBOARD MOCKUP */}
           <div className="dashboardPreview">
             {/* TOP */}
@@ -129,9 +132,7 @@ const Login = () => {
             {/* FLOAT */}
             <div className="floatingCard">
               <h5>Top Product</h5>
-
               <strong>Office 365 License</strong>
-
               <span>+42% sales boost</span>
             </div>
           </div>
