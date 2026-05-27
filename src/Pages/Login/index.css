@@ -159,11 +159,7 @@ margin: 16px 0
   width: 100%;
 }
 
-.inputRow {
-  display: flex;
 
-  gap: 18px;
-}
 
 .inputGroup {
   flex: 1;
@@ -621,9 +617,4 @@ margin: 16px 0
     flex-direction: column;
   }
 
-  .inputRow {
-    flex-direction: column;
-
-    gap: 0;
-  }
 }

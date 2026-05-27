@@ -1,16 +1,9 @@
 import React from "react";
 import "./index.css";
+ 
+import { FaGoogle, FaSteam, FaXbox } from "react-icons/fa";
 
-import {
-  FaGoogle,
-  FaSteam,
-  FaXbox,
-} from "react-icons/fa";
-
-import {
-  MdVpnKey,
-  MdSecurity,
-} from "react-icons/md";
+import { MdVpnKey, MdSecurity } from "react-icons/md";
 
 const Login = () => {
   return (
@@ -23,68 +16,39 @@ const Login = () => {
             <div className="logoBox">
               <MdVpnKey />
             </div>
-
             <span>KeyStore</span>
           </div>
-
           {/* TITLE */}
           <h1>
             Buy Premium
             <br />
             Game & Software Keys
           </h1>
-
           <p>
-            Instant delivery for Steam,
-            Windows, Office, Xbox,
-            Playstation and more digital
-            products.
+            Instant delivery for Steam, Windows, Office, Xbox, Playstation and
+            more digital products.
           </p>
-
           {/* SOCIAL */}
           <div className="socialRow">
             <button>
               <FaSteam />
               Continue with Steam
-            </button>
-
+            </button> 
             <button>
               <FaGoogle />
               Continue with Google
             </button>
           </div>
-
           {/* FORM */}
           <div className="loginForm">
             <div className="inputGroup">
               <label>Email</label>
-
-              <input
-                type="email"
-                placeholder="Enter your email"
-              />
+              <input type="email" placeholder="Enter your email" />
             </div>
-
-            <div className="inputRow">
-              <div className="inputGroup">
-                <label>Password</label>
-
-                <input
-                  type="password"
-                  placeholder="Enter password"
-                />
-              </div>
-
-              <div className="inputGroup">
-                <label>License Key</label>
-
-                <input
-                  type="text"
-                  placeholder="XXXX-XXXX"
-                />
-              </div>
+            <div className="inputGroup">
+              <label>Email</label>
+              <input type="email" placeholder="Enter your email" />
             </div>
-
             {/* CHECK */}
             <div className="checkRow">
               <label>
@@ -92,15 +56,11 @@ const Login = () => {
                 Remember me
               </label>
 
-              <button>
-                Forgot Password?
-              </button>
+              <button>Forgot Password?</button>
             </div>
 
             {/* BUTTON */}
-            <button className="loginBtn">
-              Access Dashboard
-            </button>
+            <button className="loginBtn">Access Dashboard</button>
 
             <p className="bottomText">
               Don’t have an account?
@@ -113,17 +73,12 @@ const Login = () => {
       {/* RIGHT */}
       <div className="loginRight">
         <div className="heroContent">
-          <h2>
-            The easiest way to manage
-            your digital key business.
-          </h2>
+          <h2>The easiest way to manage your digital key business.</h2>
 
           <p>
-            Track orders, manage
-            inventory, monitor sales and
-            deliver game keys instantly.
+            Track orders, manage inventory, monitor sales and deliver game keys
+            instantly.
           </p>
-
           {/* DASHBOARD MOCKUP */}
           <div className="dashboardPreview">
             {/* TOP */}
@@ -175,9 +130,7 @@ const Login = () => {
             <div className="floatingCard">
               <h5>Top Product</h5>
 
-              <strong>
-                Office 365 License
-              </strong>
+              <strong>Office 365 License</strong>
 
               <span>+42% sales boost</span>
             </div>
