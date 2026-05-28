@@ -619,14 +619,17 @@
 
     align-items: flex-start;
   }
-
+  .logoRow {
+    margin-bottom: 16px;
+  }
   .leftContent h1 {
-    font-size: 28px;
-    line-height: 38px;
+    font-size: 22px;
+    line-height: 32px;
+    margin-bottom: 16px;
   }
 
   .leftContent p {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 24px;
   }
 
@@ -647,6 +650,7 @@
   .socialRow button,
   .loginBtn {
     width: 100%;
+    padding: 8px 16px;
   }
 }
 
@@ -659,9 +663,12 @@
     padding: 16px;
   }
 
+  .logoRow {
+    margin-bottom: 16px;
+  }
   .leftContent h1 {
     font-size: 24px;
-    line-height: 34px;
+    line-height: 32px;
   }
 
   .leftContent p {
@@ -683,6 +690,9 @@
   .socialRow button,
   .inputGroup input,
   .loginBtn {
-    height: 44px;
+    padding: 8px 16px;
+  }
+  .bottomText {
+    margin-bottom: 16px;
   }
 }
