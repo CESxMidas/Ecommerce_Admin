@@ -6,46 +6,59 @@
    TOP
 ======================================== */
 
-.productsPage .productsPage__top {
+.productsPage .productsPage_top {
+  width: 100%;
+
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+
   gap: 20px;
 
   margin-bottom: 24px;
 }
 
-.productsPage .productsPage__titleWrap h1 {
+.productsPage
+  .productsPage_top_left {
+  display: flex;
+  flex-direction: column;
+}
+
+.productsPage
+  .productsPage_top_left h1 {
   font-size: 34px;
   font-weight: 800;
+
   color: #fff;
 
   margin-bottom: 8px;
 }
 
 .productsPage
-  .productsPage__breadcrumb {
+  .productsPage_breadcrumb {
   display: flex;
   align-items: center;
   gap: 10px;
 
   flex-wrap: wrap;
 
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.55);
 
   font-size: 14px;
 }
 
-.productsPage .productsPage__actions {
+.productsPage
+  .productsPage_top_right {
   display: flex;
   align-items: center;
   gap: 14px;
 }
 
-.productsPage
-  .productsPage__outlineBtn,
-.productsPage
-  .productsPage__primaryBtn {
+/* ========================================
+   BUTTON
+======================================== */
+
+.productsPage .productsPage_btn {
   height: 48px;
 
   border-radius: 14px;
@@ -66,7 +79,7 @@
 }
 
 .productsPage
-  .productsPage__outlineBtn {
+  .productsPage_btn_outline {
   border: 1px solid
     rgba(255, 255, 255, 0.08);
 
@@ -77,11 +90,11 @@
     0.04
   );
 
-  color: #fff;
+  color: white;
 }
 
 .productsPage
-  .productsPage__outlineBtn:hover {
+  .productsPage_btn_outline:hover {
   background: rgba(
     255,
     255,
@@ -91,7 +104,7 @@
 }
 
 .productsPage
-  .productsPage__primaryBtn {
+  .productsPage_btn_primary {
   border: none;
 
   background: linear-gradient(
@@ -104,10 +117,10 @@
 }
 
 .productsPage
-  .productsPage__primaryBtn:hover {
+  .productsPage_btn_primary:hover {
   transform: translateY(-2px);
 
-  box-shadow: 0 12px 24px
+  box-shadow: 0 10px 24px
     rgba(37, 99, 235, 0.25);
 }
 
@@ -116,17 +129,20 @@
 ======================================== */
 
 .productsPage
-  .productsPage__filterBar {
+  .productsPage_filter {
+  width: 100%;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   gap: 20px;
 
   margin-bottom: 24px;
 }
 
 .productsPage
-  .productsPage__search {
+  .productsPage_search {
   width: 320px;
   height: 52px;
 
@@ -152,13 +168,13 @@
 }
 
 .productsPage
-  .productsPage__search input {
+  .productsPage_search input {
   flex: 1;
-
-  background: transparent;
 
   border: none;
   outline: none;
+
+  background: transparent;
 
   color: white;
 
@@ -166,18 +182,19 @@
 }
 
 .productsPage
-  .productsPage__search input::placeholder {
+  .productsPage_search input::placeholder {
   color: rgba(255, 255, 255, 0.4);
 }
 
 .productsPage
-  .productsPage__filterActions {
+  .productsPage_filter_actions {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.productsPage .productsPage__iconBtn {
+.productsPage
+  .productsPage_icon_btn {
   width: 50px;
   height: 50px;
 
@@ -193,11 +210,11 @@
     0.04
   );
 
-  color: white;
-
   display: flex;
   align-items: center;
   justify-content: center;
+
+  color: white;
 
   cursor: pointer;
 
@@ -205,7 +222,7 @@
 }
 
 .productsPage
-  .productsPage__iconBtn:hover {
+  .productsPage_icon_btn:hover {
   background: rgba(
     255,
     255,
@@ -219,7 +236,7 @@
 ======================================== */
 
 .productsPage
-  .productsPage__tableWrapper {
+  .productsPage_table_wrapper {
   width: 100%;
 
   overflow-x: auto;
@@ -237,7 +254,8 @@
     rgba(255, 255, 255, 0.06);
 }
 
-.productsPage .productsPage__table {
+.productsPage
+  .productsPage_table {
   width: 100%;
 
   min-width: 1100px;
@@ -246,7 +264,7 @@
 }
 
 .productsPage
-  .productsPage__table thead {
+  .productsPage_table thead {
   background: rgba(
     255,
     255,
@@ -256,7 +274,7 @@
 }
 
 .productsPage
-  .productsPage__table thead th {
+  .productsPage_table thead th {
   padding: 20px;
 
   text-align: left;
@@ -264,13 +282,13 @@
   font-size: 13px;
   font-weight: 700;
 
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.55);
 
   white-space: nowrap;
 }
 
 .productsPage
-  .productsPage__table tbody tr {
+  .productsPage_table tbody tr {
   border-top: 1px solid
     rgba(255, 255, 255, 0.05);
 
@@ -278,7 +296,7 @@
 }
 
 .productsPage
-  .productsPage__table tbody tr:hover {
+  .productsPage_table tbody tr:hover {
   background: rgba(
     255,
     255,
@@ -288,14 +306,14 @@
 }
 
 .productsPage
-  .productsPage__table tbody td {
+  .productsPage_table tbody td {
   padding: 18px 20px;
+
+  vertical-align: middle;
 
   color: white;
 
   font-size: 14px;
-
-  vertical-align: middle;
 }
 
 /* ========================================
@@ -303,28 +321,36 @@
 ======================================== */
 
 .productsPage
-  .productsPage__product {
+  .productsPage_product {
   display: flex;
   align-items: center;
   gap: 14px;
 
-  min-width: 260px;
+  min-width: 250px;
 }
 
 .productsPage
-  .productsPage__product img {
+  .productsPage_product_img {
   width: 58px;
   height: 58px;
 
   border-radius: 14px;
 
-  object-fit: cover;
+  overflow: hidden;
 
   flex-shrink: 0;
 }
 
 .productsPage
-  .productsPage__productInfo h4 {
+  .productsPage_product_img img {
+  width: 100%;
+  height: 100%;
+
+  object-fit: cover;
+}
+
+.productsPage
+  .productsPage_product_info h4 {
   font-size: 15px;
   font-weight: 700;
 
@@ -334,39 +360,45 @@
 }
 
 .productsPage
-  .productsPage__productInfo p {
+  .productsPage_product_info p {
   font-size: 13px;
 
   color: rgba(255, 255, 255, 0.55);
 }
 
 /* ========================================
-   SKU / PRICE
+   SKU
 ======================================== */
 
-.productsPage .productsPage__sku {
+.productsPage .productsPage_sku {
   color: rgba(255, 255, 255, 0.7);
-}
-
-.productsPage .productsPage__price {
-  font-weight: 700;
 }
 
 /* ========================================
    STOCK
 ======================================== */
 
-.productsPage .productsPage__stock {
+.productsPage
+  .productsPage_stock {
   min-width: 150px;
 }
 
 .productsPage
-  .productsPage__stock p {
+  .productsPage_stock p {
   margin-top: 8px;
 
   font-size: 13px;
 
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.55);
+}
+
+/* ========================================
+   PRICE
+======================================== */
+
+.productsPage
+  .productsPage_price {
+  font-weight: 700;
 }
 
 /* ========================================
@@ -374,36 +406,39 @@
 ======================================== */
 
 .productsPage
-  .productsPage__rating {
+  .productsPage_rating {
   display: flex;
   align-items: center;
   gap: 8px;
-
-  min-width: 170px;
 }
 
 .productsPage
-  .productsPage__stars {
+  .productsPage_rating_value {
+  font-weight: 600;
+}
+
+.productsPage
+  .productsPage_rating_stars {
   display: flex;
   align-items: center;
   gap: 2px;
 }
 
 .productsPage
-  .productsPage__stars svg {
+  .productsPage_rating_stars svg {
   font-size: 13px;
 
   color: rgba(255, 255, 255, 0.2);
 }
 
 .productsPage
-  .productsPage__stars svg.active {
+  .productsPage_rating_stars svg.active {
   color: #f59e0b;
 }
 
 .productsPage
-  .productsPage__rating p {
-  color: rgba(255, 255, 255, 0.5);
+  .productsPage_rating p {
+  color: rgba(255, 255, 255, 0.55);
 
   font-size: 13px;
 }
@@ -413,21 +448,21 @@
 ======================================== */
 
 .productsPage
-  .productsPage__status {
+  .productsPage_status {
   padding: 8px 14px;
 
   border-radius: 999px;
 
-  font-size: 13px;
-  font-weight: 600;
-
   display: inline-flex;
   align-items: center;
   gap: 8px;
+
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .productsPage
-  .productsPage__status::before {
+  .productsPage_status::before {
   content: "";
 
   width: 8px;
@@ -437,53 +472,53 @@
 }
 
 .productsPage
-  .productsPage__status.pending {
+  .productsPage_status.pending {
   background: rgba(
     245,
     158,
     11,
-    0.15
+    0.12
   );
 
   color: #f59e0b;
 }
 
 .productsPage
-  .productsPage__status.pending::before {
+  .productsPage_status.pending::before {
   background: #f59e0b;
 }
 
 .productsPage
-  .productsPage__status.publish {
+  .productsPage_status.publish {
   background: rgba(
     34,
     197,
     94,
-    0.15
+    0.12
   );
 
   color: #22c55e;
 }
 
 .productsPage
-  .productsPage__status.publish::before {
+  .productsPage_status.publish::before {
   background: #22c55e;
 }
 
 .productsPage
-  .productsPage__status.draft {
+  .productsPage_status.draft {
   background: rgba(
     156,
     163,
     175,
-    0.15
+    0.12
   );
 
   color: #d1d5db;
 }
 
 .productsPage
-  .productsPage__status.draft::before {
+  .productsPage_status.draft::before {
   background: #d1d5db;
 }
 
@@ -492,14 +527,14 @@
 ======================================== */
 
 .productsPage
-  .productsPage__tableActions {
+  .productsPage_actions {
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
 .productsPage
-  .productsPage__tableActions button {
+  .productsPage_actions button {
   width: 40px;
   height: 40px;
 
@@ -527,24 +562,17 @@
 }
 
 .productsPage
-  .productsPage__tableActions button svg {
+  .productsPage_actions button svg {
   font-size: 16px;
 }
 
 .productsPage
-  .productsPage__tableActions .edit:hover {
+  .productsPage_actions .editBtn:hover {
   background: rgba(
     59,
     130,
     246,
     0.15
-  );
-
-  border-color: rgba(
-    59,
-    130,
-    246,
-    0.3
   );
 
   color: #60a5fa;
@@ -553,19 +581,12 @@
 }
 
 .productsPage
-  .productsPage__tableActions .view:hover {
+  .productsPage_actions .viewBtn:hover {
   background: rgba(
     168,
     85,
     247,
     0.15
-  );
-
-  border-color: rgba(
-    168,
-    85,
-    247,
-    0.3
   );
 
   color: #c084fc;
@@ -574,19 +595,12 @@
 }
 
 .productsPage
-  .productsPage__tableActions .delete:hover {
+  .productsPage_actions .deleteBtn:hover {
   background: rgba(
     239,
     68,
     68,
     0.15
-  );
-
-  border-color: rgba(
-    239,
-    68,
-    68,
-    0.3
   );
 
   color: #f87171;
@@ -598,7 +612,8 @@
    CHECKBOX
 ======================================== */
 
-.productsPage input[type="checkbox"] {
+.productsPage
+  input[type="checkbox"] {
   width: 18px;
   height: 18px;
 
@@ -610,12 +625,12 @@
 ======================================== */
 
 .productsPage
-  .productsPage__tableWrapper::-webkit-scrollbar {
+  .productsPage_table_wrapper::-webkit-scrollbar {
   height: 6px;
 }
 
 .productsPage
-  .productsPage__tableWrapper::-webkit-scrollbar-thumb {
+  .productsPage_table_wrapper::-webkit-scrollbar-thumb {
   background: rgba(
     255,
     255,
@@ -631,51 +646,45 @@
 ======================================== */
 
 @media (max-width: 992px) {
-  .productsPage .productsPage__top,
   .productsPage
-    .productsPage__filterBar {
+    .productsPage_top,
+  .productsPage
+    .productsPage_filter {
     flex-direction: column;
     align-items: flex-start;
   }
 
   .productsPage
-    .productsPage__actions {
+    .productsPage_top_right {
     width: 100%;
   }
 
   .productsPage
-    .productsPage__primaryBtn,
-  .productsPage
-    .productsPage__outlineBtn {
+    .productsPage_btn {
     flex: 1;
   }
 
   .productsPage
-    .productsPage__search {
+    .productsPage_search {
     width: 100%;
   }
 }
 
 @media (max-width: 768px) {
   .productsPage
-    .productsPage__titleWrap h1 {
+    .productsPage_top_left h1 {
     font-size: 28px;
   }
 
   .productsPage
-    .productsPage__table thead th,
+    .productsPage_table thead th,
   .productsPage
-    .productsPage__table tbody td {
+    .productsPage_table tbody td {
     padding: 16px;
   }
 
   .productsPage
-    .productsPage__tableActions {
-    gap: 8px;
-  }
-
-  .productsPage
-    .productsPage__tableActions button {
+    .productsPage_actions button {
     width: 36px;
     height: 36px;
   }
@@ -683,21 +692,19 @@
 
 @media (max-width: 480px) {
   .productsPage
-    .productsPage__actions {
+    .productsPage_top_right {
     flex-direction: column;
   }
 
   .productsPage
-    .productsPage__filterActions {
+    .productsPage_filter_actions {
     width: 100%;
   }
 
   .productsPage
-    .productsPage__outlineBtn,
+    .productsPage_btn,
   .productsPage
-    .productsPage__primaryBtn,
-  .productsPage
-    .productsPage__iconBtn {
+    .productsPage_icon_btn {
     width: 100%;
   }
 }

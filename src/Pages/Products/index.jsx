@@ -78,7 +78,7 @@ const productData = [
     sku: "SKU-89762",
     stock: 18,
     price: "$881.00",
-    rating: 4.0,
+    rating: 4,
     reviews: 12,
     status: "Publish",
   },
@@ -87,12 +87,12 @@ const productData = [
 const Products = () => {
   return (
     <section className="productsPage">
-      {/* HEADER */}
-      <div className="productsPage__top">
-        <div className="productsPage__titleWrap">
+      {/* TOP */}
+      <div className="productsPage_top">
+        <div className="productsPage_top_left">
           <h1>Products</h1>
 
-          <div className="productsPage__breadcrumb">
+          <div className="productsPage_breadcrumb">
             <span>E-Commerce</span>
             <span>•</span>
             <span>Products</span>
@@ -101,13 +101,13 @@ const Products = () => {
           </div>
         </div>
 
-        <div className="productsPage__actions">
-          <button className="productsPage__outlineBtn">
+        <div className="productsPage_top_right">
+          <button className="productsPage_btn productsPage_btn_outline">
             <FiUpload />
             Export
           </button>
 
-          <button className="productsPage__primaryBtn">
+          <button className="productsPage_btn productsPage_btn_primary">
             <FiPlus />
             Add Product
           </button>
@@ -115,8 +115,8 @@ const Products = () => {
       </div>
 
       {/* FILTER */}
-      <div className="productsPage__filterBar">
-        <div className="productsPage__search">
+      <div className="productsPage_filter">
+        <div className="productsPage_search">
           <FiSearch />
 
           <input
@@ -125,21 +125,21 @@ const Products = () => {
           />
         </div>
 
-        <div className="productsPage__filterActions">
-          <button className="productsPage__outlineBtn">
+        <div className="productsPage_filter_actions">
+          <button className="productsPage_btn productsPage_btn_outline">
             <FiFilter />
             Filters
           </button>
 
-          <button className="productsPage__iconBtn">
+          <button className="productsPage_icon_btn">
             <FiGrid />
           </button>
         </div>
       </div>
 
       {/* TABLE */}
-      <div className="productsPage__tableWrapper">
-        <table className="productsPage__table">
+      <div className="productsPage_table_wrapper">
+        <table className="productsPage_table">
           <thead>
             <tr>
               <th>
@@ -165,14 +165,17 @@ const Products = () => {
 
                 {/* PRODUCT */}
                 <td>
-                  <div className="productsPage__product">
-                    <img
-                      src={item.image}
-                      alt=""
-                    />
+                  <div className="productsPage_product">
+                    <div className="productsPage_product_img">
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                      />
+                    </div>
 
-                    <div className="productsPage__productInfo">
+                    <div className="productsPage_product_info">
                       <h4>{item.name}</h4>
+
                       <p>{item.category}</p>
                     </div>
                   </div>
@@ -180,17 +183,15 @@ const Products = () => {
 
                 {/* SKU */}
                 <td>
-                  <span className="productsPage__sku">
+                  <span className="productsPage_sku">
                     {item.sku}
                   </span>
                 </td>
 
                 {/* STOCK */}
                 <td>
-                  <div className="productsPage__stock">
-                    <Progress
-                      value={item.stock}
-                    />
+                  <div className="productsPage_stock">
+                    <Progress value={item.stock} />
 
                     <p>
                       {item.stock === 0
@@ -202,32 +203,30 @@ const Products = () => {
 
                 {/* PRICE */}
                 <td>
-                  <span className="productsPage__price">
+                  <span className="productsPage_price">
                     {item.price}
                   </span>
                 </td>
 
                 {/* RATING */}
                 <td>
-                  <div className="productsPage__rating">
-                    <span>{item.rating}</span>
+                  <div className="productsPage_rating">
+                    <span className="productsPage_rating_value">
+                      {item.rating}
+                    </span>
 
-                    <div className="productsPage__stars">
-                      {[...Array(5)].map(
-                        (_, i) => (
-                          <FaStar
-                            key={i}
-                            className={
-                              i <
-                              Math.floor(
-                                item.rating
-                              )
-                                ? "active"
-                                : ""
-                            }
-                          />
-                        )
-                      )}
+                    <div className="productsPage_rating_stars">
+                      {[...Array(5)].map((_, index) => (
+                        <FaStar
+                          key={index}
+                          className={
+                            index <
+                            Math.floor(item.rating)
+                              ? "active"
+                              : ""
+                          }
+                        />
+                      ))}
                     </div>
 
                     <p>({item.reviews})</p>
@@ -237,7 +236,7 @@ const Products = () => {
                 {/* STATUS */}
                 <td>
                   <span
-                    className={`productsPage__status ${item.status.toLowerCase()}`}
+                    className={`productsPage_status ${item.status.toLowerCase()}`}
                   >
                     {item.status}
                   </span>
@@ -245,16 +244,16 @@ const Products = () => {
 
                 {/* ACTION */}
                 <td>
-                  <div className="productsPage__tableActions">
-                    <button className="edit">
+                  <div className="productsPage_actions">
+                    <button className="editBtn">
                       <FiEdit2 />
                     </button>
 
-                    <button className="view">
+                    <button className="viewBtn">
                       <FiEye />
                     </button>
 
-                    <button className="delete">
+                    <button className="deleteBtn">
                       <FiTrash2 />
                     </button>
                   </div>

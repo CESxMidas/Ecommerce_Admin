@@ -11,11 +11,11 @@ import {
 
 import Header from "./components/Header";
 import SideBar from "./components/SideBar";
-
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 
 import "./App.css";
+import Products from "./Pages/Products";
 
 /* ========================= */
 /* CONTEXT */
@@ -76,7 +76,6 @@ function App() {
         />
       ),
     },
-
     /* DASHBOARD */
     {
       path: "/",
@@ -130,8 +129,61 @@ function App() {
         </section>
       ),
     },
-  ]);
+    /* PRODUCTS */
+    {
+      path: "/product",
 
+      element: (
+        <section className="mainLayout">
+          {/* SIDEBAR */}
+          <SideBar
+            isSidebarOpen={
+              isSidebarOpen
+            }
+          />
+
+          {/* MOBILE OVERLAY */}
+          {isSidebarOpen &&
+            window.innerWidth <=
+              768 && (
+              <div
+                className="sidebarOverlay"
+                onClick={() =>
+                  setIsSidebarOpen(
+                    false
+                  )
+                }
+              />
+            )}
+
+          {/* RIGHT SIDE */}
+          <div
+            className={`mainContainer ${
+              isSidebarOpen
+                ? "sidebarOpen"
+                : "sidebarClosed"
+            }`}
+          >
+            {/* HEADER */}
+            <Header
+              isSidebarOpen={
+                isSidebarOpen
+              }
+              setIsSidebarOpen={
+                setIsSidebarOpen
+              }
+            />
+
+            {/* CONTENT */}
+            <main className="dashboardContent">
+              <Products />
+            </main>
+          </div>
+        </section>
+      ),
+    },
+  ]);
+  
   /* ========================= */
   /* CONTEXT VALUES */
   /* ========================= */
