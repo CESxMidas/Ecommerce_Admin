@@ -1,4 +1,4 @@
-git statusimport React from "react";
+import React from "react";
 import "./index.css";
 
 import { FaGoogle, FaSteam, FaXbox } from "react-icons/fa";
