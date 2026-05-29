@@ -1,210 +1,92 @@
+import { lazy, Suspense, useMemo, useState } from "react";
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider,
 } from "react-router-dom";
 
-import {
-  createContext,
-  useEffect,
-  useState,
-} from "react";
-
-import Header from "./components/Header";
-import SideBar from "./components/SideBar";
-import Dashboard from "./pages/Dashboard";
-import Login from "./pages/Login";
+import AdminLayout from "./layouts/AdminLayout";
+import { AppContext } from "./context/AppContext";
+import { useSidebar } from "./hooks/useSidebar";
 
 import "./App.css";
-import Products from "./Pages/Products";
 
-/* ========================= */
-/* CONTEXT */
-/* ========================= */
+const Dashboard = lazy(() => import("./Pages/DashBoard"));
+const Products = lazy(() => import("./Pages/Products"));
+const Login = lazy(() => import("./Pages/Login"));
 
-const MyContext = createContext();
-
-/* ========================= */
-/* APP */
-/* ========================= */
+function PageLoader() {
+  return (
+    <div className="page-loader" role="status" aria-live="polite">
+      <span className="page-loader__spinner" aria-hidden="true" />
+      <span>Loading…</span>
+    </div>
+  );
+}
 
 function App() {
-  const [isSidebarOpen, setIsSidebarOpen] =
-    useState(
-      window.innerWidth > 768
-    );
+  const [isLogin, setIsLogin] = useState(false);
+  const sidebar = useSidebar();
 
-  const [isLogin, setIsLogin] =
-    useState(false);
+  const router = useMemo(
+    () =>
+      createBrowserRouter([
+        {
+          path: "/login",
+          element: (
+            <Suspense fallback={<PageLoader />}>
+              <Login setIsLogin={setIsLogin} />
+            </Suspense>
+          ),
+        },
+        {
+          element: <AdminLayout />,
+          children: [
+            {
+              index: true,
+              element: (
+                <Suspense fallback={<PageLoader />}>
+                  <Dashboard />
+                </Suspense>
+              ),
+            },
+            {
+              path: "product",
+              element: (
+                <Suspense fallback={<PageLoader />}>
+                  <Products />
+                </Suspense>
+              ),
+            },
+          ],
+        },
+        {
+          path: "*",
+          element: <Navigate to="/" replace />,
+        },
+      ]),
+    []
+  );
 
-  /* ========================= */
-  /* AUTO RESPONSIVE SIDEBAR */
-  /* ========================= */
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth <= 768) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
-    };
-
-    window.addEventListener(
-      "resize",
-      handleResize
-    );
-
-    return () =>
-      window.removeEventListener(
-        "resize",
-        handleResize
-      );
-  }, []);
-
-  /* ========================= */
-  /* ROUTER */
-  /* ========================= */
-
-  const router = createBrowserRouter([
-    /* LOGIN */
-    {
-      path: "/login",
-
-      element: (
-        <Login
-          setIsLogin={setIsLogin}
-        />
-      ),
-    },
-    /* DASHBOARD */
-    {
-      path: "/",
-
-      element: (
-        <section className="mainLayout">
-          {/* SIDEBAR */}
-          <SideBar
-            isSidebarOpen={
-              isSidebarOpen
-            }
-          />
-
-          {/* MOBILE OVERLAY */}
-          {isSidebarOpen &&
-            window.innerWidth <=
-              768 && (
-              <div
-                className="sidebarOverlay"
-                onClick={() =>
-                  setIsSidebarOpen(
-                    false
-                  )
-                }
-              />
-            )}
-
-          {/* RIGHT SIDE */}
-          <div
-            className={`mainContainer ${
-              isSidebarOpen
-                ? "sidebarOpen"
-                : "sidebarClosed"
-            }`}
-          >
-            {/* HEADER */}
-            <Header
-              isSidebarOpen={
-                isSidebarOpen
-              }
-              setIsSidebarOpen={
-                setIsSidebarOpen
-              }
-            />
-
-            {/* CONTENT */}
-            <main className="dashboardContent">
-              <Dashboard />
-            </main>
-          </div>
-        </section>
-      ),
-    },
-    /* PRODUCTS */
-    {
-      path: "/product",
-
-      element: (
-        <section className="mainLayout">
-          {/* SIDEBAR */}
-          <SideBar
-            isSidebarOpen={
-              isSidebarOpen
-            }
-          />
-
-          {/* MOBILE OVERLAY */}
-          {isSidebarOpen &&
-            window.innerWidth <=
-              768 && (
-              <div
-                className="sidebarOverlay"
-                onClick={() =>
-                  setIsSidebarOpen(
-                    false
-                  )
-                }
-              />
-            )}
-
-          {/* RIGHT SIDE */}
-          <div
-            className={`mainContainer ${
-              isSidebarOpen
-                ? "sidebarOpen"
-                : "sidebarClosed"
-            }`}
-          >
-            {/* HEADER */}
-            <Header
-              isSidebarOpen={
-                isSidebarOpen
-              }
-              setIsSidebarOpen={
-                setIsSidebarOpen
-              }
-            />
-
-            {/* CONTENT */}
-            <main className="dashboardContent">
-              <Products />
-            </main>
-          </div>
-        </section>
-      ),
-    },
-  ]);
-  
-  /* ========================= */
-  /* CONTEXT VALUES */
-  /* ========================= */
-
-  const values = {
-    isSidebarOpen,
-    setIsSidebarOpen,
-
-    isLogin,
-    setIsLogin,
-  };
+  const contextValue = useMemo(
+    () => ({
+      isSidebarOpen: sidebar.isSidebarOpen,
+      isCompact: sidebar.isCompact,
+      isMobile: sidebar.isMobile,
+      setIsSidebarOpen: sidebar.setIsSidebarOpen,
+      toggleSidebar: sidebar.toggleSidebar,
+      closeSidebar: sidebar.closeSidebar,
+      isLogin,
+      setIsLogin,
+    }),
+    [sidebar, isLogin]
+  );
 
   return (
-    <MyContext.Provider
-      value={values}
-    >
+    <AppContext.Provider value={contextValue}>
       <RouterProvider router={router} />
-    </MyContext.Provider>
+    </AppContext.Provider>
   );
 }
 
 export default App;
-
-export { MyContext };

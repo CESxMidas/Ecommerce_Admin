@@ -1,270 +1,200 @@
-import React from "react";
+import { memo } from "react";
 import {
-  FiSearch,
-  FiFilter,
-  FiGrid,
   FiEdit2,
   FiEye,
+  FiFilter,
+  FiGrid,
+  FiPlus,
+  FiSearch,
   FiTrash2,
   FiUpload,
-  FiPlus,
 } from "react-icons/fi";
 
-import { FaStar } from "react-icons/fa";
 
 import Progress from "../../Components/Progress";
+import TableScrollPanel from "../../Components/TableScrollPanel";
+import PageHeader from "../../Components/ui/PageHeader";
+import StarRating from "../../Components/ui/StarRating";
+import { useProducts } from "../../context/ProductsContext";
+
 
 import "./index.css";
 
-const productData = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f",
-    name: "Tasty Metal Shirt",
-    category: "Books",
-    sku: "SKU-52442",
-    stock: 30,
-    price: "$410.00",
-    rating: 3.5,
-    reviews: 14,
-    status: "Pending",
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
-    name: "Modern Gloves",
-    category: "Kids",
-    sku: "SKU-98424",
-    stock: 0,
-    price: "$340.00",
-    rating: 4.5,
-    reviews: 9,
-    status: "Draft",
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
-    name: "Rustic Steel Computer",
-    category: "Games",
-    sku: "SKU-78192",
-    stock: 50,
-    price: "$948.00",
-    rating: 3.8,
-    reviews: 19,
-    status: "Draft",
-  },
-  {
-    id: 4,
-    image:
-      "https://images.unsplash.com/photo-1585386959984-a4155224a1ad",
-    name: "Licensed Concrete Cheese",
-    category: "Electronics",
-    sku: "SKU-86229",
-    stock: 0,
-    price: "$853.00",
-    rating: 2.5,
-    reviews: 5,
-    status: "Pending",
-  },
-  {
-    id: 5,
-    image:
-      "https://images.unsplash.com/photo-1496747611176-843222e1e57c",
-    name: "Electronic Rubber Table",
-    category: "Books",
-    sku: "SKU-89762",
-    stock: 18,
-    price: "$881.00",
-    rating: 4,
-    reviews: 12,
-    status: "Publish",
-  },
-];
+function Products() {
+  const { products, addProductFromForm } = useProducts();
+  
 
-const Products = () => {
+  const breadcrumb = (
+    <>
+      <span>E-Commerce</span>
+      <span aria-hidden="true">•</span>
+      <span>Products</span>
+      <span aria-hidden="true">•</span>
+      <span aria-current="page">List</span>
+    </>
+  );
+
+  const headerActions = (
+    <>
+      <button type="button" className="admin-btn admin-btn--ghost">
+        <FiUpload />
+        Export
+      </button>
+      <button
+        type="button"
+        className="admin-btn admin-btn--primary"
+     
+      >
+        <FiPlus />
+        Add Product
+      </button>
+    </>
+  );
+
   return (
     <section className="productsPage">
-      {/* TOP */}
-      <div className="productsPage_top">
-        <div className="productsPage_top_left">
-          <h1>Products</h1>
+      <PageHeader
+        title="Products"
+        breadcrumb={breadcrumb}
+        actions={headerActions}
+      />
 
-          <div className="productsPage_breadcrumb">
-            <span>E-Commerce</span>
-            <span>•</span>
-            <span>Products</span>
-            <span>•</span>
-            <span>List</span>
-          </div>
-        </div>
-
-        <div className="productsPage_top_right">
-          <button className="productsPage_btn productsPage_btn_outline">
-            <FiUpload />
-            Export
-          </button>
-
-          <button className="productsPage_btn productsPage_btn_primary">
-            <FiPlus />
-            Add Product
-          </button>
-        </div>
-      </div>
-
-      {/* FILTER */}
-      <div className="productsPage_filter">
-        <div className="productsPage_search">
-          <FiSearch />
-
+      <div className="productsPage__filterBar">
+        <div className="productsPage__search">
+          <FiSearch aria-hidden="true" />
           <input
-            type="text"
+            type="search"
+            className="productsPage__searchInput"
             placeholder="Search by product name..."
+            aria-label="Search products"
           />
         </div>
 
-        <div className="productsPage_filter_actions">
-          <button className="productsPage_btn productsPage_btn_outline">
+        <div className="productsPage__filterActions">
+          <button type="button" className="admin-btn admin-btn--ghost">
             <FiFilter />
             Filters
           </button>
-
-          <button className="productsPage_icon_btn">
+          <button
+            type="button"
+            className="productsPage__iconBtn"
+            aria-label="Grid view"
+          >
             <FiGrid />
           </button>
         </div>
       </div>
 
-      {/* TABLE */}
-      <div className="productsPage_table_wrapper">
-        <table className="productsPage_table">
-          <thead>
-            <tr>
-              <th>
-                <input type="checkbox" />
-              </th>
+      <div className="productsPage__tableOuter">
+        <TableScrollPanel hint="Swipe to view all product columns">
+          <table className="productsPage__table">
+            <thead>
+              <tr>
+                <th scope="col">
+                  <input type="checkbox" aria-label="Select all products" />
+                </th>
+                <th scope="col">PRODUCT</th>
+                <th scope="col">SKU</th>
+                <th scope="col">STOCK</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">RATING</th>
+                <th scope="col">STATUS</th>
+                <th scope="col">ACTION</th>
+              </tr>
+            </thead>
 
-              <th>PRODUCT</th>
-              <th>SKU</th>
-              <th>STOCK</th>
-              <th>PRICE</th>
-              <th>RATING</th>
-              <th>STATUS</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
+            <tbody>
+              {products.map((item) => (
+                <tr key={item.id}>
+                  <td data-label="Select">
+                    <input
+                      type="checkbox"
+                      aria-label={`Select ${item.name}`}
+                    />
+                  </td>
 
-          <tbody>
-            {productData.map((item) => (
-              <tr key={item.id}>
-                <td>
-                  <input type="checkbox" />
-                </td>
-
-                {/* PRODUCT */}
-                <td>
-                  <div className="productsPage_product">
-                    <div className="productsPage_product_img">
+                  <td data-label="Product">
+                    <div className="productsPage__product">
                       <img
                         src={item.image}
                         alt={item.name}
+                        loading="lazy"
+                        width={58}
+                        height={58}
                       />
+                      <div className="productsPage__productInfo">
+                        <h4>{item.name}</h4>
+                        <p>{item.category}</p>
+                      </div>
                     </div>
+                  </td>
 
-                    <div className="productsPage_product_info">
-                      <h4>{item.name}</h4>
+                  <td data-label="SKU">
+                    <span className="productsPage__sku">{item.sku}</span>
+                  </td>
 
-                      <p>{item.category}</p>
+                  <td data-label="Stock">
+                    <div className="productsPage__stock">
+                      <Progress value={item.stock} />
+                      <p>
+                        {item.stock === 0
+                          ? "Out of stock"
+                          : `${item.stock} in stock`}
+                      </p>
                     </div>
-                  </div>
-                </td>
+                  </td>
 
-                {/* SKU */}
-                <td>
-                  <span className="productsPage_sku">
-                    {item.sku}
-                  </span>
-                </td>
+                  <td data-label="Price">
+                    <span className="productsPage__price">{item.price}</span>
+                  </td>
 
-                {/* STOCK */}
-                <td>
-                  <div className="productsPage_stock">
-                    <Progress value={item.stock} />
+                  <td data-label="Rating">
+                    <StarRating rating={item.rating} reviews={item.reviews} />
+                  </td>
 
-                    <p>
-                      {item.stock === 0
-                        ? "Out of stock"
-                        : `${item.stock} in stock`}
-                    </p>
-                  </div>
-                </td>
-
-                {/* PRICE */}
-                <td>
-                  <span className="productsPage_price">
-                    {item.price}
-                  </span>
-                </td>
-
-                {/* RATING */}
-                <td>
-                  <div className="productsPage_rating">
-                    <span className="productsPage_rating_value">
-                      {item.rating}
+                  <td data-label="Status">
+                    <span
+                      className={`productsPage__status productsPage__status--${item.status.toLowerCase()}`}
+                    >
+                      {item.status}
                     </span>
+                  </td>
 
-                    <div className="productsPage_rating_stars">
-                      {[...Array(5)].map((_, index) => (
-                        <FaStar
-                          key={index}
-                          className={
-                            index <
-                            Math.floor(item.rating)
-                              ? "active"
-                              : ""
-                          }
-                        />
-                      ))}
+                  <td data-label="Action">
+                    <div className="productsPage__tableActions">
+                      <button
+                        type="button"
+                        className="productsPage__tableActions-btn productsPage__tableActions-btn--edit"
+                        aria-label={`Edit ${item.name}`}
+                      >
+                        <FiEdit2 />
+                      </button>
+                      <button
+                        type="button"
+                        className="productsPage__tableActions-btn productsPage__tableActions-btn--view"
+                        aria-label={`View ${item.name}`}
+                      >
+                        <FiEye />
+                      </button>
+                      <button
+                        type="button"
+                        className="productsPage__tableActions-btn productsPage__tableActions-btn--delete"
+                        aria-label={`Delete ${item.name}`}
+                      >
+                        <FiTrash2 />
+                      </button>
                     </div>
-
-                    <p>({item.reviews})</p>
-                  </div>
-                </td>
-
-                {/* STATUS */}
-                <td>
-                  <span
-                    className={`productsPage_status ${item.status.toLowerCase()}`}
-                  >
-                    {item.status}
-                  </span>
-                </td>
-
-                {/* ACTION */}
-                <td>
-                  <div className="productsPage_actions">
-                    <button className="editBtn">
-                      <FiEdit2 />
-                    </button>
-
-                    <button className="viewBtn">
-                      <FiEye />
-                    </button>
-
-                    <button className="deleteBtn">
-                      <FiTrash2 />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </TableScrollPanel>
       </div>
+
+
     </section>
   );
-};
+}
 
-export default Products;
+export default memo(Products);

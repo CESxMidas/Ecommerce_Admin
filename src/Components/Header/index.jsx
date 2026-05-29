@@ -1,162 +1,141 @@
-import { useState, useEffect } from "react";
-
+import { memo, useCallback, useState } from "react";
 import {
+  Badge,
   Button,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
-  Badge,
-  Divider,
 } from "@mui/material";
-
 import {
-  MdMenuOpen,
   MdMenu,
-  MdOutlineNotificationsNone,
+  MdMenuOpen,
   MdOutlineLogout,
+  MdOutlineNotificationsNone,
 } from "react-icons/md";
-
 import { FaRegUserCircle } from "react-icons/fa";
+
+import { useAppContext } from "../../context/AppContext";
 
 import "./index.css";
 
-const Header = ({
-  isSidebarOpen,
-  setIsSidebarOpen,
-}) => {
+function Header() {
+  const { isSidebarOpen, toggleSidebar } = useAppContext();
   const [anchorEl, setAnchorEl] = useState(null);
-
   const open = Boolean(anchorEl);
 
-  /* ========================= */
-  /* CHECK STATE */
-  /* ========================= */
+  const handleToggleSidebar = useCallback(() => {
+    toggleSidebar();
+  }, [toggleSidebar]);
 
-  useEffect(() => {
-    console.log(
-      "Sidebar State:",
-      isSidebarOpen
-    );
-  }, [isSidebarOpen]);
-
-  const handleToggleSidebar = () => {
-    console.log(
-      "Before:",
-      isSidebarOpen
-    );
-
-    setIsSidebarOpen(!isSidebarOpen);
-
-    console.log("Button Clicked");
-  };
-
-  const handleOpenMenu = (event) => {
+  const handleOpenMenu = useCallback((event) => {
     setAnchorEl(event.currentTarget);
-  };
+  }, []);
 
-  const handleCloseMenu = () => {
+  const handleCloseMenu = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
   return (
-    <header className="header px-3 md:px-5 lg:px-7">
-      {/* LEFT */}
+    <header className="header">
       <div className="headerLeft">
         <Button
+          type="button"
           className="menuBtn"
           onClick={handleToggleSidebar}
+          aria-label={isSidebarOpen ? "Collapse sidebar" : "Expand sidebar"}
         >
-          {isSidebarOpen ? (
-            <MdMenuOpen size={22} />
-          ) : (
-            <MdMenu size={22} />
-          )}
+          {isSidebarOpen ? <MdMenuOpen size={22} /> : <MdMenu size={22} />}
         </Button>
 
-        <div className="flex items-center gap-3">
-          <div className="logoBox">
+        <div className="headerBrand">
+          <div className="logoBox" aria-hidden="true">
             S
           </div>
-
-          <div className="hidden md:block">
-            <h1 className="logoText">
-              SoftKey Admin
-            </h1>
-
-            <p className="logoSubText">
-              Software License Dashboard
-            </p>
+          <div className="headerBrandText">
+            <p className="logoText">SoftKey Admin</p>
+            <p className="logoSubText">Software License Dashboard</p>
           </div>
         </div>
       </div>
 
-      {/* RIGHT */}
       <div className="headerRight">
-        <div className="searchBox hidden lg:flex">
+        <div className="searchBox">
           <input
-            type="text"
+            type="search"
             placeholder="Search here..."
+            aria-label="Search dashboard"
+            autoComplete="off"
           />
         </div>
 
-        {/* NOTIFICATION */}
-        <IconButton className="iconBtn">
-          <Badge
-            badgeContent={4}
-            color="error"
-          >
-            <MdOutlineNotificationsNone
-              size={22}
-            />
+        <IconButton className="iconBtn" aria-label="Notifications">
+          <Badge badgeContent={4} color="error">
+            <MdOutlineNotificationsNone size={22} />
           </Badge>
         </IconButton>
 
-        {/* USER */}
-        <div>
-          <IconButton
-            className="iconBtn"
-            onClick={handleOpenMenu}
+        <IconButton
+          className="iconBtn"
+          onClick={handleOpenMenu}
+          aria-label="User menu"
+          aria-controls={open ? "user-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+        >
+          <FaRegUserCircle size={24} />
+        </IconButton>
+
+        <Menu
+          id="user-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleCloseMenu}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+          slotProps={{
+            paper: { className: "headerUserMenu" },
+            list: {
+              className: "headerUserMenu__list",
+              disablePadding: true,
+              "aria-labelledby": "user-menu",
+            },
+          }}
+        >
+          <MenuItem
+            disableRipple
+            disabled
+            className="headerUserMenu__profile"
+            tabIndex={-1}
           >
-            <FaRegUserCircle size={24} />
-          </IconButton>
+            <span className="headerUserMenu__avatar" aria-hidden="true">
+              <FaRegUserCircle size={28} />
+            </span>
+            <span className="headerUserMenu__profileText">
+              <span className="headerUserMenu__name">Hoàng Đỗ</span>
+              <span className="headerUserMenu__role">Administrator</span>
+            </span>
+          </MenuItem>
 
-          <Menu
-            anchorEl={anchorEl}
-            open={open}
-            onClose={handleCloseMenu}
-          >
-            <div className="userInfo">
-              <div className="userAvatar">
-                <FaRegUserCircle size={30} />
-              </div>
+          <Divider component="li" className="headerUserMenu__divider" />
 
-              <div>
-                <h3>Hoàng Đỗ</h3>
-
-                <p>Administrator</p>
-              </div>
-            </div>
-
-            <Divider />
-
-            <MenuItem
-              onClick={handleCloseMenu}
-            >
+          <MenuItem onClick={handleCloseMenu} className="headerUserMenu__item">
+            <span className="headerUserMenu__icon" aria-hidden="true">
               <FaRegUserCircle size={20} />
-              &nbsp; Profile
-            </MenuItem>
+            </span>
+            <span className="headerUserMenu__label">Profile</span>
+          </MenuItem>
 
-            <MenuItem
-              onClick={handleCloseMenu}
-            >
-              <MdOutlineLogout size={22} />
-              &nbsp; Sign Out
-            </MenuItem>
-          </Menu>
-        </div>
+          <MenuItem onClick={handleCloseMenu} className="headerUserMenu__item">
+            <span className="headerUserMenu__icon" aria-hidden="true">
+              <MdOutlineLogout size={20} />
+            </span>
+            <span className="headerUserMenu__label">Sign Out</span>
+          </MenuItem>
+        </Menu>
       </div>
     </header>
   );
-};
+}
 
-export default Header;
+export default memo(Header);

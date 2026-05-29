@@ -4,34 +4,22 @@
 
 .header {
   width: 100%;
-
-  height: 75px;
-
-  background: rgba(8, 18, 37, 0.85);
-
+  min-height: var(--header-height);
+  padding: var(--space-2) var(--space-5);
+  padding-top: max(var(--space-2), env(safe-area-inset-top, 0px));
+  background: rgba(8, 18, 37, 0.92);
   backdrop-filter: blur(12px);
-
   -webkit-backdrop-filter: blur(12px);
-
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-
+  border-bottom: 1px solid var(--admin-surface-border);
   display: flex;
-
   align-items: center;
-
   justify-content: space-between;
-
+  gap: var(--space-3);
+  flex-shrink: 0;
   position: sticky;
-
   top: 0;
-
-  left: 0;
-
-  z-index: 9999;
-
-  padding-top: 10px;
-
-  padding-bottom: 10px;
+  z-index: 110;
+  overflow: hidden;
 }
 
 /* ========================= */
@@ -41,48 +29,60 @@
 .header .headerLeft {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: var(--space-3);
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
-/* ========================= */
-/* LOGO */
-/* ========================= */
+.header .headerBrand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.header .headerBrandText {
+  min-width: 0;
+  overflow: hidden;
+}
 
 .header .logoBox {
   width: 44px;
   height: 44px;
-
+  flex-shrink: 0;
   border-radius: 14px;
-
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
-
+  background: var(--admin-gradient-primary);
   display: flex;
   align-items: center;
   justify-content: center;
-
-  color: white;
-
-  font-size: 20px;
+  color: var(--admin-text-primary);
+  font-size: 1.25rem;
   font-weight: 700;
+  line-height: 1;
 }
 
 .header .logoText {
-  color: white;
-
-  font-size: 20px;
+  color: var(--admin-text-primary);
+  font-size: 1.25rem;
   font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header .logoSubText {
-  color: #94a3b8;
-
-  font-size: 13px;
-
+  color: var(--admin-text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.3;
   margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* ========================= */
-/* BUTTON */
+/* BUTTONS */
 /* ========================= */
 
 .header .menuBtn,
@@ -90,20 +90,49 @@
   width: 42px !important;
   min-width: 42px !important;
   height: 42px !important;
-
+  padding: 0 !important;
   border-radius: 14px !important;
-
-  background: rgba(255, 255, 255, 0.04) !important;
-
-  border: 1px solid rgba(255, 255, 255, 0.05) !important;
-
-  color: white !important;
+  background: var(--admin-surface) !important;
+  border: 1px solid var(--admin-surface-border) !important;
+  color: var(--admin-text-primary) !important;
+  flex-shrink: 0;
+  transition:
+    background var(--transition-base),
+    border-color var(--transition-base),
+    transform var(--transition-base);
 }
+
+.header .menuBtn:hover,
+.header .iconBtn:hover {
+  background: var(--admin-surface-hover) !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.header .menuBtn:focus-visible,
+.header .iconBtn:focus-visible {
+  outline: 2px solid rgba(59, 130, 246, 0.55);
+  outline-offset: 2px;
+}
+
+.header .iconBtn .MuiBadge-badge {
+  font-size: 0.625rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border: 2px solid rgba(8, 18, 37, 0.95);
+}
+
+/* ========================= */
+/* RIGHT */
+/* ========================= */
 
 .header .headerRight {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 /* ========================= */
@@ -111,116 +140,239 @@
 /* ========================= */
 
 .header .searchBox {
-  width: 260px;
+  flex: 1 1 auto;
+  width: auto;
+  max-width: 280px;
+  min-width: 140px;
   height: 44px;
-
   border-radius: 14px;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-surface-border);
+  transition:
+    border-color var(--transition-base),
+    box-shadow var(--transition-base);
+}
 
-  overflow: hidden;
-
-  background: rgba(255, 255, 255, 0.04);
-
-  border: 1px solid rgba(255, 255, 255, 0.05);
+.header .searchBox:focus-within {
+  border-color: rgba(59, 130, 246, 0.45);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 .header .searchBox input {
   width: 100%;
   height: 100%;
-
   background: transparent;
-
   border: none;
   outline: none;
+  padding: 0 var(--space-4);
+  color: var(--admin-text-primary);
+  font-size: 0.875rem;
+}
 
-  padding: 0 16px;
+.header .searchBox input::placeholder {
+  color: var(--admin-text-muted);
+}
 
-  color: white;
+.header .searchBox input::-webkit-search-cancel-button {
+  filter: invert(0.8);
 }
 
 /* ========================= */
-/* USER */
+/* USER MENU */
 /* ========================= */
 
-.header .userInfo {
-  padding: 20px;
-
-  display: flex;
-  align-items: center;
-  gap: 14px;
+.headerUserMenu {
+  margin-top: 10px !important;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 28, 50, 0.99) 0%,
+    rgba(11, 18, 36, 0.99) 100%
+  ) !important;
+  border: 1px solid var(--admin-surface-border) !important;
+  border-radius: 14px !important;
+  color: var(--admin-text-primary) !important;
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  min-width: 240px;
+  overflow: hidden;
 }
 
-.header .userAvatar {
-  width: 58px;
-  height: 58px;
+.headerUserMenu__list {
+  padding: var(--space-2) 0 !important;
+}
 
-  border-radius: 100%;
+.headerUserMenu__profile.MuiMenuItem-root {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--space-3) !important;
+  padding: 14px 18px !important;
+  min-height: auto !important;
+  opacity: 1 !important;
+  cursor: default !important;
+  background: transparent !important;
+}
 
+.headerUserMenu__profile.MuiMenuItem-root.Mui-disabled {
+  opacity: 1 !important;
+}
+
+.headerUserMenu__avatar {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  background: rgba(255, 255, 255, 0.05);
-
-  color: white;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-surface-border);
+  color: var(--admin-text-primary);
 }
 
-.header .menuItem {
-  gap: 12px !important;
+.headerUserMenu__profileText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
-/* =========================================
-   RESPONSIVE
-========================================= */
 
-/* -------- Laptop nhỏ -------- */
+.headerUserMenu__name {
+  color: var(--admin-text-primary);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.headerUserMenu__role {
+  color: var(--admin-text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+}
+
+.headerUserMenu__divider {
+  border-color: var(--admin-surface-border) !important;
+  margin: var(--space-1) var(--space-3) !important;
+  list-style: none;
+}
+
+.headerUserMenu__item.MuiMenuItem-root {
+  display: flex !important;
+  align-items: center !important;
+  gap: var(--space-3) !important;
+  padding: 11px 18px !important;
+  margin: 0 var(--space-1);
+  border-radius: 10px;
+  color: var(--admin-text-body) !important;
+  font-size: 0.875rem !important;
+  min-height: 44px !important;
+}
+
+.headerUserMenu__item.MuiMenuItem-root:hover {
+  background: var(--admin-surface-hover) !important;
+  color: var(--admin-text-primary) !important;
+}
+
+.headerUserMenu__icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--admin-text-secondary);
+}
+
+.headerUserMenu__item:hover .headerUserMenu__icon {
+  color: var(--admin-text-primary);
+}
+
+.headerUserMenu__label {
+  flex: 1;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
 @media (max-width: 1200px) {
   .header .searchBox {
-    width: 200px;
+    max-width: 200px;
+    min-width: 120px;
   }
 
   .header .logoText {
-    font-size: 18px;
+    font-size: 1.125rem;
   }
 
   .header .logoSubText {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 
-/* -------- Tablet -------- */
 @media (max-width: 992px) {
   .header {
-    height: auto;
-    min-height: 75px;
+    padding: var(--space-2) var(--space-4);
+  }
 
-    padding-top: 12px;
-    padding-bottom: 12px;
+  .header .searchBox {
+    max-width: 160px;
+    min-width: 100px;
+    height: 40px;
+  }
+
+  .header .headerLeft {
+    gap: var(--space-2);
+  }
+
+  .header .headerRight {
+    gap: var(--space-2);
+  }
+
+  .header .logoBox {
+    width: 40px;
+    height: 40px;
+    font-size: 1.125rem;
+  }
+
+  .header .logoText {
+    font-size: 1.0625rem;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 40px !important;
+    min-width: 40px !important;
+    height: 40px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding-left: max(var(--space-3), env(safe-area-inset-left, 0px));
+    padding-right: max(var(--space-3), env(safe-area-inset-right, 0px));
+    min-height: 68px;
   }
 
   .header .searchBox {
     display: none;
   }
 
-  .header .headerLeft {
-    gap: 12px;
+  .header .headerBrandText {
+    display: none;
   }
 
-  .header .headerRight {
-    gap: 10px;
+  .header .headerLeft {
+    flex: 0 1 auto;
   }
 
   .header .logoBox {
-    width: 40px;
-    height: 40px;
-
-    font-size: 18px;
-  }
-
-  .header .logoText {
-    font-size: 17px;
-  }
-
-  .header .logoSubText {
-    font-size: 11px;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-size: 1rem;
   }
 
   .header .menuBtn,
@@ -228,62 +380,29 @@
     width: 38px !important;
     min-width: 38px !important;
     height: 38px !important;
-  }
-}
-
-/* -------- Mobile -------- */
-@media (max-width: 768px) {
-  .header {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-
-  .header .logoText,
-  .header .logoSubText {
-    display: none;
-  }
-
-  .header .headerLeft {
-    gap: 10px;
-  }
-
-  .header .headerRight {
-    gap: 8px;
-  }
-
-  .header .logoBox {
-    width: 38px;
-    height: 38px;
-
-    border-radius: 12px;
-
-    font-size: 17px;
-  }
-
-  .header .menuBtn,
-  .header .iconBtn {
-    width: 36px !important;
-    min-width: 36px !important;
-    height: 36px !important;
-
     border-radius: 12px !important;
   }
 
-  .header .userInfo {
-    padding: 14px;
-    gap: 10px;
+  .headerUserMenu__avatar {
+    width: 42px;
+    height: 42px;
   }
 
-  .header .userAvatar {
-    width: 46px;
-    height: 46px;
+  .headerUserMenu__profile.MuiMenuItem-root {
+    padding: 12px 14px !important;
+  }
+
+  .headerUserMenu__item.MuiMenuItem-root {
+    padding: 10px 14px !important;
   }
 }
 
-/* -------- Mobile nhỏ -------- */
 @media (max-width: 480px) {
   .header {
-    min-height: 65px;
+    gap: var(--space-2);
+    min-height: 64px;
+    padding-left: max(10px, env(safe-area-inset-left, 0px));
+    padding-right: max(10px, env(safe-area-inset-right, 0px));
   }
 
   .header .headerRight {
@@ -291,16 +410,19 @@
   }
 
   .header .logoBox {
-    width: 34px;
-    height: 34px;
-
-    font-size: 15px;
+    width: 36px;
+    height: 36px;
+    font-size: 0.9375rem;
   }
 
   .header .menuBtn,
   .header .iconBtn {
-    width: 34px !important;
-    min-width: 34px !important;
-    height: 34px !important;
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+  }
+
+  .headerUserMenu {
+    min-width: min(100vw - 24px, 280px);
   }
 }

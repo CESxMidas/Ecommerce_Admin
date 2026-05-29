@@ -1,0 +1,202 @@
+/* Shared admin UI primitives — uses tokens from index.css :root */
+
+.admin-card {
+  margin-top: var(--space-6);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-surface-border);
+  backdrop-filter: blur(12px);
+  box-shadow:
+    var(--admin-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+.admin-card__header {
+  padding: var(--space-5) var(--space-6);
+  border-bottom: 1px solid var(--admin-surface-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+
+.admin-card__title {
+  color: var(--admin-text-primary);
+  font-size: 1.375rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.admin-card__subtitle {
+  margin-top: var(--space-1);
+  color: var(--admin-text-secondary);
+  font-size: 0.875rem;
+}
+
+.admin-input,
+.admin-select {
+  height: 46px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--admin-surface-border);
+  background: var(--admin-surface);
+  color: var(--admin-text-primary);
+  font-size: 0.875rem;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+
+
+.admin-input::placeholder {
+  color: var(--admin-text-muted);
+}
+
+.admin-input:focus,
+.admin-select:focus {
+  border-color: rgba(59, 130, 246, 0.45);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.admin-select option {
+  color: var(--text);
+  background: var(--white);
+}
+
+.admin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 46px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform var(--transition-base),
+    box-shadow var(--transition-base),
+    background var(--transition-base);
+}
+
+.admin-btn--primary {
+  border: none;
+  background: var(--admin-gradient-primary);
+  color: var(--admin-text-primary);
+}
+
+.admin-btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.28);
+}
+
+.admin-btn--ghost {
+  border: 1px solid var(--admin-surface-border);
+  background: var(--admin-surface);
+  color: var(--admin-text-primary);
+}
+
+.admin-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-2) var(--space-4);
+  border-radius: 999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.admin-badge--neutral {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--admin-text-primary);
+}
+
+.admin-badge--success {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--admin-accent-green);
+}
+
+.admin-page-title {
+  font-size: 2.125rem;
+  font-weight: 800;
+  color: var(--admin-text-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-2);
+}
+
+.admin-breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  font-size: 0.875rem;
+  color: var(--admin-text-secondary);
+}
+
+/* MUI table dark theme overrides */
+.admin-mui-table .MuiTableCell-stickyHeader {
+  background: var(--admin-table-header-bg) !important;
+  backdrop-filter: blur(10px);
+}
+
+.admin-mui-table .MuiTableCell-head {
+  background: var(--admin-table-header-bg) !important;
+  color: var(--admin-text-secondary) !important;
+  border-bottom: 1px solid var(--admin-surface-border) !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.admin-mui-table .MuiTableCell-body {
+  color: var(--admin-text-body) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.admin-mui-table .MuiTableRow-root:hover {
+  background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.admin-mui-table .MuiTableCell-root:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  background: var(--admin-table-row-bg);
+}
+
+.admin-mui-table .MuiTableHead-root .MuiTableCell-root:first-child {
+  z-index: 4;
+}
+
+.admin-pagination {
+  color: var(--admin-text-primary) !important;
+  border-top: 1px solid var(--admin-surface-border);
+}
+
+.admin-pagination .MuiTablePagination-selectIcon,
+.admin-pagination .MuiTablePagination-select,
+.admin-pagination .MuiTablePagination-displayedRows,
+.admin-pagination .MuiTablePagination-actions {
+  color: var(--admin-text-secondary) !important;
+}
+
+/* Admin layout scrollbars */
+.admin-layout ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.admin-layout ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.admin-layout ::-webkit-scrollbar-track {
+  background: transparent;
+}

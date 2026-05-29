@@ -1,228 +1,140 @@
-import { useState } from "react";
-
+import { memo, useCallback, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
-  MdDashboard,
   MdKeyboardArrowDown,
   MdKeyboardArrowRight,
-  MdCategory,
-  MdPeople,
-  MdOutlineShoppingBag,
-  MdLogout,
-  MdOutlineLayers,
-  MdOutlineImage,
 } from "react-icons/md";
-import { FaBloggerB, FaProductHunt } from "react-icons/fa";
+
+import { NAV_ITEMS } from "../../config/navigation";
+import { useAppContext } from "../../context/AppContext";
+
 import "./index.css";
-const SideBar = ({ isSidebarOpen }) => {
-  const [subMenuIndex, setSubMenuIndex] = useState(null);
 
-  const isOpenSubMenu = (index) => {
-    if (!isSidebarOpen) return;
+function SideBar({ isSidebarOpen }) {
+  const { closeSidebar, isCompact } = useAppContext();
+  const location = useLocation();
+  const [openSubmenuId, setOpenSubmenuId] = useState(null);
 
-    setSubMenuIndex((prev) => (prev === index ? null : index));
+  const toggleSubMenu = useCallback(
+    (id) => {
+      if (!isSidebarOpen) return;
+      setOpenSubmenuId((current) => (current === id ? null : id));
+    },
+    [isSidebarOpen]
+  );
+
+  const handleNavClick = useCallback(() => {
+    if (isCompact) closeSidebar();
+  }, [closeSidebar, isCompact]);
+
+  const sidebarClassName = `sidebar ${isSidebarOpen ? "open" : "close"}`;
+
+  const renderSubmenuChild = (child) => {
+    if (typeof child === "object" && child.type === "link") {
+      return (
+        <li key={child.to}>
+          <NavLink
+            to={child.to}
+            className={({ isActive }) => (isActive ? "active" : "")}
+            onClick={handleNavClick}
+          >
+            {child.label}
+          </NavLink>
+        </li>
+      );
+    }
+
+    return <li key={child}>{child}</li>;
   };
 
   return (
-    <aside className={`sidebar ${isSidebarOpen ? "open" : "close"}`}>
-      {/* LOGO */}
+    <aside className={sidebarClassName} aria-label="Main navigation">
       <div className="logoWrapper">
         <img
           src="https://cdn-icons-png.flaticon.com/512/1055/1055687.png"
-          alt="logo"
+          alt="Admin logo"
           className="logoImg"
         />
       </div>
 
-      {/* MENU */}
       <ul className="menuList">
-        {/* DASHBOARD */}
-        <li className="menuItem active">
-          <div className="menuLeft">
-            <MdDashboard />
-            <span>Dashboard</span>
-          </div>
-        </li>
+        {NAV_ITEMS.map((item) => {
+          if (item.type === "link") {
+            const isActive = item.matchPath
+              ? location.pathname === item.matchPath
+              : undefined;
+            const Icon = item.icon;
 
-        {/* HOME SLIDES */}
-        <li>
-          <div
-            className={`menuItem ${subMenuIndex === 0 ? "opened" : ""}`}
-            onClick={() => isOpenSubMenu(0)}
-          >
-            <div className="menuLeft">
-              <MdOutlineImage />
-              <span>Home Slides</span>
-            </div>
+            return (
+              <li key={item.label}>
+                <NavLink
+                  to={item.to}
+                  end={item.end}
+                  className={({ isActive: routeActive }) =>
+                    `menuItem menuItem--link ${
+                      routeActive || isActive ? "active" : ""
+                    }`
+                  }
+                  onClick={handleNavClick}
+                >
+                  <div className="menuLeft">
+                    <Icon />
+                    <span>{item.label}</span>
+                  </div>
+                </NavLink>
+              </li>
+            );
+          }
 
-            <div className="arrowIcon">
-              {subMenuIndex === 0 ? (
-                <MdKeyboardArrowDown />
-              ) : (
-                <MdKeyboardArrowRight />
-              )}
-            </div>
-          </div>
+          if (item.type === "static") {
+            const Icon = item.icon;
+            return (
+              <li key={item.label}>
+                <div className="menuItem menuItem--static">
+                  <div className="menuLeft">
+                    <Icon />
+                    <span>{item.label}</span>
+                  </div>
+                </div>
+              </li>
+            );
+          }
 
-          <div className={`subMenuWrapper ${subMenuIndex === 0 ? "show" : ""}`}>
-            <ul className="subMenu">
-              <li>Home slide list</li>
+          if (item.type === "submenu") {
+            const Icon = item.icon;
+            const isOpen = openSubmenuId === item.id;
 
-              <li>Add home banner slide</li>
-            </ul>
-          </div>
-        </li>
+            return (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  className={`menuItem menuItem--button ${isOpen ? "opened" : ""}`}
+                  onClick={() => toggleSubMenu(item.id)}
+                  aria-expanded={isOpen}
+                >
+                  <div className="menuLeft">
+                    <Icon />
+                    <span>{item.label}</span>
+                  </div>
+                  <div className="arrowIcon" aria-hidden="true">
+                    {isOpen ? <MdKeyboardArrowDown /> : <MdKeyboardArrowRight />}
+                  </div>
+                </button>
 
-        {/* CATEGORY */}
-        <li>
-          <div
-            className={`menuItem ${subMenuIndex === 1 ? "opened" : ""}`}
-            onClick={() => isOpenSubMenu(1)}
-          >
-            <div className="menuLeft">
-              <MdCategory />
-              <span>Category</span>
-            </div>
+                <div className={`subMenuWrapper ${isOpen ? "show" : ""}`}>
+                  <ul className="subMenu">
+                    {item.children.map(renderSubmenuChild)}
+                  </ul>
+                </div>
+              </li>
+            );
+          }
 
-            <div className="arrowIcon">
-              {subMenuIndex === 1 ? (
-                <MdKeyboardArrowDown />
-              ) : (
-                <MdKeyboardArrowRight />
-              )}
-            </div>
-          </div>
-
-          <div className={`subMenuWrapper ${subMenuIndex === 1 ? "show" : ""}`}>
-            <ul className="subMenu">
-              <li>Category List</li>
-              <li>Add Category</li>
-              <li>Sub Category</li>
-              <li>Add Sub Category</li>
-            </ul>
-          </div>
-        </li>
-
-        {/* PRODUCTS */}
-        <li>
-          <div
-            className={`menuItem ${subMenuIndex === 2 ? "opened" : ""}`}
-            onClick={() => isOpenSubMenu(2)}
-          >
-            <div className="menuLeft">
-              <FaProductHunt />
-              <span>Products</span>
-            </div>
-
-            <div className="arrowIcon">
-              {subMenuIndex === 2 ? (
-                <MdKeyboardArrowDown />
-              ) : (
-                <MdKeyboardArrowRight />
-              )}
-            </div>
-          </div>
-
-          <div className={`subMenuWrapper ${subMenuIndex === 2 ? "show" : ""}`}>
-            <ul className="subMenu">
-              <li>Product List</li>
-              <li>Product Upload</li>
-              <li>Product Reviews</li>
-            </ul>
-          </div>
-        </li>
-
-        {/* USERS */}
-        <li className="menuItem">
-          <div className="menuLeft">
-            <MdPeople />
-            <span>Users</span>
-          </div>
-        </li>
-
-        {/* ORDERS */}
-        <li className="menuItem">
-          <div className="menuLeft">
-            <MdOutlineShoppingBag />
-            <span>Orders</span>
-          </div>
-        </li>
-
-        {/* BANNERS */}
-        <li>
-          <div
-            className={`menuItem ${subMenuIndex === 3 ? "opened" : ""}`}
-            onClick={() => isOpenSubMenu(3)}
-          >
-            <div className="menuLeft">
-              <FaProductHunt />
-              <span>Banners</span>
-            </div>
-
-            <div className="arrowIcon">
-              {subMenuIndex === 3 ? (
-                <MdKeyboardArrowDown />
-              ) : (
-                <MdKeyboardArrowRight />
-              )}
-            </div>
-          </div>
-
-          <div className={`subMenuWrapper ${subMenuIndex === 3 ? "show" : ""}`}>
-            <ul className="subMenu">
-              <li>All Banners</li>
-              <li>Add Banner</li>
-              <li>Banner Settings</li>
-            </ul>
-          </div>
-        </li>
-
-        {/* BLOGS */}
-        <li>
-          <div
-            className={`menuItem ${subMenuIndex === 4 ? "opened" : ""}`}
-            onClick={() => isOpenSubMenu(4)}
-          >
-            <div className="menuLeft">
-              <FaBloggerB />
-              <span>Blogs</span>
-            </div>
-
-            <div className="arrowIcon">
-              {subMenuIndex === 4 ? (
-                <MdKeyboardArrowDown />
-              ) : (
-                <MdKeyboardArrowRight />
-              )}
-            </div>
-          </div>
-
-          <div className={`subMenuWrapper ${subMenuIndex === 4 ? "show" : ""}`}>
-            <ul className="subMenu">
-              <li>All Blogs</li>
-              <li>Add Blog</li>
-              <li>Blog Category</li>
-            </ul>
-          </div>
-        </li>
-
-        {/* MANAGE LOGO */}
-        <li className="menuItem">
-          <div className="menuLeft">
-            <MdOutlineLayers />
-            <span>Manage Logo</span>
-          </div>
-        </li>
-
-        {/* LOGOUT */}
-        <li className="menuItem">
-          <div className="menuLeft">
-            <MdLogout />
-            <span>Logout</span>
-          </div>
-        </li>
+          return null;
+        })}
       </ul>
     </aside>
   );
-};
+}
 
-export default SideBar;
+export default memo(SideBar);

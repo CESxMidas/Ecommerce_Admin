@@ -5,7 +5,7 @@ import { FaGoogle, FaSteam, FaXbox } from "react-icons/fa";
 
 import { MdVpnKey, MdSecurity } from "react-icons/md";
 
-const Login = () => {
+const Login = ({ setIsLogin }) => {
   return (
     <section className="loginPage">
       {/* LEFT */}
@@ -42,12 +42,22 @@ const Login = () => {
           {/* FORM */}
           <div className="loginForm">
             <div className="inputGroup">
-              <label>Email</label>
-              <input type="email" placeholder="Enter your email" />
+              <label htmlFor="login-email">Email</label>
+              <input
+                id="login-email"
+                type="email"
+                placeholder="Enter your email"
+                autoComplete="email"
+              />
             </div>
             <div className="inputGroup">
-              <label>Email</label>
-              <input type="email" placeholder="Enter your email" />
+              <label htmlFor="login-password">Password</label>
+              <input
+                id="login-password"
+                type="password"
+                placeholder="Enter your password"
+                autoComplete="current-password"
+              />
             </div>
 
 
@@ -62,7 +72,13 @@ const Login = () => {
             </div>
 
             {/* BUTTON */}
-            <button className="loginBtn">Access Dashboard</button>
+            <button
+              type="button"
+              className="loginBtn"
+              onClick={() => setIsLogin?.(true)}
+            >
+              Access Dashboard
+            </button>
 
             <p className="bottomText">
               Don’t have an account?

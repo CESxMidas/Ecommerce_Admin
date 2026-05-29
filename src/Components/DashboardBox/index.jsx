@@ -87,7 +87,7 @@ const DashboardBoxes = () => {
         {dashboardData.map((item) => {
           return (
             <SwiperSlide key={item.id}>
-              <div className="dashboardBox mt-10">
+              <div className="dashboardBox">
                 {/* TOP */}
                 <div className="topSection">
                   <div className="leftSide">
@@ -127,7 +127,7 @@ const DashboardBoxes = () => {
                 </div>
 
                 {/* BOTTOM */}
-                <div className="bottomSection mt-5">
+                <div className="bottomSection">
                   <span
                     className={`percent ${item.percent.includes("-")
                       ? "down"
