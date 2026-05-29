@@ -1,13 +1,10 @@
-/* =========================================
-   DASHBOARD ROOT
-========================================= */
 
 .dashboard {
   width: 100%;
 }
 
 /* =========================================
-   COMMON CARD
+   CARD
 ========================================= */
 
 .dashboard__card {
@@ -53,12 +50,13 @@
 
   gap: 30px;
 
-  background: linear-gradient(135deg, #4f46e5, #7c3aed, #2563eb);
+  background: linear-gradient(
+    135deg,
+    #4f46e5,
+    #7c3aed,
+    #2563eb
+  );
 }
-
-/* =========================================
-   BG CIRCLE
-========================================= */
 
 .dashboard__circle {
   position: absolute;
@@ -66,8 +64,6 @@
   border-radius: 100%;
 
   background: rgba(255, 255, 255, 0.06);
-
-  pointer-events: none;
 }
 
 .dashboard__circle--1 {
@@ -86,13 +82,10 @@
   right: -40px;
 }
 
-/* =========================================
-   WELCOME INFO
-========================================= */
-
 .dashboard__welcome-info,
 .dashboard__welcome-img {
   position: relative;
+
   z-index: 10;
 }
 
@@ -102,8 +95,6 @@
 
 .dashboard__badge {
   display: inline-flex;
-
-  align-items: center;
 
   padding: 8px 16px;
 
@@ -134,7 +125,6 @@
   color: rgba(255, 255, 255, 0.82);
 
   font-size: 17px;
-  line-height: 30px;
 }
 
 .dashboard__btn {
@@ -150,40 +140,17 @@
 
   color: #111827;
 
-  font-size: 15px;
   font-weight: 700;
 
   cursor: pointer;
-
-  transition: all 0.3s ease;
 }
-
-.dashboard__btn:hover {
-  transform: translateY(-3px);
-
-  background: #f3f4f6;
-}
-
-/* =========================================
-   IMAGE
-========================================= */
 
 .dashboard__welcome-img {
   width: 280px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
 }
 
 .dashboard__welcome-img img {
   width: 100%;
-
-  object-fit: contain;
-
-  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.2));
 }
 
 /* =========================================
@@ -193,7 +160,7 @@
 .dashboard__tableHeader {
   padding: 24px 28px;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 
   display: flex;
 
@@ -201,7 +168,7 @@
 
   justify-content: space-between;
 
-  gap: 24px;
+  gap: 20px;
 
   flex-wrap: wrap;
 }
@@ -216,7 +183,7 @@
 .dashboard__subtitle {
   margin-top: 4px;
 
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255,255,255,0.5);
 
   font-size: 14px;
 }
@@ -243,19 +210,17 @@
 
   border-radius: 14px;
 
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255,255,255,0.08);
 
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255,255,255,0.04);
 
   color: white;
 
   outline: none;
-
-  font-size: 14px;
 }
 
 .dashboard__search::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255,255,255,0.4);
 }
 
 .dashboard__select option {
@@ -271,20 +236,17 @@
 
   border-radius: 14px;
 
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
 
   color: white;
 
-  font-size: 14px;
   font-weight: 700;
 
   cursor: pointer;
-
-  transition: all 0.3s ease;
-}
-
-.dashboard__addBtn:hover {
-  transform: translateY(-2px);
 }
 
 /* =========================================
@@ -301,12 +263,18 @@
   min-width: 1100px;
 }
 
-.dashboard__table .MuiTableHead-root {
-  background: rgba(255, 255, 255, 0.03);
+.dashboard__table .MuiTableCell-stickyHeader {
+  background: rgba(15, 23, 42, 0.96) !important;
+
+  backdrop-filter: blur(10px);
 }
 
 .dashboard__table .MuiTableCell-head {
-  color: rgba(255, 255, 255, 0.55) !important;
+  background: rgba(15, 23, 42, 0.96) !important;
+
+  color: rgba(255,255,255,0.72) !important;
+
+  border-bottom: 1px solid rgba(255,255,255,0.06);
 
   font-size: 12px !important;
 
@@ -314,17 +282,17 @@
 
   letter-spacing: 1px;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  text-transform: uppercase;
 }
 
 .dashboard__table .MuiTableCell-body {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255,255,255,0.85);
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 }
 
 .dashboard__table .MuiTableRow-root:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255,255,255,0.03);
 }
 
 /* =========================================
@@ -337,8 +305,6 @@
   align-items: center;
 
   gap: 14px;
-
-  min-width: 240px;
 }
 
 .dashboard__product img {
@@ -348,23 +314,12 @@
   border-radius: 16px;
 
   object-fit: cover;
-
-  border: 1px solid rgba(255, 255, 255, 0.08);
-
-  transition: all 0.3s ease;
-}
-
-.dashboard__product img:hover {
-  transform: scale(1.05);
 }
 
 .dashboard__product h4 {
   color: white;
 
   font-size: 15px;
-  font-weight: 600;
-
-  margin-bottom: 4px;
 }
 
 .dashboard__product p {
@@ -381,8 +336,8 @@
    BADGE
 ========================================= */
 
-.dashboard__status,
-.dashboard__badge {
+.dashboard__categoryBadge,
+.dashboard__status {
   display: inline-flex;
 
   align-items: center;
@@ -394,13 +349,18 @@
   border-radius: 999px;
 
   font-size: 12px;
+
   font-weight: 700;
 }
 
-.dashboard__status {
-  background: rgba(34, 197, 94, 0.15);
+.dashboard__categoryBadge {
+  background: rgba(255,255,255,0.08);
 
-  border: 1px solid rgba(34, 197, 94, 0.18);
+  color: white;
+}
+
+.dashboard__status {
+  background: rgba(34,197,94,0.15);
 
   color: #4ade80;
 }
@@ -436,8 +396,6 @@
 .dashboard__actions {
   display: flex;
 
-  align-items: center;
-
   gap: 10px;
 }
 
@@ -456,28 +414,29 @@
 
   justify-content: center;
 
-  cursor: pointer;
-
   color: white;
 
-  transition: all 0.25s ease;
+  cursor: pointer;
 }
 
 .dashboard__actions button:first-child {
-  background: linear-gradient(135deg, #2563eb, #4f46e5);
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
 }
 
 .dashboard__actions button:last-child {
-  background: linear-gradient(135deg, #dc2626, #ef4444);
+  background: linear-gradient(
+    135deg,
+    #dc2626,
+    #ef4444
+  );
 }
 
 .dashboard__expand {
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.dashboard__actions button:hover,
-.dashboard__expand:hover {
-  transform: translateY(-3px);
+  background: rgba(255,255,255,0.08);
 }
 
 /* =========================================
@@ -493,7 +452,7 @@
 .dashboard__collapse {
   padding: 24px;
 
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255,255,255,0.02);
 }
 
 .dashboard__collapse-head,
@@ -518,22 +477,21 @@
 
   border-radius: 20px;
 
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255,255,255,0.04);
 
-  color: rgba(255, 255, 255, 0.45);
+  color: rgba(255,255,255,0.45);
 
   font-size: 12px;
-  font-weight: 700;
 
-  letter-spacing: 1px;
+  font-weight: 700;
 }
 
 .dashboard__collapse-row {
   padding: 18px 24px;
 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
 
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255,255,255,0.8);
 }
 
 .dashboard__collapse-row img {
@@ -557,36 +515,97 @@
   color: white !important;
 }
 
+
 /* =========================================
    CHART
 ========================================= */
 
-.recharts-cartesian-axis-tick-value {
-  fill: rgba(255, 255, 255, 0.8);
+.dashboard__chartCard {
+  overflow: hidden;
 }
 
+.dashboard__chartWrapper {
+  width: 100%;
+
+  height: 460px;
+
+  padding:
+    20px
+    25px
+    10px;
+
+  position: relative;
+}
+
+/* glow effect */
+.dashboard__chartWrapper::before {
+  content: "";
+
+  position: absolute;
+
+  top: -120px;
+  right: -120px;
+
+  width: 260px;
+  height: 260px;
+
+  border-radius: 100%;
+
+  background: rgba(59, 130, 246, 0.15);
+
+  filter: blur(80px);
+
+  pointer-events: none;
+}
+
+.dashboard__chartWrapper::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: -140px;
+  left: -100px;
+
+  width: 260px;
+  height: 260px;
+
+  border-radius: 100%;
+
+  background: rgba(0, 230, 118, 0.12);
+
+  filter: blur(90px);
+
+  pointer-events: none;
+}
+
+/* axis text */
+.recharts-cartesian-axis-tick-value {
+  fill: rgba(255,255,255,0.7);
+}
+
+/* legend */
 .recharts-legend-item-text {
   color: white !important;
+
+  font-size: 14px;
+
+  font-weight: 600;
 }
 
-/* =========================================
-   SCROLLBAR
-========================================= */
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* tooltip */
+.recharts-tooltip-wrapper {
+  outline: none;
 }
 
-::-webkit-scrollbar-thumb {
-  border-radius: 999px;
+/* responsive */
+@media (max-width: 768px) {
+  .dashboard__chartWrapper {
+    height: 380px;
 
-  background: rgba(255, 255, 255, 0.12);
+    padding: 10px;
+  }
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
 
 /* =========================================
    RESPONSIVE
@@ -599,36 +618,14 @@
     text-align: center;
   }
 
-  .dashboard__welcome-info {
-    max-width: 100%;
-  }
-
-  .dashboard__welcome-img {
-    width: 240px;
-  }
-
-  .dashboard__title {
-    font-size: 32px;
-
-    line-height: 42px;
-  }
-
-  .dashboard__tableHeader {
-    flex-direction: column;
-
-    align-items: flex-start;
-  }
-
   .dashboard__controls {
     width: 100%;
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 768px) {
   .dashboard__controls {
     flex-direction: column;
-
-    align-items: stretch;
   }
 
   .dashboard__search,
@@ -637,69 +634,13 @@
     width: 100%;
   }
 
-  .dashboard__collapse-head,
-  .dashboard__collapse-row {
-    min-width: 900px;
-  }
-}
-
-@media (max-width: 768px) {
-  .dashboard__welcome {
-    padding: 28px 20px;
-
-    border-radius: 24px;
-  }
-
   .dashboard__title {
     font-size: 28px;
 
     line-height: 38px;
   }
 
-  .dashboard__desc {
-    font-size: 15px;
-
-    line-height: 28px;
-  }
-
   .dashboard__welcome-img {
     width: 200px;
-  }
-
-  .dashboard__tableHeader {
-    padding: 20px;
-  }
-
-  .dashboard__table .MuiTableCell-head,
-  .dashboard__table .MuiTableCell-body {
-    padding: 14px !important;
-  }
-
-  .dashboard__product {
-    min-width: 220px;
-  }
-}
-
-@media (max-width: 576px) {
-  .dashboard__title {
-    font-size: 24px;
-
-    line-height: 34px;
-  }
-
-  .dashboard__btn {
-    width: 100%;
-  }
-
-  .dashboard__welcome-img {
-    width: 170px;
-  }
-
-  .dashboard__card {
-    border-radius: 20px;
-  }
-
-  .dashboard__collapse {
-    overflow-x: auto;
   }
 }

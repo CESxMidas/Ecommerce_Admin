@@ -1,28 +1,48 @@
-/* ========================= */
-/* MAIN LAYOUT */
-/* ========================= */
+/* =========================================
+   MAIN LAYOUT
+========================================= */
 
 .mainLayout {
   width: 100%;
-  min-height: 100vh;
+
+  min-height: 100dvh;
+
   display: flex;
-  background: linear-gradient(to bottom, #081225, #0b1730);
+
+  background: radial-gradient(
+    circle at top,
+    #0b1224,
+    #050b1e
+  );
+
+  overflow: hidden;
+
+  position: relative;
 }
 
-/* ========================= */
-/* RIGHT SIDE */
-/* ========================= */
+/* =========================================
+   MAIN CONTAINER
+========================================= */
 
 .mainContainer {
   flex: 1;
+
+  min-width: 0;
+
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
+
+  overflow: hidden;
+
+  transition:
+    width 0.3s ease,
+    margin 0.3s ease,
+    transform 0.3s ease;
 }
 
-/* ========================= */
-/* HEADER FIX */
-/* ========================= */
+/* =========================================
+   HEADER
+========================================= */
 
 .mainContainer .header {
   position: sticky;
@@ -32,30 +52,42 @@
   width: 100%;
 
   z-index: 100;
+
+  flex-shrink: 0;
 }
 
-/* ========================= */
-/* DASHBOARD CONTENT */
-/* ========================= */
+/* =========================================
+   DASHBOARD CONTENT
+========================================= */
 
 .dashboardContent {
   flex: 1;
 
-  padding: 20px;
+  padding: 22px;
 
   overflow-y: auto;
+  overflow-x: hidden;
+
+  -webkit-overflow-scrolling: touch;
+
+  scroll-behavior: smooth;
 }
 
-/* ========================= */
-/* SCROLLBAR */
-/* ========================= */
+/* =========================================
+   SCROLLBAR
+========================================= */
 
 .dashboardContent::-webkit-scrollbar {
   width: 6px;
 }
 
 .dashboardContent::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(
+    255,
+    255,
+    255,
+    0.08
+  );
 
   border-radius: 30px;
 }
@@ -64,12 +96,87 @@
   background: transparent;
 }
 
-/* ========================= */
-/* RESPONSIVE */
-/* ========================= */
+/* =========================================
+   SIDEBAR STATES
+========================================= */
+
+.mainContainer.sidebarOpen {
+  width: calc(100% - 280px);
+}
+
+.mainContainer.sidebarClosed {
+  width: calc(100% - 90px);
+}
+
+/* =========================================
+   SIDEBAR OVERLAY
+========================================= */
+
+.sidebarOverlay {
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.45);
+
+  backdrop-filter: blur(4px);
+
+  -webkit-backdrop-filter: blur(4px);
+
+  z-index: 998;
+
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 992px) {
+  .dashboardContent {
+    padding: 18px;
+  }
+
+  .mainContainer.sidebarOpen,
+  .mainContainer.sidebarClosed {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 768px) {
+  .mainLayout {
+    overflow-x: hidden;
+  }
+
+  .mainContainer {
+    width: 100% !important;
+  }
+
   .dashboardContent {
     padding: 14px;
+  }
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 480px) {
+  .dashboardContent {
+    padding: 32px;
   }
 }

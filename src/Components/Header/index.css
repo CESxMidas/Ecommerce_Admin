@@ -167,3 +167,140 @@
 .header .menuItem {
   gap: 12px !important;
 }
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+/* -------- Laptop nhỏ -------- */
+@media (max-width: 1200px) {
+  .header .searchBox {
+    width: 200px;
+  }
+
+  .header .logoText {
+    font-size: 18px;
+  }
+
+  .header .logoSubText {
+    font-size: 12px;
+  }
+}
+
+/* -------- Tablet -------- */
+@media (max-width: 992px) {
+  .header {
+    height: auto;
+    min-height: 75px;
+
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .header .searchBox {
+    display: none;
+  }
+
+  .header .headerLeft {
+    gap: 12px;
+  }
+
+  .header .headerRight {
+    gap: 10px;
+  }
+
+  .header .logoBox {
+    width: 40px;
+    height: 40px;
+
+    font-size: 18px;
+  }
+
+  .header .logoText {
+    font-size: 17px;
+  }
+
+  .header .logoSubText {
+    font-size: 11px;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+}
+
+/* -------- Mobile -------- */
+@media (max-width: 768px) {
+  .header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .header .logoText,
+  .header .logoSubText {
+    display: none;
+  }
+
+  .header .headerLeft {
+    gap: 10px;
+  }
+
+  .header .headerRight {
+    gap: 8px;
+  }
+
+  .header .logoBox {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+
+    border-radius: 12px !important;
+  }
+
+  .header .userInfo {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .header .userAvatar {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* -------- Mobile nhỏ -------- */
+@media (max-width: 480px) {
+  .header {
+    min-height: 65px;
+  }
+
+  .header .headerRight {
+    gap: 6px;
+  }
+
+  .header .logoBox {
+    width: 34px;
+    height: 34px;
+
+    font-size: 15px;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+  }
+}

@@ -11,28 +11,19 @@ import {
   MdOutlineLayers,
   MdOutlineImage,
 } from "react-icons/md";
-import {
-  FaBloggerB,
-  FaProductHunt,
-} from "react-icons/fa";
+import { FaBloggerB, FaProductHunt } from "react-icons/fa";
 import "./index.css";
 const SideBar = ({ isSidebarOpen }) => {
-  const [subMenuIndex, setSubMenuIndex] =
-    useState(null);
+  const [subMenuIndex, setSubMenuIndex] = useState(null);
 
   const isOpenSubMenu = (index) => {
     if (!isSidebarOpen) return;
 
-    setSubMenuIndex((prev) =>
-      prev === index ? null : index
-    );
+    setSubMenuIndex((prev) => (prev === index ? null : index));
   };
 
   return (
-    <aside
-      className={`sidebar ${isSidebarOpen ? "open" : "close"
-        }`}
-    >
+    <aside className={`sidebar ${isSidebarOpen ? "open" : "close"}`}>
       {/* LOGO */}
       <div className="logoWrapper">
         <img
@@ -55,13 +46,8 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* HOME SLIDES */}
         <li>
           <div
-            className={`menuItem ${subMenuIndex === 0
-              ? "opened"
-              : ""
-              }`}
-            onClick={() =>
-              isOpenSubMenu(0)
-            }
+            className={`menuItem ${subMenuIndex === 0 ? "opened" : ""}`}
+            onClick={() => isOpenSubMenu(0)}
           >
             <div className="menuLeft">
               <MdOutlineImage />
@@ -77,18 +63,11 @@ const SideBar = ({ isSidebarOpen }) => {
             </div>
           </div>
 
-          <div
-            className={`subMenuWrapper ${subMenuIndex === 0
-              ? "show"
-              : ""
-              }`}
-          >
+          <div className={`subMenuWrapper ${subMenuIndex === 0 ? "show" : ""}`}>
             <ul className="subMenu">
               <li>Home slide list</li>
 
-              <li>
-                Add home banner slide
-              </li>
+              <li>Add home banner slide</li>
             </ul>
           </div>
         </li>
@@ -96,13 +75,8 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* CATEGORY */}
         <li>
           <div
-            className={`menuItem ${subMenuIndex === 1
-              ? "opened"
-              : ""
-              }`}
-            onClick={() =>
-              isOpenSubMenu(1)
-            }
+            className={`menuItem ${subMenuIndex === 1 ? "opened" : ""}`}
+            onClick={() => isOpenSubMenu(1)}
           >
             <div className="menuLeft">
               <MdCategory />
@@ -118,12 +92,7 @@ const SideBar = ({ isSidebarOpen }) => {
             </div>
           </div>
 
-          <div
-            className={`subMenuWrapper ${subMenuIndex === 1
-              ? "show"
-              : ""
-              }`}
-          >
+          <div className={`subMenuWrapper ${subMenuIndex === 1 ? "show" : ""}`}>
             <ul className="subMenu">
               <li>Category List</li>
               <li>Add Category</li>
@@ -136,13 +105,8 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* PRODUCTS */}
         <li>
           <div
-            className={`menuItem ${subMenuIndex === 2
-              ? "opened"
-              : ""
-              }`}
-            onClick={() =>
-              isOpenSubMenu(2)
-            }
+            className={`menuItem ${subMenuIndex === 2 ? "opened" : ""}`}
+            onClick={() => isOpenSubMenu(2)}
           >
             <div className="menuLeft">
               <FaProductHunt />
@@ -158,12 +122,7 @@ const SideBar = ({ isSidebarOpen }) => {
             </div>
           </div>
 
-          <div
-            className={`subMenuWrapper ${subMenuIndex === 2
-              ? "show"
-              : ""
-              }`}
-          >
+          <div className={`subMenuWrapper ${subMenuIndex === 2 ? "show" : ""}`}>
             <ul className="subMenu">
               <li>Product List</li>
               <li>Product Upload</li>
@@ -191,13 +150,8 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* BANNERS */}
         <li>
           <div
-            className={`menuItem ${subMenuIndex === 3
-              ? "opened"
-              : ""
-              }`}
-            onClick={() =>
-              isOpenSubMenu(3)
-            }
+            className={`menuItem ${subMenuIndex === 3 ? "opened" : ""}`}
+            onClick={() => isOpenSubMenu(3)}
           >
             <div className="menuLeft">
               <FaProductHunt />
@@ -213,12 +167,7 @@ const SideBar = ({ isSidebarOpen }) => {
             </div>
           </div>
 
-          <div
-            className={`subMenuWrapper ${subMenuIndex === 3
-              ? "show"
-              : ""
-              }`}
-          >
+          <div className={`subMenuWrapper ${subMenuIndex === 3 ? "show" : ""}`}>
             <ul className="subMenu">
               <li>All Banners</li>
               <li>Add Banner</li>
@@ -230,13 +179,8 @@ const SideBar = ({ isSidebarOpen }) => {
         {/* BLOGS */}
         <li>
           <div
-            className={`menuItem ${subMenuIndex === 4
-              ? "opened"
-              : ""
-              }`}
-            onClick={() =>
-              isOpenSubMenu(4)
-            }
+            className={`menuItem ${subMenuIndex === 4 ? "opened" : ""}`}
+            onClick={() => isOpenSubMenu(4)}
           >
             <div className="menuLeft">
               <FaBloggerB />
@@ -252,12 +196,7 @@ const SideBar = ({ isSidebarOpen }) => {
             </div>
           </div>
 
-          <div
-            className={`subMenuWrapper ${subMenuIndex === 4
-              ? "show"
-              : ""
-              }`}
-          >
+          <div className={`subMenuWrapper ${subMenuIndex === 4 ? "show" : ""}`}>
             <ul className="subMenu">
               <li>All Blogs</li>
               <li>Add Blog</li>

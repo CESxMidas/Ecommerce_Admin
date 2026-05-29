@@ -5,6 +5,7 @@ import {
 
 import {
   createContext,
+  useEffect,
   useState,
 } from "react";
 
@@ -22,24 +23,57 @@ import "./App.css";
 
 const MyContext = createContext();
 
+/* ========================= */
+/* APP */
+/* ========================= */
+
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] =
-    useState(true);
+    useState(
+      window.innerWidth > 768
+    );
 
   const [isLogin, setIsLogin] =
     useState(false);
+
+  /* ========================= */
+  /* AUTO RESPONSIVE SIDEBAR */
+  /* ========================= */
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 768) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener(
+      "resize",
+      handleResize
+    );
+
+    return () =>
+      window.removeEventListener(
+        "resize",
+        handleResize
+      );
+  }, []);
 
   /* ========================= */
   /* ROUTER */
   /* ========================= */
 
   const router = createBrowserRouter([
-    /* LOGIN PAGE */
+    /* LOGIN */
     {
       path: "/login",
 
       element: (
-        <Login setIsLogin={setIsLogin} />
+        <Login
+          setIsLogin={setIsLogin}
+        />
       ),
     },
 
@@ -56,7 +90,21 @@ function App() {
             }
           />
 
-          {/* RIGHT */}
+          {/* MOBILE OVERLAY */}
+          {isSidebarOpen &&
+            window.innerWidth <=
+              768 && (
+              <div
+                className="sidebarOverlay"
+                onClick={() =>
+                  setIsSidebarOpen(
+                    false
+                  )
+                }
+              />
+            )}
+
+          {/* RIGHT SIDE */}
           <div
             className={`mainContainer ${
               isSidebarOpen
@@ -64,6 +112,7 @@ function App() {
                 : "sidebarClosed"
             }`}
           >
+            {/* HEADER */}
             <Header
               isSidebarOpen={
                 isSidebarOpen
@@ -73,9 +122,10 @@ function App() {
               }
             />
 
-            <div className="dashboardContent">
+            {/* CONTENT */}
+            <main className="dashboardContent">
               <Dashboard />
-            </div>
+            </main>
           </div>
         </section>
       ),
@@ -83,7 +133,7 @@ function App() {
   ]);
 
   /* ========================= */
-  /* VALUES */
+  /* CONTEXT VALUES */
   /* ========================= */
 
   const values = {
@@ -95,15 +145,11 @@ function App() {
   };
 
   return (
-    <>
-      <MyContext.Provider
-        value={values}
-      >
-        <RouterProvider
-          router={router}
-        />
-      </MyContext.Provider>
-    </>
+    <MyContext.Provider
+      value={values}
+    >
+      <RouterProvider router={router} />
+    </MyContext.Provider>
   );
 }
 

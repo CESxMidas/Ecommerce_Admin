@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Progress from "../../Components/Progress";
+
 import {
   LineChart,
   Line,
@@ -100,71 +101,64 @@ const ordersData = [
 
 const chartData = [
   {
-    name: "Page A",
+    name: "Jan",
     uv: 4000,
     pv: 2400,
-    amt: 2400,
   },
   {
-    name: "Page B",
+    name: "Feb",
     uv: 3000,
     pv: 1398,
-    amt: 2210,
   },
   {
-    name: "Page C",
+    name: "Mar",
     uv: 2000,
     pv: 9800,
-    amt: 2290,
   },
   {
-    name: "Page D",
+    name: "Apr",
     uv: 2780,
     pv: 3908,
-    amt: 2000,
   },
   {
-    name: "Page E",
+    name: "May",
     uv: 1890,
     pv: 4800,
-    amt: 2181,
   },
   {
-    name: "Page F",
+    name: "Jun",
     uv: 2390,
     pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: "Page G",
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
   },
 ];
-// #endregion
-
-/* ================= COMPONENT ================= */
 
 const DashBoard = () => {
   const [openRow, setOpenRow] = useState(null);
+
   const [page, setPage] = useState(0);
+
   const [rowsPerPage, setRowsPerPage] = useState(5);
-  const toggleRow = (i) => setOpenRow(openRow === i ? null : i);
-  const [chart1Data, setChar1tData] = useState(chartData);
+
+  const toggleRow = (i) => {
+    setOpenRow(openRow === i ? null : i);
+  };
+
   return (
     <div className="dashboard">
       {/* ================= WELCOME ================= */}
+
       <section className="dashboard__welcome">
-        <div className="dashboard__circle dashboard__circle--1" />
-        <div className="dashboard__circle dashboard__circle--2" />
+        <div className="dashboard__circle dashboard__circle--1"></div>
+
+        <div className="dashboard__circle dashboard__circle--2"></div>
 
         <div className="dashboard__welcome-info">
           <span className="dashboard__badge">Ecommerce Dashboard</span>
 
           <h2 className="dashboard__title">
             Good Morning,
-            <br /> Admin 👋
+            <br />
+            Admin 👋
           </h2>
 
           <p className="dashboard__desc">
@@ -183,56 +177,33 @@ const DashBoard = () => {
       </section>
 
       {/* ================= PRODUCTS ================= */}
+
       <section className="dashboard__card">
-        {/* ================= HEADER CONTROLS ================= */}
         <div className="dashboard__tableHeader">
-          {/* LEFT: TITLE */}
           <div>
             <h3 className="dashboard__title-sm">Recent Products</h3>
-            <p className="dashboard__subtitle">
-              Manage your products, filter and search easily
-            </p>
+
+            <p className="dashboard__subtitle">Manage your products easily</p>
           </div>
 
-          {/* RIGHT: CONTROLS */}
           <div className="dashboard__controls">
-            {/* SEARCH */}
             <input
               type="text"
               placeholder="Search product..."
               className="dashboard__search"
             />
 
-            {/* CATEGORY */}
             <select className="dashboard__select">
-              <option>Category By</option>
+              <option>Category</option>
               <option>Shoes</option>
               <option>Electronics</option>
               <option>Audio</option>
             </select>
 
-            {/* SUB CATEGORY */}
-            <select className="dashboard__select">
-              <option>Sub Category By</option>
-              <option>Sneakers</option>
-              <option>Smartwatch</option>
-              <option>Wireless</option>
-            </select>
-
-            {/* THIRD CATEGORY */}
-            <select className="dashboard__select">
-              <option>Third Level Sub Category By</option>
-              <option>Premium</option>
-              <option>Basic</option>
-              <option>Pro</option>
-            </select>
-
-            {/* ADD BUTTON */}
             <button className="dashboard__addBtn">+ Add Product</button>
           </div>
         </div>
 
-        {/* ================= TABLE ================= */}
         <TableContainer
           component={Paper}
           className="dashboard__table"
@@ -246,7 +217,7 @@ const DashBoard = () => {
               <TableRow>
                 <TableCell>Product</TableCell>
                 <TableCell>Category</TableCell>
-                <TableCell>Sub</TableCell>
+                <TableCell>Sub Category</TableCell>
                 <TableCell>Price</TableCell>
                 <TableCell>Sales</TableCell>
                 <TableCell>Stock</TableCell>
@@ -267,17 +238,20 @@ const DashBoard = () => {
                           className="dashboard__checkbox"
                         />
 
-                        <img src={p.image} />
+                        <img src={p.image} alt="" />
 
                         <div>
                           <h4>{p.name}</h4>
+
                           <p>ID #{p.id}</p>
                         </div>
                       </div>
                     </TableCell>
 
                     <TableCell>
-                      <span className="dashboard__badge">{p.category}</span>
+                      <span className="dashboard__categoryBadge">
+                        {p.category}
+                      </span>
                     </TableCell>
 
                     <TableCell>{p.subCategory}</TableCell>
@@ -294,7 +268,9 @@ const DashBoard = () => {
 
                     <TableCell>
                       <div className="dashboard__rating">
-                        <FaStar /> {p.rating}
+                        <FaStar />
+
+                        {p.rating}
                       </div>
                     </TableCell>
 
@@ -303,6 +279,7 @@ const DashBoard = () => {
                         <button>
                           <FaEdit />
                         </button>
+
                         <button>
                           <FaTrash />
                         </button>
@@ -314,7 +291,6 @@ const DashBoard = () => {
           </Table>
         </TableContainer>
 
-        {/* PAGINATION */}
         <TablePagination
           component="div"
           count={products.length}
@@ -323,6 +299,7 @@ const DashBoard = () => {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={(e) => {
             setRowsPerPage(+e.target.value);
+
             setPage(0);
           }}
           rowsPerPageOptions={[5, 10, 20]}
@@ -331,8 +308,16 @@ const DashBoard = () => {
       </section>
 
       {/* ================= ORDERS ================= */}
+
       <section className="dashboard__card">
-        <h3 className="dashboard__title-sm">Recent Orders</h3>
+        <div className="dashboard__tableHeader">
+          <div>
+            <h3 className="dashboard__title-sm">Recent Orders</h3>
+
+            <p className="dashboard__subtitle">Latest customer orders</p>
+          </div>
+        </div>
+
         <TableContainer
           component={Paper}
           className="dashboard__table"
@@ -369,9 +354,13 @@ const DashBoard = () => {
                     </TableCell>
 
                     <TableCell>{o.id}</TableCell>
+
                     <TableCell>{o.paymentId}</TableCell>
+
                     <TableCell>{o.name}</TableCell>
+
                     <TableCell>{o.phone}</TableCell>
+
                     <TableCell>{o.address}</TableCell>
 
                     <TableCell className="dashboard__price">
@@ -399,9 +388,13 @@ const DashBoard = () => {
                           {o.products.map((p, idx) => (
                             <div key={idx} className="dashboard__collapse-row">
                               <span>PRD-001</span>
+
                               <span>{p.name}</span>
-                              <img src={p.image} />
+
+                              <img src={p.image} alt="" />
+
                               <span>x{p.qty}</span>
+
                               <span>{p.price}</span>
 
                               <span>
@@ -423,68 +416,133 @@ const DashBoard = () => {
         </TableContainer>
       </section>
 
-    <div className="dashboard__card">
-  <ResponsiveContainer width="100%" height={400}>
-    <LineChart
-      data={chart1Data}
-      margin={{ top: 10, right: 20, left: 0, bottom: 10 }}
-    >
-      {/* GRID: nhẹ để không bị rối */}
-      <CartesianGrid
-        stroke="rgba(255,255,255,0.08)"
-        strokeDasharray="4 4"
-      />
+      {/* ================= CHART ================= */}
 
-      {/* AXIS: trắng rõ */}
-      <XAxis
-        dataKey="name"
-        stroke="rgba(255,255,255,0.8)"
-        tick={{ fill: "rgba(255,255,255,0.8)" }}
-      />
+      <section className="dashboard__card dashboard__chartCard">
+        <div className="dashboard__tableHeader">
+          <div>
+            <h3 className="dashboard__title-sm">Analytics Overview</h3>
 
-      <YAxis
-        width={65}
-        stroke="rgba(255,255,255,0.8)"
-        tick={{ fill: "rgba(255,255,255,0.8)" }}
-      />
+            <p className="dashboard__subtitle">Sales & visitors statistics</p>
+          </div>
+        </div>
 
-      {/* TOOLTIP: sáng + dễ đọc */}
-      <Tooltip
-        cursor={{ stroke: "rgba(255,255,255,0.2)" }}
-        contentStyle={{
-          backgroundColor: "rgba(255,255,255,0.95)",
-          border: "1px solid rgba(0,0,0,0.1)",
-          borderRadius: "10px",
-          color: "#000",
-        }}
-      />
+        <div className="dashboard__chartWrapper">
+          <ResponsiveContainer width="100%" height={420}>
+            <LineChart
+              data={chartData}
+              margin={{
+                top: 20,
+                right: 30,
+                left: 10,
+                bottom: 10,
+              }}
+            >
+              {/* GRID */}
+              <CartesianGrid
+                stroke="rgba(255,255,255,0.05)"
+                strokeDasharray="3 3"
+                vertical={false}
+              />
 
-      <Legend />
+              {/* X AXIS */}
+              <XAxis
+                dataKey="name"
+                tickLine={false}
+                axisLine={false}
+                tick={{
+                  fill: "rgba(255,255,255,0.7)",
+                  fontSize: 13,
+                  fontWeight: 500,
+                }}
+              />
 
-      {/* LINE 1 - xanh dương sáng */}
-      <Line
-        type="monotone"
-        dataKey="pv"
-        name="Page Views"
-        stroke="#3b82f6"
-        strokeWidth={3}
-        dot={{ fill: "#fff", stroke: "#3b82f6", strokeWidth: 2, r: 4 }}
-        activeDot={{ r: 7 }}
-      />
+              {/* Y AXIS */}
+              <YAxis
+                width={60}
+                tickLine={false}
+                axisLine={false}
+                tick={{
+                  fill: "rgba(255,255,255,0.6)",
+                  fontSize: 13,
+                }}
+              />
 
-      {/* LINE 2 - xanh lá sáng */}
-      <Line
-        type="monotone"
-        dataKey="uv"
-        name="User Visits"
-        stroke="#22c55e"
-        strokeWidth={3}
-        dot={{ fill: "#fff", stroke: "#22c55e", strokeWidth: 2, r: 4 }}
-        activeDot={{ r: 7 }}
-      />
-    </LineChart>
-  </ResponsiveContainer>
-</div>
+              {/* TOOLTIP */}
+              <Tooltip
+                cursor={{
+                  stroke: "rgba(255,255,255,0.15)",
+                  strokeWidth: 1,
+                }}
+                contentStyle={{
+                  background: "rgba(15,23,42,0.96)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  borderRadius: "18px",
+                  backdropFilter: "blur(10px)",
+                  color: "#fff",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
+                }}
+                labelStyle={{
+                  color: "#fff",
+                  marginBottom: "10px",
+                  fontWeight: 700,
+                }}
+              />
+
+              {/* LEGEND */}
+              <Legend
+                verticalAlign="bottom"
+                height={50}
+                iconType="circle"
+                wrapperStyle={{
+                  color: "#fff",
+                  paddingTop: "20px",
+                }}
+              />
+
+              {/* PAGE VIEW */}
+              <Line
+                type="monotone"
+                dataKey="pv"
+                name="Page Views"
+                stroke="#3b82f6"
+                strokeWidth={4}
+                dot={{
+                  r: 5,
+                  strokeWidth: 3,
+                  fill: "#0f172a",
+                }}
+                activeDot={{
+                  r: 8,
+                  stroke: "#3b82f6",
+                  strokeWidth: 3,
+                  fill: "#fff",
+                }}
+              />
+
+              {/* USER VISITS */}
+              <Line
+                type="monotone"
+                dataKey="uv"
+                name="User Visits"
+                stroke="#00e676"
+                strokeWidth={4}
+                dot={{
+                  r: 5,
+                  strokeWidth: 3,
+                  fill: "#0f172a",
+                }}
+                activeDot={{
+                  r: 8,
+                  stroke: "#00e676",
+                  strokeWidth: 3,
+                  fill: "#fff",
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
     </div>
   );
 };
