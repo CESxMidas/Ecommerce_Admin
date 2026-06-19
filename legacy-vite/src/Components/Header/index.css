@@ -1,0 +1,306 @@
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.header {
+  width: 100%;
+
+  height: 75px;
+
+  background: rgba(8, 18, 37, 0.85);
+
+  backdrop-filter: blur(12px);
+
+  -webkit-backdrop-filter: blur(12px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  position: sticky;
+
+  top: 0;
+
+  left: 0;
+
+  z-index: 9999;
+
+  padding-top: 10px;
+
+  padding-bottom: 10px;
+}
+
+/* ========================= */
+/* LEFT */
+/* ========================= */
+
+.header .headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* ========================= */
+/* LOGO */
+/* ========================= */
+
+.header .logoBox {
+  width: 44px;
+  height: 44px;
+
+  border-radius: 14px;
+
+  background: linear-gradient(135deg, #2563eb, #4f46e5);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: white;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.header .logoText {
+  color: white;
+
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.header .logoSubText {
+  color: #94a3b8;
+
+  font-size: 13px;
+
+  margin-top: 2px;
+}
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+
+.header .menuBtn,
+.header .iconBtn {
+  width: 42px !important;
+  min-width: 42px !important;
+  height: 42px !important;
+
+  border-radius: 14px !important;
+
+  background: rgba(255, 255, 255, 0.04) !important;
+
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+
+  color: white !important;
+}
+
+.header .headerRight {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ========================= */
+/* SEARCH */
+/* ========================= */
+
+.header .searchBox {
+  width: 260px;
+  height: 44px;
+
+  border-radius: 14px;
+
+  overflow: hidden;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.header .searchBox input {
+  width: 100%;
+  height: 100%;
+
+  background: transparent;
+
+  border: none;
+  outline: none;
+
+  padding: 0 16px;
+
+  color: white;
+}
+
+/* ========================= */
+/* USER */
+/* ========================= */
+
+.header .userInfo {
+  padding: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header .userAvatar {
+  width: 58px;
+  height: 58px;
+
+  border-radius: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(255, 255, 255, 0.05);
+
+  color: white;
+}
+
+.header .menuItem {
+  gap: 12px !important;
+}
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+/* -------- Laptop nhỏ -------- */
+@media (max-width: 1200px) {
+  .header .searchBox {
+    width: 200px;
+  }
+
+  .header .logoText {
+    font-size: 18px;
+  }
+
+  .header .logoSubText {
+    font-size: 12px;
+  }
+}
+
+/* -------- Tablet -------- */
+@media (max-width: 992px) {
+  .header {
+    height: auto;
+    min-height: 75px;
+
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .header .searchBox {
+    display: none;
+  }
+
+  .header .headerLeft {
+    gap: 12px;
+  }
+
+  .header .headerRight {
+    gap: 10px;
+  }
+
+  .header .logoBox {
+    width: 40px;
+    height: 40px;
+
+    font-size: 18px;
+  }
+
+  .header .logoText {
+    font-size: 17px;
+  }
+
+  .header .logoSubText {
+    font-size: 11px;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 38px !important;
+    min-width: 38px !important;
+    height: 38px !important;
+  }
+}
+
+/* -------- Mobile -------- */
+@media (max-width: 768px) {
+  .header {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .header .logoText,
+  .header .logoSubText {
+    display: none;
+  }
+
+  .header .headerLeft {
+    gap: 10px;
+  }
+
+  .header .headerRight {
+    gap: 8px;
+  }
+
+  .header .logoBox {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 12px;
+
+    font-size: 17px;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 36px !important;
+    min-width: 36px !important;
+    height: 36px !important;
+
+    border-radius: 12px !important;
+  }
+
+  .header .userInfo {
+    padding: 14px;
+    gap: 10px;
+  }
+
+  .header .userAvatar {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* -------- Mobile nhỏ -------- */
+@media (max-width: 480px) {
+  .header {
+    min-height: 65px;
+  }
+
+  .header .headerRight {
+    gap: 6px;
+  }
+
+  .header .logoBox {
+    width: 34px;
+    height: 34px;
+
+    font-size: 15px;
+  }
+
+  .header .menuBtn,
+  .header .iconBtn {
+    width: 34px !important;
+    min-width: 34px !important;
+    height: 34px !important;
+  }
+}

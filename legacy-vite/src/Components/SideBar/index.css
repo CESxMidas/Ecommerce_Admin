@@ -1,0 +1,464 @@
+/* ========================= */
+/* SIDEBAR */
+/* ========================= */
+
+.sidebar {
+  width: 280px;
+  min-width: 280px;
+
+  height: 100vh;
+
+  background: linear-gradient(
+    to bottom,
+    #081225,
+    #0b1730
+  );
+
+  border-right: 1px solid
+    rgba(255, 255, 255, 0.06);
+
+  padding: 20px 16px;
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+
+  position: sticky;
+  top: 0;
+  left: 0;
+
+  z-index: 999;
+
+  flex-shrink: 0;
+
+  transition:
+    width 0.32s
+      cubic-bezier(
+        0.4,
+        0,
+        0.2,
+        1
+      ),
+    min-width 0.32s
+      cubic-bezier(
+        0.4,
+        0,
+        0.2,
+        1
+      ),
+    padding 0.32s
+      cubic-bezier(
+        0.4,
+        0,
+        0.2,
+        1
+      );
+}
+
+/* ========================= */
+/* OPEN / CLOSE */
+/* ========================= */
+
+.sidebar.open {
+  width: 280px;
+  min-width: 280px;
+}
+
+.sidebar.close {
+  width: 90px;
+  min-width: 90px;
+
+  padding: 20px 10px;
+}
+
+/* ========================= */
+/* LOGO */
+/* ========================= */
+
+.sidebar .logoWrapper {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 24px;
+}
+
+.sidebar .logoImg {
+  width: 44px;
+  height: 44px;
+
+  object-fit: contain;
+
+  filter: drop-shadow(
+    0px 10px 20px
+      rgba(59, 130, 246, 0.35)
+  );
+}
+
+/* ========================= */
+/* MENU */
+/* ========================= */
+
+.sidebar .menuList {
+  display: flex;
+  flex-direction: column;
+
+  gap: 8px;
+}
+
+.sidebar .menuList a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.sidebar .subMenu li a.active {
+  color: #60a5fa;
+}
+
+/* ========================= */
+/* MENU ITEM */
+/* ========================= */
+
+.sidebar .menuItem {
+  width: 100%;
+  min-height: 54px;
+
+  border-radius: 16px;
+
+  padding: 0px 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  position: relative;
+
+  overflow: hidden;
+
+  cursor: pointer;
+
+  color: #94a3b8;
+
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease,
+    width 0.3s ease,
+    height 0.3s ease,
+    padding 0.3s ease;
+}
+
+.sidebar .menuItem::before {
+  content: "";
+
+  position: absolute;
+
+  inset: 0;
+
+  width: 0%;
+
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.15),
+    rgba(79, 70, 229, 0.15)
+  );
+
+  transition: width 0.25s ease;
+}
+
+.sidebar .menuItem:hover::before {
+  width: 100%;
+}
+
+.sidebar .menuItem:hover {
+  color: white;
+
+  transform: translateX(4px);
+}
+
+.sidebar .menuItem.active {
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #4f46e5
+  );
+
+  color: white;
+
+  box-shadow: 0px 10px 25px
+    rgba(37, 99, 235, 0.3);
+}
+
+.sidebar .menuItem.active::before {
+  display: none;
+}
+
+.sidebar .menuItem.opened {
+  background: rgba(
+    255,
+    255,
+    255,
+    0.05
+  );
+
+  color: white;
+}
+
+/* ========================= */
+/* MENU LEFT */
+/* ========================= */
+
+.sidebar .menuLeft {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  position: relative;
+  z-index: 2;
+
+  white-space: nowrap;
+
+  width: 100%;
+}
+
+.sidebar .menuLeft svg {
+  font-size: 22px;
+
+  min-width: 22px;
+
+  transition:
+    transform 0.25s ease,
+    margin 0.25s ease;
+}
+
+/* ========================= */
+/* TEXT */
+/* ========================= */
+
+.sidebar .menuLeft span {
+  opacity: 1;
+
+  transform: translateX(0);
+
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    width 0.22s ease;
+}
+
+/* ========================= */
+/* ARROW */
+/* ========================= */
+
+.sidebar .arrowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  position: relative;
+  z-index: 2;
+
+  opacity: 1;
+
+  transition:
+    opacity 0.22s ease,
+    transform 0.22s ease,
+    width 0.22s ease;
+}
+
+.sidebar .arrowIcon svg {
+  font-size: 22px;
+}
+
+/* ========================= */
+/* SUBMENU */
+/* ========================= */
+
+.sidebar .subMenuWrapper {
+  max-height: 0;
+
+  overflow: hidden;
+
+  transition:
+    max-height 0.35s ease;
+}
+
+.sidebar .subMenuWrapper.show {
+  max-height: 300px;
+}
+
+.sidebar .subMenu {
+  padding-top: 8px;
+  padding-left: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 6px;
+}
+
+.sidebar .subMenu li {
+  min-height: 42px;
+
+  border-radius: 12px;
+
+  padding: 0px 14px;
+
+  display: flex;
+  align-items: center;
+
+  color: #94a3b8;
+
+  cursor: pointer;
+
+  transition:
+    all 0.25s ease;
+}
+
+.sidebar .subMenu li:hover {
+  background: rgba(
+    255,
+    255,
+    255,
+    0.05
+  );
+
+  color: white;
+
+  transform: translateX(5px);
+}
+
+/* ========================= */
+/* CLOSE MODE */
+/* ========================= */
+
+.sidebar.close .menuItem {
+  width: 54px;
+  height: 54px;
+
+  margin: 0 auto;
+
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+}
+
+.sidebar.close .menuLeft {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 0;
+}
+
+.sidebar.close .menuLeft svg {
+  margin: 0;
+
+  min-width: unset;
+}
+
+.sidebar.close .menuLeft span {
+  opacity: 0;
+
+  width: 0;
+
+  overflow: hidden;
+
+  transform: translateX(-12px);
+
+  pointer-events: none;
+}
+
+.sidebar.close .arrowIcon {
+  opacity: 0;
+
+  width: 0;
+
+  overflow: hidden;
+
+  transform: translateX(-12px);
+
+  pointer-events: none;
+}
+
+.sidebar.close .subMenuWrapper {
+  max-height: 0;
+
+  overflow: hidden;
+}
+
+.sidebar.close .menuItem:hover {
+  transform: scale(1.05);
+}
+
+/* ========================= */
+/* OPEN MODE */
+/* ========================= */
+
+.sidebar.open .menuLeft span {
+  opacity: 1;
+
+  width: auto;
+
+  transform: translateX(0);
+}
+
+.sidebar.open .arrowIcon {
+  opacity: 1;
+
+  width: auto;
+
+  transform: translateX(0);
+}
+
+/* ========================= */
+/* SCROLLBAR */
+/* ========================= */
+
+.sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(
+    255,
+    255,
+    255,
+    0.08
+  );
+
+  border-radius: 30px;
+}
+
+/* ========================= */
+/* RESPONSIVE */
+/* ========================= */
+
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    top: 0;
+    transition: all 0.3s ease;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .sidebar.close {
+    left: -100%;
+  }
+}

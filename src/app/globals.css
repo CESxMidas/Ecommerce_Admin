@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 5%;
+    --foreground: 0 0% 100%;
+    --card: 222 47% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 222 47% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 217 33% 17%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 217 33% 17%;
+    --input: 217 33% 17%;
+    --ring: 217 91% 60%;
+    --radius: 0.75rem;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  body {
+    background-color: #020817;
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  html:has(.auth-login-grid),
+  html:has(.auth-login-grid) body {
+    height: 100%;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  .admin-card {
+    @apply rounded-2xl border border-keyshop-line bg-keyshop-surface p-6 shadow-card;
+  }
+
+  .admin-page-title {
+    @apply text-2xl font-bold tracking-tight text-white;
+  }
+
+  .admin-page-subtitle {
+    @apply mt-1 text-sm text-keyshop-muted;
+  }
+
+  .admin-table-wrap {
+    @apply w-full;
+  }
+
+  .admin-table {
+    @apply w-full min-w-[720px] border-collapse text-left text-sm;
+  }
+
+  .admin-table thead {
+    @apply bg-white/[0.03];
+  }
+
+  .admin-table th {
+    @apply whitespace-nowrap px-4 py-3 text-xs font-semibold uppercase tracking-wide text-keyshop-muted;
+  }
+
+  .admin-table td {
+    @apply border-t border-keyshop-line px-4 py-3.5 align-middle text-keyshop-muted;
+  }
+
+  .admin-table tbody tr {
+    @apply transition-colors hover:bg-white/[0.02];
+  }
+
+  .admin-price-cell {
+    @apply min-w-[9rem] tabular-nums;
+  }
+
+  .admin-price-cell > * {
+    @apply whitespace-nowrap leading-snug;
+  }
+
+  .admin-col-price {
+    @apply w-[1%] whitespace-nowrap;
+  }
+
+  /* Auth login — split layout, single viewport on desktop */
+  .auth-login-grid {
+    @apply grid h-full overflow-hidden lg:grid-cols-2;
+  }
+
+  .auth-login-form-panel {
+    @apply flex h-full flex-col justify-center overflow-y-auto px-6 py-6 sm:px-10 lg:overflow-hidden lg:px-12 lg:py-0 xl:px-16;
+  }
+
+  .auth-login-form-inner {
+    @apply mx-auto w-full max-w-[400px] space-y-4 lg:space-y-5;
+  }
+
+  .auth-login-brand {
+    @apply flex items-center gap-2.5;
+  }
+
+  .auth-login-logo {
+    @apply flex h-10 w-10 items-center justify-center rounded-xl bg-keyshop-blue/15 text-keyshop-blue ring-1 ring-keyshop-blue/25;
+  }
+
+  .auth-login-input {
+    @apply transition-shadow focus-visible:ring-keyshop-blue/40;
+  }
+
+  .auth-login-submit {
+    @apply bg-keyshop-blue shadow-glow hover:bg-keyshop-blue-hover;
+  }
+
+  .auth-login-hero-panel {
+    @apply relative flex h-full flex-col items-center justify-center overflow-hidden border-l border-keyshop-line bg-gradient-to-br from-[#07111f] via-keyshop-soft to-keyshop-bg px-8 py-8 xl:px-12;
+  }
+
+  .auth-login-hero-inner {
+    @apply relative z-10 w-full max-w-md xl:max-w-lg;
+  }
+
+  .auth-login-hero-glow {
+    @apply pointer-events-none absolute -right-24 top-1/4 h-72 w-72 rounded-full bg-keyshop-blue/20 blur-[80px];
+  }
+
+  .auth-login-preview {
+    @apply overflow-hidden rounded-xl border border-keyshop-line bg-keyshop-surface/90 shadow-card backdrop-blur-sm;
+  }
+
+  .auth-login-preview-bar {
+    @apply flex items-center gap-1.5 border-b border-keyshop-line bg-white/[0.03] px-3 py-2;
+  }
+
+  .auth-login-preview-dot {
+    @apply h-2 w-2 rounded-full;
+  }
+
+  .auth-login-preview-body {
+    @apply p-3.5;
+  }
+
+  .auth-login-preview-stat {
+    @apply flex flex-col gap-0.5 rounded-lg border border-keyshop-line bg-keyshop-bg/60 p-2.5;
+  }
+}

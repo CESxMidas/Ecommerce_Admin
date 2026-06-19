@@ -1,0 +1,67 @@
+export const productListMock = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1512436991641-6745cdb1723f",
+    name: "Tasty Metal Shirt",
+    category: "Books",
+    sku: "SKU-52442",
+    stock: 30,
+    price: "$410.00",
+    rating: 3.5,
+    reviews: 14,
+    status: "Pending",
+  },
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab",
+    name: "Modern Gloves",
+    category: "Kids",
+    sku: "SKU-98424",
+    stock: 0,
+    price: "$340.00",
+    rating: 4.5,
+    reviews: 9,
+    status: "Draft",
+  },
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1542291026-7eec264c27ff",
+    name: "Rustic Steel Computer",
+    category: "Games",
+    sku: "SKU-78192",
+    stock: 50,
+    price: "$948.00",
+    rating: 3.8,
+    reviews: 19,
+    status: "Draft",
+  },
+  {
+    id: 4,
+    image:
+      "https://images.unsplash.com/photo-1585386959984-a4155224a1ad",
+    name: "Licensed Concrete Cheese",
+    category: "Electronics",
+    sku: "SKU-86229",
+    stock: 0,
+    price: "$853.00",
+    rating: 2.5,
+    reviews: 5,
+    status: "Pending",
+  },
+  {
+    id: 5,
+    image:
+      "https://images.unsplash.com/photo-1496747611176-843222e1e57c",
+    name: "Electronic Rubber Table",
+    category: "Books",
+    sku: "SKU-89762",
+    stock: 18,
+    price: "$881.00",
+    rating: 4.0,
+    reviews: 12,
+    status: "Publish",
+  },
+];
