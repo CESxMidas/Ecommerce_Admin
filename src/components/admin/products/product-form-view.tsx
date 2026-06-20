@@ -10,19 +10,23 @@ import toast from "react-hot-toast";
 import AdminError from "@/components/admin/admin-error";
 import AdminLoading from "@/components/admin/admin-loading";
 import AdminPageHeader from "@/components/admin/admin-page-header";
+import ProductReviewsPanel from "@/components/admin/products/product-reviews-panel";
 import { tDeliveryType, tProductType } from "@/constants/vi";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import {
   createProduct,
   fetchCategories,
   fetchProduct,
+  fetchProducts,
   updateProduct,
   uploadAdminImage,
 } from "@/lib/services/admin-service";
 import {
   defaultDeliveryType,
+  getDeliveryTypeMismatchMessage,
   isPoolProductType,
   slugify,
+  validateProductForm,
 } from "@/lib/utils/product-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -125,6 +129,7 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
   });
 
   const { data: categories, loading: categoriesLoading } = useAdminFetch(fetchCategories);
+  const { data: productsCatalog } = useAdminFetch(fetchProducts);
 
   const [form, setForm] = useState<ProductFormState>(emptyForm);
   const [slugTouched, setSlugTouched] = useState(false);
@@ -139,6 +144,11 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
 
   const poolEnabled = useMemo(
     () => isPoolProductType(form.productType, form.deliveryType),
+    [form.deliveryType, form.productType],
+  );
+
+  const deliveryMismatch = useMemo(
+    () => getDeliveryTypeMismatchMessage(form.productType, form.deliveryType),
     [form.deliveryType, form.productType],
   );
 
@@ -208,33 +218,34 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
     const name = form.name.trim();
     const slug = (form.slug || slugify(name)).trim();
     const price = Number(form.price);
+    const discountRaw = form.discountPrice.trim();
+    const discountPrice = discountRaw ? Number(discountRaw) : null;
 
-    if (!name) {
-      toast.error("Tên sản phẩm là bắt buộc");
-      return;
+    let existingProducts = productsCatalog ?? [];
+    if (existingProducts.length === 0) {
+      existingProducts = await fetchProducts();
     }
 
-    if (!slug) {
-      toast.error("Đường dẫn (slug) là bắt buộc");
-      return;
-    }
+    const validationError = validateProductForm({
+      name,
+      slug,
+      price,
+      discountPrice,
+      categoryId: form.categoryId,
+      productType: form.productType,
+      deliveryType: form.deliveryType,
+      existingProducts,
+      currentProductId: product?.productId,
+    });
 
-    if (!Number.isFinite(price) || price < 0) {
-      toast.error("Giá bán không hợp lệ");
+    if (validationError) {
+      toast.error(validationError);
       return;
     }
 
     const selectedCategory = categories?.find(
       (category) => String(category.categoryId) === form.categoryId,
     );
-
-    const discountRaw = form.discountPrice.trim();
-    const discountPrice = discountRaw ? Number(discountRaw) : null;
-
-    if (discountPrice != null && (!Number.isFinite(discountPrice) || discountPrice < 0)) {
-      toast.error("Giá khuyến mãi không hợp lệ");
-      return;
-    }
 
     const payload = {
       name,
@@ -492,6 +503,9 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
                   </p>
                 </div>
               ) : null}
+              {deliveryMismatch ? (
+                <p className="text-sm text-amber-300 sm:col-span-2">{deliveryMismatch}</p>
+              ) : null}
             </div>
           </section>
 
@@ -561,6 +575,7 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
               value={form.categoryId}
               onChange={(event) => updateField("categoryId", event.target.value)}
               disabled={categoriesLoading}
+              required
             >
               <option value="">— Chọn danh mục —</option>
               {categories?.map((category) => (
@@ -651,6 +666,8 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
           </section>
         </div>
       </div>
+
+      {isEdit && productId ? <ProductReviewsPanel productId={productId} /> : null}
     </form>
   );
 }

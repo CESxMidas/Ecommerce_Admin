@@ -9,12 +9,15 @@ import type {
   AdminOrder,
   AdminOrderItem,
   AdminProduct,
+  AdminUser,
+  AdminUserDetail,
   BannerPlacement,
   CouponType,
   DeliveryType,
   OrderStatus,
   PaymentStatus,
   ProductType,
+  UserRole,
 } from "@/types/admin";
 
 function asRecord(value: unknown): Record<string, unknown> {
@@ -167,6 +170,47 @@ export function normalizeCategories(raw: unknown): AdminCategory[] {
   });
 
   return rows.map((row) => normalizeCategory(row, nameMap));
+}
+
+export function normalizeUser(raw: unknown): AdminUser {
+  const doc = asRecord(raw);
+
+  return {
+    id: asString(doc.id ?? doc._id),
+    name: asString(doc.name),
+    email: asString(doc.email),
+    avatar: resolveMediaUrl(asString(doc.avatar), ""),
+    role: asString(doc.role, "USER") as UserRole,
+    verifyEmail: Boolean(doc.verifyEmail ?? doc.verify_email),
+    authProvider: asString(doc.authProvider, "local") as AdminUser["authProvider"],
+    status: asString(doc.status, "Active") as AdminUser["status"],
+    createdAt: doc.createdAt
+      ? new Date(asString(doc.createdAt)).toISOString()
+      : new Date().toISOString(),
+    orderCount: asNumber(doc.orderCount),
+  };
+}
+
+export function normalizeUsers(raw: unknown): AdminUser[] {
+  return asArray<unknown>(raw).map(normalizeUser);
+}
+
+export function normalizeUserDetail(raw: unknown): AdminUserDetail {
+  const doc = asRecord(raw);
+
+  return {
+    ...normalizeUser(raw),
+    mobile: asString(doc.mobile),
+    phoneVerified: Boolean(doc.phoneVerified),
+    twoFactorEnabled: Boolean(doc.twoFactorEnabled),
+    lastLoginAt: doc.lastLoginAt
+      ? new Date(asString(doc.lastLoginAt)).toISOString()
+      : null,
+    gender: asString(doc.gender),
+    dateOfBirth: doc.dateOfBirth
+      ? new Date(asString(doc.dateOfBirth)).toISOString()
+      : null,
+  };
 }
 
 export function normalizeBanner(raw: unknown): AdminBanner {

@@ -49,6 +49,17 @@ export function tDeliveryType(type: string) {
   return DELIVERY_TYPE_VI[type] ?? type;
 }
 
+export const KEY_STATUS_VI: Record<string, string> = {
+  available: "Khả dụng",
+  reserved: "Đang giữ",
+  sold: "Đã bán",
+  revoked: "Thu hồi",
+};
+
+export function tKeyStatus(status: string) {
+  return KEY_STATUS_VI[status] ?? status;
+}
+
 export function tActive(isActive: boolean) {
   return isActive ? "Đang bán" : "Ngừng bán";
 }
@@ -71,6 +82,32 @@ export function tVerified(verified: boolean) {
 
 export function tAuthProvider(provider: string) {
   return provider === "google" ? "Google" : "Email";
+}
+
+export const USER_STATUS_VI: Record<string, string> = {
+  Active: "Hoạt động",
+  Inactive: "Không hoạt động",
+  Suspended: "Đình chỉ",
+};
+
+export function tUserStatus(status: string) {
+  return USER_STATUS_VI[status] ?? status;
+}
+
+export function userStatusTone(
+  status: string,
+): "success" | "warning" | "danger" | "neutral" {
+  if (status === "Active") return "success";
+  if (status === "Inactive") return "neutral";
+  if (status === "Suspended") return "danger";
+  return "neutral";
+}
+
+export function tGender(gender: string) {
+  if (gender === "male") return "Nam";
+  if (gender === "female") return "Nữ";
+  if (gender === "other") return "Khác";
+  return "—";
 }
 
 export function tPlacement(placement: string) {

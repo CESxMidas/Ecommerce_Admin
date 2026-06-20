@@ -2,14 +2,19 @@ import apiClient from "@/lib/api/client";
 import {
   buildChartFromOrders,
   normalizeBanners,
+  normalizeBlog,
   normalizeBlogs,
   normalizeCategories,
+  normalizeCategory,
   normalizeCoupons,
   normalizeDashboardStats,
   normalizeOrder,
   normalizeOrders,
   normalizeProduct,
   normalizeProducts,
+  normalizeUser,
+  normalizeUserDetail,
+  normalizeUsers,
 } from "@/lib/api/normalizers";
 import { API_ENDPOINTS } from "@/constants/apiEndpoints";
 import type {
@@ -21,7 +26,13 @@ import type {
   AdminDashboardStats,
   AdminOrder,
   AdminProduct,
+  AdminUser,
+  AdminUserDetail,
+  AdminUserDetailData,
+  BlogWritePayload,
+  CategoryWritePayload,
   ProductWritePayload,
+  UserWritePayload,
 } from "@/types/admin";
 
 function unwrapList<T>(data: unknown): T[] {
@@ -64,6 +75,37 @@ export async function deleteProduct(id: string): Promise<void> {
   await apiClient.delete(API_ENDPOINTS.products.detail(id));
 }
 
+export async function setProductActive(id: string, isActive: boolean): Promise<void> {
+  if (!isActive) {
+    await deleteProduct(id);
+    return;
+  }
+
+  await updateProduct(id, { isActive: true });
+}
+
+export async function bulkSetProductsActive(
+  productIds: number[],
+  isActive: boolean,
+): Promise<void> {
+  await Promise.all(productIds.map((id) => setProductActive(String(id), isActive)));
+}
+
+export type ProductReview = {
+  id: string;
+  productId: number;
+  userName: string;
+  rating: number;
+  comment: string;
+  verifiedPurchase: boolean;
+  createdAt: string;
+};
+
+export async function fetchProductReviews(productId: string): Promise<ProductReview[]> {
+  const { data } = await apiClient.get(`${API_ENDPOINTS.products.detail(productId)}/reviews`);
+  return unwrapList<ProductReview>(data);
+}
+
 export async function uploadAdminImage(
   file: File,
   folder = "products",
@@ -84,6 +126,84 @@ export async function fetchCategories(): Promise<AdminCategory[]> {
   return normalizeCategories(data);
 }
 
+export async function fetchAdminCategories(): Promise<AdminCategory[]> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.categories);
+  return normalizeCategories(unwrapList(data));
+}
+
+export async function fetchCategory(id: string): Promise<AdminCategory> {
+  const { data } = await apiClient.get(API_ENDPOINTS.categories.detail(id));
+  return normalizeCategory(data);
+}
+
+export async function createCategory(payload: CategoryWritePayload): Promise<AdminCategory> {
+  const { data } = await apiClient.post(API_ENDPOINTS.categories.list, payload);
+  return normalizeCategory(data);
+}
+
+export async function updateCategory(
+  id: string,
+  payload: Partial<CategoryWritePayload>,
+): Promise<AdminCategory> {
+  const { data } = await apiClient.put(API_ENDPOINTS.categories.detail(id), payload);
+  return normalizeCategory(data);
+}
+
+export async function deleteCategory(id: string): Promise<void> {
+  await apiClient.delete(API_ENDPOINTS.categories.detail(id));
+}
+
+export async function setCategoryActive(id: string, isActive: boolean): Promise<void> {
+  if (!isActive) {
+    await deleteCategory(id);
+    return;
+  }
+
+  await updateCategory(id, { isActive: true });
+}
+
+export async function bulkSetCategoriesActive(
+  categoryIds: number[],
+  isActive: boolean,
+): Promise<void> {
+  await Promise.all(categoryIds.map((id) => setCategoryActive(String(id), isActive)));
+}
+
+export async function fetchAdminUsers(): Promise<AdminUser[]> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.users);
+  return normalizeUsers(unwrapList(data));
+}
+
+export async function fetchAdminUser(id: string): Promise<AdminUserDetailData> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.user(id));
+  const payload = data as {
+    user: unknown;
+    orders: unknown;
+    orderStats: AdminUserDetailData["orderStats"];
+  };
+
+  return {
+    user: normalizeUserDetail(payload.user),
+    orders: normalizeOrders(payload.orders),
+    orderStats: payload.orderStats,
+  };
+}
+
+export async function updateUser(
+  id: string,
+  payload: UserWritePayload,
+): Promise<AdminUser> {
+  const { data } = await apiClient.patch(API_ENDPOINTS.admin.user(id), payload);
+  return normalizeUser(data);
+}
+
+export async function bulkSetUsersStatus(
+  userIds: string[],
+  status: AdminUser["status"],
+): Promise<void> {
+  await Promise.all(userIds.map((id) => updateUser(id, { status })));
+}
+
 export async function fetchOrders(): Promise<AdminOrder[]> {
   const { data } = await apiClient.get(`${API_ENDPOINTS.orders.list}?all=true`);
   return normalizeOrders(data);
@@ -97,6 +217,39 @@ export async function fetchBanners(): Promise<AdminBanner[]> {
 export async function fetchBlogs(): Promise<AdminBlog[]> {
   const { data } = await apiClient.get(API_ENDPOINTS.admin.blogs);
   return normalizeBlogs(data);
+}
+
+export async function createBlog(payload: BlogWritePayload): Promise<AdminBlog> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.blogs, payload);
+  return normalizeBlog(data);
+}
+
+export async function updateBlog(
+  id: string,
+  payload: Partial<BlogWritePayload>,
+): Promise<AdminBlog> {
+  const { data } = await apiClient.put(API_ENDPOINTS.admin.blog(id), payload);
+  return normalizeBlog(data);
+}
+
+export async function deleteBlog(id: string): Promise<void> {
+  await apiClient.delete(API_ENDPOINTS.admin.blog(id));
+}
+
+export async function setBlogActive(id: string, isActive: boolean): Promise<void> {
+  if (!isActive) {
+    await deleteBlog(id);
+    return;
+  }
+
+  await updateBlog(id, { isActive: true });
+}
+
+export async function bulkSetBlogsActive(
+  blogIds: string[],
+  isActive: boolean,
+): Promise<void> {
+  await Promise.all(blogIds.map((id) => setBlogActive(id, isActive)));
 }
 
 export async function fetchCoupons(): Promise<AdminCoupon[]> {

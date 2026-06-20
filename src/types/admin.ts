@@ -125,6 +125,16 @@ export interface AdminCategory {
   productCount: number;
 }
 
+export type CategoryWritePayload = {
+  name: string;
+  slug: string;
+  description?: string;
+  image?: string;
+  parentId?: number | null;
+  sortOrder?: number;
+  isActive?: boolean;
+};
+
 export interface AdminBanner {
   id: string;
   title: string;
@@ -145,6 +155,15 @@ export interface AdminBlog {
   publishedAt: string;
   isActive: boolean;
 }
+
+export type BlogWritePayload = {
+  title: string;
+  description?: string;
+  image?: string;
+  category?: string;
+  publishedAt?: string;
+  isActive?: boolean;
+};
 
 export interface AdminCoupon {
   id: string;
@@ -167,9 +186,34 @@ export interface AdminUser {
   role: UserRole;
   verifyEmail: boolean;
   authProvider: "local" | "google";
+  status: "Active" | "Inactive" | "Suspended";
   createdAt: string;
   orderCount: number;
 }
+
+export type UserWritePayload = {
+  role?: UserRole;
+  status?: "Active" | "Inactive" | "Suspended";
+};
+
+export interface AdminUserDetail extends AdminUser {
+  mobile: string;
+  phoneVerified: boolean;
+  twoFactorEnabled: boolean;
+  lastLoginAt: string | null;
+  gender: string;
+  dateOfBirth: string | null;
+}
+
+export type AdminUserDetailData = {
+  user: AdminUserDetail;
+  orders: AdminOrder[];
+  orderStats: {
+    total: number;
+    paid: number;
+    totalSpent: number;
+  };
+};
 
 export interface AdminDashboardStats {
   users: number;

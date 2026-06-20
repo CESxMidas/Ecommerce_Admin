@@ -8,10 +8,11 @@ import { ArrowLeft, KeyRound, Trash2, Upload } from "lucide-react";
 import AdminError from "@/components/admin/admin-error";
 import AdminLoading from "@/components/admin/admin-loading";
 import AdminPageHeader from "@/components/admin/admin-page-header";
+import PaginationBar from "@/components/admin/pagination-bar";
 import StatusBadge from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { tDeliveryType, tProductType } from "@/constants/vi";
+import { tDeliveryType, tKeyStatus, tProductType } from "@/constants/vi";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import {
   fetchProduct,
@@ -21,26 +22,59 @@ import {
   revokeProductKey,
   type KeyPoolEntry,
 } from "@/lib/services/admin-service";
-import { parseKeyImportFileContent, parseKeyImportText } from "@/lib/utils/product-form";
+import { isPoolProductType, parseKeyImportFileContent, parseKeyImportText } from "@/lib/utils/product-form";
 
 type ProductKeysViewProps = {
   productId: string;
 };
 
-function isPoolProductType(productType: string, deliveryType: string) {
-  return (
-    ["license_key", "redeem_code"].includes(productType) &&
-    deliveryType === "instant_key"
-  );
+type KeyStatusFilter = "available" | "reserved" | "sold" | "revoked";
+
+const keyStatusOptions: KeyStatusFilter[] = [
+  "available",
+  "reserved",
+  "sold",
+  "revoked",
+];
+
+function keyStatusTone(status: string): "success" | "warning" | "neutral" | "danger" {
+  if (status === "available") return "success";
+  if (status === "reserved") return "warning";
+  if (status === "sold") return "neutral";
+  return "danger";
 }
 
 export default function ProductKeysView({ productId }: ProductKeysViewProps) {
-  const { data: product, loading: productLoading, error: productError, refetch: refetchProduct } =
-    useAdminFetch(() => fetchProduct(productId), [productId]);
-  const { data: stats, loading: statsLoading, error: statsError, refetch: refetchStats } =
-    useAdminFetch(() => fetchProductKeyStats(productId), [productId]);
-  const { data: keysData, loading: keysLoading, error: keysError, refetch: refetchKeys } =
-    useAdminFetch(() => fetchProductKeys(productId, { status: "available", page: 1, limit: 20 }), [productId]);
+  const [keyStatus, setKeyStatus] = useState<KeyStatusFilter>("available");
+  const [keyPage, setKeyPage] = useState(0);
+  const keyPageSize = 20;
+
+  const {
+    data: product,
+    loading: productLoading,
+    error: productError,
+    refetch: refetchProduct,
+  } = useAdminFetch(() => fetchProduct(productId), [productId]);
+  const {
+    data: stats,
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats,
+  } = useAdminFetch(() => fetchProductKeyStats(productId), [productId]);
+  const {
+    data: keysData,
+    loading: keysLoading,
+    error: keysError,
+    refetch: refetchKeys,
+  } = useAdminFetch(
+    () =>
+      fetchProductKeys(productId, {
+        status: keyStatus,
+        page: keyPage + 1,
+        limit: keyPageSize,
+      }),
+    [productId, keyStatus, keyPage],
+  );
 
   const [importText, setImportText] = useState("");
   const [importing, setImporting] = useState(false);
@@ -48,6 +82,8 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
   const loading = productLoading || statsLoading || keysLoading;
   const error = productError || statsError || keysError;
   const keys = keysData?.items ?? [];
+  const totalKeys = keysData?.total ?? 0;
+  const totalPages = keysData?.totalPages ?? 1;
 
   const poolEnabled = useMemo(() => {
     if (!product) return false;
@@ -91,6 +127,8 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
       const result = await importProductKeys(productId, { keys: lines });
       toast.success(`Đã import ${result.imported} key (${result.available} khả dụng)`);
       setImportText("");
+      setKeyStatus("available");
+      setKeyPage(0);
       refetchStats();
       refetchKeys();
       refetchProduct();
@@ -115,7 +153,7 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
     }
   }
 
-  if (loading) {
+  if (loading && !product) {
     return <AdminLoading label="Đang tải kho key..." />;
   }
 
@@ -158,7 +196,7 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
             <h2 className="text-lg font-semibold text-white">{product.name}</h2>
             <p className="mt-1 text-sm text-keyshop-muted">
               {tProductType(product.productType)} · {tDeliveryType(product.deliveryType)} · SKU{" "}
-              {product.sku}
+              {product.sku || "—"}
             </p>
           </div>
           <StatusBadge
@@ -171,7 +209,7 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
           <p className="text-sm text-amber-300">
             Sản phẩm này chưa bật key pool. Đặt loại{" "}
             <code>license_key</code> hoặc <code>redeem_code</code> và giao hàng{" "}
-            <code>instant_key</code>.
+            <code>instant_key</code> trong form sửa sản phẩm.
           </p>
         ) : null}
       </section>
@@ -179,16 +217,31 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
       {stats ? (
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
           {[
-            ["Khả dụng", stats.available],
-            ["Đang giữ", stats.reserved],
-            ["Đã bán", stats.sold],
-            ["Thu hồi", stats.revoked],
-            ["Tổng", stats.total],
-          ].map(([label, value]) => (
-            <div key={String(label)} className="admin-card">
-              <p className="text-sm text-keyshop-muted">{label}</p>
+            ["available", stats.available],
+            ["reserved", stats.reserved],
+            ["sold", stats.sold],
+            ["revoked", stats.revoked],
+            ["total", stats.total],
+          ].map(([status, value]) => (
+            <button
+              key={String(status)}
+              type="button"
+              onClick={() => {
+                if (status === "total") return;
+                setKeyStatus(status as KeyStatusFilter);
+                setKeyPage(0);
+              }}
+              className={`admin-card text-left transition-colors ${
+                status !== "total" && keyStatus === status
+                  ? "ring-1 ring-keyshop-blue"
+                  : "hover:bg-keyshop-soft/40"
+              }`}
+            >
+              <p className="text-sm text-keyshop-muted">
+                {status === "total" ? "Tổng" : tKeyStatus(String(status))}
+              </p>
               <p className="mt-2 text-2xl font-bold text-white">{value}</p>
-            </div>
+            </button>
           ))}
         </section>
       ) : null}
@@ -238,8 +291,26 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
       </section>
 
       <section className="admin-card overflow-hidden p-0">
-        <div className="border-b border-keyshop-line p-6">
-          <h2 className="text-lg font-semibold text-white">Key khả dụng (20 mới nhất)</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-keyshop-line p-6">
+          <h2 className="text-lg font-semibold text-white">
+            Danh sách key · {tKeyStatus(keyStatus)}
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            {keyStatusOptions.map((status) => (
+              <Button
+                key={status}
+                type="button"
+                size="sm"
+                variant={keyStatus === status ? "default" : "outline"}
+                onClick={() => {
+                  setKeyStatus(status);
+                  setKeyPage(0);
+                }}
+              >
+                {tKeyStatus(status)}
+              </Button>
+            ))}
+          </div>
         </div>
         <div className="admin-table-wrap overflow-x-auto">
           <table className="admin-table">
@@ -248,44 +319,66 @@ export default function ProductKeysView({ productId }: ProductKeysViewProps) {
                 <th>Key</th>
                 <th>Trạng thái</th>
                 <th>Ngày thêm</th>
+                <th>Đơn hàng</th>
                 <th />
               </tr>
             </thead>
             <tbody>
-              {keys.map((entry) => (
+              {keysLoading ? (
+                <tr>
+                  <td colSpan={5} className="py-10 text-center text-keyshop-muted">
+                    Đang tải key...
+                  </td>
+                </tr>
+              ) : keys.map((entry) => (
                 <tr key={entry._id}>
                   <td>
                     <code className="text-xs text-keyshop-blue">{entry.key}</code>
                   </td>
                   <td>
-                    <StatusBadge label={entry.status} tone="success" />
+                    <StatusBadge
+                      label={tKeyStatus(entry.status)}
+                      tone={keyStatusTone(entry.status)}
+                    />
                   </td>
                   <td className="text-sm text-keyshop-muted">
                     {new Date(entry.createdAt).toLocaleString("vi-VN")}
                   </td>
+                  <td className="text-sm text-keyshop-muted">
+                    {entry.orderId || "—"}
+                  </td>
                   <td>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-red-400"
-                      onClick={() => handleRevoke(entry)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {entry.status === "available" ? (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-red-400"
+                        onClick={() => handleRevoke(entry)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    ) : null}
                   </td>
                 </tr>
               ))}
-              {keys.length === 0 ? (
+              {!keysLoading && keys.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="py-10 text-center text-keyshop-muted">
-                    Chưa có key trong kho. Import key thật ở trên.
+                  <td colSpan={5} className="py-10 text-center text-keyshop-muted">
+                    Không có key nào ở trạng thái {tKeyStatus(keyStatus).toLowerCase()}.
                   </td>
                 </tr>
               ) : null}
             </tbody>
           </table>
         </div>
+        <PaginationBar
+          page={keyPage}
+          totalPages={totalPages}
+          totalItems={totalKeys}
+          pageSize={keyPageSize}
+          onPageChange={setKeyPage}
+        />
       </section>
     </div>
   );

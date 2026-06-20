@@ -98,6 +98,22 @@
     @apply w-[1%] whitespace-nowrap;
   }
 
+  .admin-filter-select {
+    @apply h-10 w-full appearance-none rounded-lg border border-keyshop-line bg-keyshop-bg px-3 pr-10 text-sm text-white shadow-none outline-none transition-colors;
+  }
+
+  .admin-filter-select:hover:not(:disabled) {
+    @apply border-keyshop-blue/40 bg-keyshop-soft/40;
+  }
+
+  .admin-filter-select:focus-visible {
+    @apply border-keyshop-blue ring-2 ring-keyshop-blue/20;
+  }
+
+  .admin-filter-select option {
+    @apply bg-keyshop-bg text-white;
+  }
+
   /* Auth login — split layout, single viewport on desktop */
   .auth-login-grid {
     @apply grid h-full overflow-hidden lg:grid-cols-2;

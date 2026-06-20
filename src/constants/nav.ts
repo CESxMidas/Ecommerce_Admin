@@ -32,7 +32,9 @@ export const adminNavItems: AdminNavItem[] = [
   {
     label: "Danh mục",
     icon: Tags,
-    children: [{ label: "Danh sách danh mục", href: "/categories" }],
+    children: [
+      { label: "Danh sách danh mục", href: "/categories" },
+    ],
   },
   {
     label: "Sản phẩm",

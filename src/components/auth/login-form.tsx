@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { Eye, EyeOff, KeyRound, Loader2, ShieldCheck } from "lucide-react";
@@ -17,7 +17,6 @@ const STOREFRONT_URL =
 const REMEMBER_EMAIL_KEY = "keyshop_admin_remember_email";
 
 export default function LoginForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useSession();
   const [email, setEmail] = useState("");
@@ -39,9 +38,9 @@ export default function LoginForm() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      router.replace(callbackUrl);
+      window.location.assign(callbackUrl);
     }
-  }, [status, router, callbackUrl]);
+  }, [status, callbackUrl]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -93,8 +92,8 @@ export default function LoginForm() {
       }
 
       toast.success("Đăng nhập thành công");
-      router.push(callbackUrl);
-      router.refresh();
+      // Hard navigation ensures the session cookie is sent before middleware runs.
+      window.location.assign(callbackUrl);
     }
   }
 

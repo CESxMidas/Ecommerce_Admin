@@ -38,5 +38,8 @@ export const API_ENDPOINTS = {
       `/admin/products/${productId}/keys/import`,
     revokeProductKey: (productId: string, keyId: string) =>
       `/admin/products/${productId}/keys/${keyId}`,
+    categories: "/admin/categories",
+    users: "/admin/users",
+    user: (id: string) => `/admin/users/${id}`,
   },
 } as const;
