@@ -1,11 +1,14 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { Bell, LogOut, Menu, Search, UserCircle } from "lucide-react";
+import { LogOut, Menu, UserCircle } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { performLogout } from "@/lib/auth/logout";
+import AdminGlobalSearch from "@/components/layout/admin-global-search";
+import AdminNotifications from "@/components/layout/admin-notifications";
+import { tRole } from "@/constants/vi";
 
 type AdminHeaderProps = {
   sidebarOpen: boolean;
@@ -41,23 +44,9 @@ export default function AdminHeader({
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="relative hidden lg:block">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-keyshop-muted" />
-          <input
-            type="search"
-            placeholder="Tìm kiếm..."
-            className="h-10 w-64 rounded-xl border border-keyshop-line bg-keyshop-soft pl-10 pr-4 text-sm text-white placeholder:text-keyshop-muted focus:outline-none focus:ring-2 focus:ring-keyshop-blue/40"
-          />
-        </div>
+        <AdminGlobalSearch />
 
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label="Thông báo"
-        >
-          <Bell className="h-5 w-5" />
-        </Button>
+        <AdminNotifications />
 
         <div className="relative">
           <Button
@@ -86,6 +75,11 @@ export default function AdminHeader({
                   <p className="text-xs text-keyshop-muted">
                     {session?.user?.email}
                   </p>
+                  {session?.user?.role ? (
+                    <p className="mt-1 text-[11px] font-medium text-keyshop-blue">
+                      {tRole(session.user.role)}
+                    </p>
+                  ) : null}
                 </div>
                 <button
                   type="button"

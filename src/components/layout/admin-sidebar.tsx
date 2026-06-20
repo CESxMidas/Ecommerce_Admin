@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useSession } from "next-auth/react";
+import { useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, KeyRound } from "lucide-react";
 
 import { adminNavItems } from "@/constants/nav";
+import { hasPermission } from "@/lib/auth/permissions";
 import { cn } from "@/lib/utils";
 
 type AdminSidebarProps = {
@@ -15,7 +17,36 @@ type AdminSidebarProps = {
 
 export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
+  const role = session?.user?.role;
+
+  const visibleNavItems = useMemo(
+    () =>
+      adminNavItems
+        .map((item) => {
+          if (item.permission && !hasPermission(role, item.permission)) {
+            return null;
+          }
+
+          if (item.children) {
+            const children = item.children.filter(
+              (child) =>
+                !child.permission || hasPermission(role, child.permission),
+            );
+
+            if (children.length === 0) {
+              return null;
+            }
+
+            return { ...item, children };
+          }
+
+          return item;
+        })
+        .filter(Boolean) as typeof adminNavItems,
+    [role],
+  );
 
   const toggleMenu = (label: string) => {
     if (!open) return;
@@ -49,7 +80,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
 
       <nav className="flex-1 overflow-y-auto p-3">
         <ul className="space-y-1">
-          {adminNavItems.map((item) => {
+          {visibleNavItems.map((item) => {
             const Icon = item.icon;
             const hasChildren = Boolean(item.children?.length);
             const expanded =

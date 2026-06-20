@@ -15,7 +15,7 @@ import {
   tVerified,
   userStatusTone,
 } from "@/constants/vi";
-import type { AdminUser, UserRole } from "@/types/admin";
+import type { AdminUser } from "@/types/admin";
 import { formatDateTime } from "@/lib/utils/format";
 
 type UserEditDialogProps = {
@@ -31,13 +31,11 @@ export default function UserEditDialog({
   onClose,
   onSaved,
 }: UserEditDialogProps) {
-  const [role, setRole] = useState<UserRole>("USER");
   const [status, setStatus] = useState<AdminUser["status"]>("Active");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (!open || !user) return;
-    setRole(user.role);
     setStatus(user.status);
   }, [open, user]);
 
@@ -47,8 +45,8 @@ export default function UserEditDialog({
 
     setSaving(true);
     try {
-      await updateUser(user.id, { role, status });
-      toast.success("Đã cập nhật người dùng");
+      await updateUser(user.id, { status });
+      toast.success("Đã cập nhật khách hàng");
       onSaved();
       onClose();
     } catch (err) {
@@ -71,9 +69,9 @@ export default function UserEditDialog({
       <div className="relative z-10 w-full max-w-lg rounded-2xl border border-keyshop-line bg-keyshop-bg p-6 shadow-2xl">
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-xl font-semibold text-white">Quản lý người dùng</h2>
+            <h2 className="text-xl font-semibold text-white">Quản lý khách hàng</h2>
             <p className="mt-1 text-sm text-keyshop-muted">
-              Cập nhật vai trò và trạng thái tài khoản
+              Cập nhật trạng thái tài khoản khách hàng
             </p>
           </div>
           <Button type="button" variant="ghost" size="icon" onClick={onClose}>
@@ -87,7 +85,7 @@ export default function UserEditDialog({
             <p className="text-sm text-keyshop-muted">{user.email}</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <StatusBadge label={tRole(user.role)} tone={user.role === "ADMIN" ? "info" : "neutral"} />
+            <StatusBadge label={tRole(user.role)} tone="neutral" />
             <StatusBadge label={tUserStatus(user.status)} tone={userStatusTone(user.status)} />
             <StatusBadge
               label={tVerified(user.verifyEmail)}
@@ -101,19 +99,6 @@ export default function UserEditDialog({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="userRole">Vai trò</Label>
-            <select
-              id="userRole"
-              className="admin-filter-select"
-              value={role}
-              onChange={(event) => setRole(event.target.value as UserRole)}
-            >
-              <option value="USER">Khách hàng</option>
-              <option value="ADMIN">Quản trị viên</option>
-            </select>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="userStatus">Trạng thái tài khoản</Label>
             <select

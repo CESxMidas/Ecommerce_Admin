@@ -2,16 +2,20 @@ import apiClient from "@/lib/api/client";
 import {
   buildChartFromOrders,
   normalizeBanners,
+  normalizeBanner,
   normalizeBlog,
   normalizeBlogs,
   normalizeCategories,
   normalizeCategory,
   normalizeCoupons,
+  normalizeCoupon,
   normalizeDashboardStats,
   normalizeOrder,
   normalizeOrders,
   normalizeProduct,
   normalizeProducts,
+  normalizeStaff,
+  normalizeStaffList,
   normalizeUser,
   normalizeUserDetail,
   normalizeUsers,
@@ -22,16 +26,29 @@ import type {
   AdminBlog,
   AdminCategory,
   AdminChartPoint,
+  AdminAnalyticsOverview,
   AdminCoupon,
   AdminDashboardStats,
   AdminOrder,
   AdminProduct,
+  AdminSiteSettings,
+  AdminStaff,
+  AdminTicket,
+  AdminAuditLog,
+  AdminSearchResult,
+  AdminAlert,
   AdminUser,
   AdminUserDetail,
   AdminUserDetailData,
+  BannerWritePayload,
   BlogWritePayload,
   CategoryWritePayload,
+  CouponWritePayload,
   ProductWritePayload,
+  SiteSettingsWritePayload,
+  StaffCreatePayload,
+  StaffPasswordPayload,
+  StaffUpdatePayload,
   UserWritePayload,
 } from "@/types/admin";
 
@@ -98,12 +115,88 @@ export type ProductReview = {
   rating: number;
   comment: string;
   verifiedPurchase: boolean;
+  isHidden?: boolean;
   createdAt: string;
 };
 
 export async function fetchProductReviews(productId: string): Promise<ProductReview[]> {
-  const { data } = await apiClient.get(`${API_ENDPOINTS.products.detail(productId)}/reviews`);
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.productReviews(productId));
   return unwrapList<ProductReview>(data);
+}
+
+export async function hideProductReview(reviewId: string, isHidden: boolean): Promise<ProductReview> {
+  const { data } = await apiClient.patch(API_ENDPOINTS.admin.review(reviewId), { isHidden });
+  return data as ProductReview;
+}
+
+export async function deleteProductReview(reviewId: string): Promise<void> {
+  await apiClient.delete(API_ENDPOINTS.admin.review(reviewId));
+}
+
+export async function fetchTickets(params?: {
+  status?: string;
+  priority?: string;
+  q?: string;
+}): Promise<AdminTicket[]> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.tickets, { params });
+  return unwrapList<AdminTicket>(data);
+}
+
+export async function fetchTicket(id: string): Promise<AdminTicket> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.ticket(id));
+  return data as AdminTicket;
+}
+
+export async function updateTicket(
+  id: string,
+  payload: { status?: AdminTicket["status"]; priority?: AdminTicket["priority"] },
+): Promise<AdminTicket> {
+  const { data } = await apiClient.patch(API_ENDPOINTS.admin.ticket(id), payload);
+  return data as AdminTicket;
+}
+
+export async function replyTicket(
+  id: string,
+  payload: { message: string; status?: AdminTicket["status"] },
+): Promise<AdminTicket> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.ticketReplies(id), payload);
+  return data as AdminTicket;
+}
+
+export async function fetchAuditLogs(params?: {
+  page?: number;
+  limit?: number;
+  q?: string;
+  action?: string;
+  entityType?: string;
+}): Promise<{
+  items: AdminAuditLog[];
+  total: number;
+  page: number;
+  totalPages: number;
+}> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.audit, { params });
+  return data as {
+    items: AdminAuditLog[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+}
+
+export async function globalSearch(query: string): Promise<AdminSearchResult[]> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.search, {
+    params: { q: query },
+  });
+  return (data as { results: AdminSearchResult[] }).results;
+}
+
+export async function fetchAdminNotifications(): Promise<{
+  alerts: AdminAlert[];
+  unreadCount: number;
+}> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.notifications);
+  return data as { alerts: AdminAlert[]; unreadCount: number };
 }
 
 export async function uploadAdminImage(
@@ -204,6 +297,60 @@ export async function bulkSetUsersStatus(
   await Promise.all(userIds.map((id) => updateUser(id, { status })));
 }
 
+export async function fetchStaff(): Promise<AdminStaff[]> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.staff);
+  return normalizeStaffList(data);
+}
+
+export async function createStaff(payload: StaffCreatePayload): Promise<AdminStaff> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.staff, payload);
+  return normalizeStaff(data);
+}
+
+export async function updateStaff(
+  id: string,
+  payload: StaffUpdatePayload,
+): Promise<AdminStaff> {
+  const { data } = await apiClient.patch(API_ENDPOINTS.admin.staffMember(id), payload);
+  return normalizeStaff(data);
+}
+
+export async function bulkSetStaffStatus(
+  staffIds: string[],
+  status: AdminStaff["status"],
+): Promise<void> {
+  await Promise.all(staffIds.map((id) => updateStaff(id, { status })));
+}
+
+export async function resetStaffPassword(
+  id: string,
+  payload: StaffPasswordPayload,
+): Promise<void> {
+  await apiClient.patch(API_ENDPOINTS.admin.staffPassword(id), payload);
+}
+
+export async function fetchAnalyticsOverview(params?: {
+  from?: string;
+  to?: string;
+}): Promise<AdminAnalyticsOverview> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.analyticsOverview, {
+    params,
+  });
+  return data as AdminAnalyticsOverview;
+}
+
+export async function fetchSiteSettings(): Promise<AdminSiteSettings> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.settings);
+  return data as AdminSiteSettings;
+}
+
+export async function updateSiteSettings(
+  payload: SiteSettingsWritePayload,
+): Promise<AdminSiteSettings> {
+  const { data } = await apiClient.patch(API_ENDPOINTS.admin.settings, payload);
+  return data as AdminSiteSettings;
+}
+
 export async function fetchOrders(): Promise<AdminOrder[]> {
   const { data } = await apiClient.get(`${API_ENDPOINTS.orders.list}?all=true`);
   return normalizeOrders(data);
@@ -212,6 +359,39 @@ export async function fetchOrders(): Promise<AdminOrder[]> {
 export async function fetchBanners(): Promise<AdminBanner[]> {
   const { data } = await apiClient.get(API_ENDPOINTS.admin.banners);
   return normalizeBanners(data);
+}
+
+export async function createBanner(payload: BannerWritePayload): Promise<AdminBanner> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.banners, payload);
+  return normalizeBanner(data);
+}
+
+export async function updateBanner(
+  id: string,
+  payload: Partial<BannerWritePayload>,
+): Promise<AdminBanner> {
+  const { data } = await apiClient.put(API_ENDPOINTS.admin.banner(id), payload);
+  return normalizeBanner(data);
+}
+
+export async function deleteBanner(id: string): Promise<void> {
+  await apiClient.delete(API_ENDPOINTS.admin.banner(id));
+}
+
+export async function setBannerActive(id: string, isActive: boolean): Promise<void> {
+  if (!isActive) {
+    await deleteBanner(id);
+    return;
+  }
+
+  await updateBanner(id, { isActive: true });
+}
+
+export async function bulkSetBannersActive(
+  bannerIds: string[],
+  isActive: boolean,
+): Promise<void> {
+  await Promise.all(bannerIds.map((id) => setBannerActive(id, isActive)));
 }
 
 export async function fetchBlogs(): Promise<AdminBlog[]> {
@@ -255,6 +435,39 @@ export async function bulkSetBlogsActive(
 export async function fetchCoupons(): Promise<AdminCoupon[]> {
   const { data } = await apiClient.get(API_ENDPOINTS.admin.coupons);
   return normalizeCoupons(data);
+}
+
+export async function createCoupon(payload: CouponWritePayload): Promise<AdminCoupon> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.coupons, payload);
+  return normalizeCoupon(data);
+}
+
+export async function updateCoupon(
+  id: string,
+  payload: Partial<CouponWritePayload>,
+): Promise<AdminCoupon> {
+  const { data } = await apiClient.put(API_ENDPOINTS.admin.coupon(id), payload);
+  return normalizeCoupon(data);
+}
+
+export async function deleteCoupon(id: string): Promise<void> {
+  await apiClient.delete(API_ENDPOINTS.admin.coupon(id));
+}
+
+export async function setCouponActive(id: string, isActive: boolean): Promise<void> {
+  if (!isActive) {
+    await deleteCoupon(id);
+    return;
+  }
+
+  await updateCoupon(id, { isActive: true });
+}
+
+export async function bulkSetCouponsActive(
+  couponIds: string[],
+  isActive: boolean,
+): Promise<void> {
+  await Promise.all(couponIds.map((id) => setCouponActive(id, isActive)));
 }
 
 export async function updateOrderStatus(

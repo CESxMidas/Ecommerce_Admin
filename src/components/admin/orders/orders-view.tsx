@@ -1,12 +1,16 @@
 "use client";
 
-import { Fragment, useMemo, useState } from "react";
-import { ChevronDown, ChevronUp, MoreHorizontal } from "lucide-react";
+import { Fragment, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { ChevronDown, ChevronUp, LayoutGrid, List, ShoppingBag, Upload } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import AdminError from "@/components/admin/admin-error";
 import AdminLoading from "@/components/admin/admin-loading";
+import EmptyState from "@/components/admin/empty-state";
+import FilterSelect from "@/components/admin/filter-select";
+import OrdersKanbanBoard from "@/components/admin/orders/orders-kanban-board";
 import PaginationBar from "@/components/admin/pagination-bar";
 import SearchToolbar from "@/components/admin/search-toolbar";
 import StatusBadge, {
@@ -14,10 +18,17 @@ import StatusBadge, {
   paymentStatusTone,
 } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
-import { tOrderStatus, tPaymentMethod, tPaymentStatus } from "@/constants/vi";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  tOrderStatus,
+  tPaymentMethod,
+  tPaymentStatus,
+} from "@/constants/vi";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import { fetchOrders, updateOrderStatus } from "@/lib/services/admin-service";
-import type { OrderStatus } from "@/types/admin";
+import { exportOrdersToCsv, isOrderInDateRange } from "@/lib/utils/order-export";
+import type { OrderStatus, PaymentStatus } from "@/types/admin";
 import { formatCurrency, formatDateTime } from "@/lib/utils/format";
 
 const statusOptions: OrderStatus[] = [
@@ -30,30 +41,96 @@ const statusOptions: OrderStatus[] = [
   "Refunded",
 ];
 
+const paymentStatusOptions: PaymentStatus[] = [
+  "paid",
+  "pending",
+  "awaiting_cod",
+  "failed",
+  "refunded",
+];
+
 export default function OrdersView() {
+  const searchParams = useSearchParams();
   const { data, loading, error, refetch } = useAdminFetch(fetchOrders);
   const orders = data ?? [];
+
+  const [viewMode, setViewMode] = useState<"table" | "kanban">("table");
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<"all" | OrderStatus>("all");
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<"all" | PaymentStatus>("all");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("all");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
   const [openOrder, setOpenOrder] = useState<string | null>(null);
   const [page, setPage] = useState(0);
   const [savingOrderId, setSavingOrderId] = useState<string | null>(null);
   const pageSize = 10;
 
+  useEffect(() => {
+    const initialSearch = searchParams.get("search");
+    const initialStatus = searchParams.get("status");
+    const initialView = searchParams.get("view");
+
+    if (initialSearch) setSearch(initialSearch);
+    if (initialStatus && statusOptions.includes(initialStatus as OrderStatus)) {
+      setStatusFilter(initialStatus as OrderStatus);
+    }
+    if (initialView === "kanban") setViewMode("kanban");
+  }, [searchParams]);
+
+  const paymentMethods = useMemo(() => {
+    const unique = new Set(orders.map((order) => order.paymentMethod).filter(Boolean));
+    return Array.from(unique).sort();
+  }, [orders]);
+
   const filtered = useMemo(() => {
+    const query = search.trim().toLowerCase();
+
     return orders.filter((order) => {
-      const query = search.toLowerCase();
       const matchesSearch =
+        !query ||
         order.orderId.toLowerCase().includes(query) ||
         order.name.toLowerCase().includes(query) ||
-        order.email.toLowerCase().includes(query);
-      const matchesStatus =
-        statusFilter === "all" || order.status === statusFilter;
-      return matchesSearch && matchesStatus;
+        order.email.toLowerCase().includes(query) ||
+        order.phone.toLowerCase().includes(query);
+
+      const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+      const matchesPaymentStatus =
+        paymentStatusFilter === "all" || order.paymentStatus === paymentStatusFilter;
+      const matchesPaymentMethod =
+        paymentMethodFilter === "all" || order.paymentMethod === paymentMethodFilter;
+      const matchesDate = isOrderInDateRange(order.createdAt, fromDate, toDate);
+
+      return (
+        matchesSearch &&
+        matchesStatus &&
+        matchesPaymentStatus &&
+        matchesPaymentMethod &&
+        matchesDate
+      );
     });
-  }, [orders, search, statusFilter]);
+  }, [orders, search, statusFilter, paymentStatusFilter, paymentMethodFilter, fromDate, toDate]);
 
   const pageItems = filtered.slice(page * pageSize, page * pageSize + pageSize);
+
+  const activeFilterCount = [
+    search.trim().length > 0,
+    statusFilter !== "all",
+    paymentStatusFilter !== "all",
+    paymentMethodFilter !== "all",
+    fromDate.length > 0,
+    toDate.length > 0,
+  ].filter(Boolean).length;
+
+  function clearFilters() {
+    setSearch("");
+    setStatusFilter("all");
+    setPaymentStatusFilter("all");
+    setPaymentMethodFilter("all");
+    setFromDate("");
+    setToDate("");
+    setPage(0);
+  }
 
   async function handleStatusSave(orderId: string, status: string) {
     setSavingOrderId(orderId);
@@ -68,42 +145,168 @@ export default function OrdersView() {
     }
   }
 
+  function handleExport() {
+    if (filtered.length === 0) {
+      toast.error("Không có đơn hàng để xuất");
+      return;
+    }
+    exportOrdersToCsv(filtered);
+    toast.success(`Đã xuất ${filtered.length} đơn hàng`);
+  }
+
   return (
     <div className="space-y-6 animate-fade-in-up">
       <AdminPageHeader
         title="Đơn hàng"
         description="Quản lý đơn hàng và cập nhật trạng thái giao dịch"
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex rounded-xl border border-keyshop-line p-1">
+              <Button
+                type="button"
+                size="sm"
+                variant={viewMode === "table" ? "default" : "ghost"}
+                onClick={() => setViewMode("table")}
+              >
+                <List className="h-4 w-4" />
+                Bảng
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={viewMode === "kanban" ? "default" : "ghost"}
+                onClick={() => setViewMode("kanban")}
+              >
+                <LayoutGrid className="h-4 w-4" />
+                Kanban
+              </Button>
+            </div>
+            <Button type="button" variant="outline" onClick={handleExport}>
+              <Upload className="h-4 w-4" />
+              Xuất file
+            </Button>
+          </div>
+        }
       />
 
       <SearchToolbar
-        placeholder="Tìm theo mã đơn, khách hàng..."
+        placeholder="Tìm theo mã đơn, khách hàng, email, SĐT..."
         value={search}
         onChange={(value) => {
           setSearch(value);
           setPage(0);
         }}
-      >
-        <select
-          value={statusFilter}
-          onChange={(event) => {
-            setStatusFilter(event.target.value);
-            setPage(0);
-          }}
-          className="h-10 rounded-md border border-input bg-background px-3 text-sm"
-        >
-          <option value="all">Tất cả trạng thái</option>
-          {statusOptions.map((status) => (
-            <option key={status} value={status}>
-              {tOrderStatus(status)}
-            </option>
-          ))}
-        </select>
-      </SearchToolbar>
+        resultCount={filtered.length}
+        totalCount={orders.length}
+        activeFilterCount={activeFilterCount}
+        onClearFilters={clearFilters}
+        filters={
+          <>
+            <FilterSelect
+              label="Trạng thái đơn"
+              value={statusFilter}
+              onChange={(value) => {
+                setStatusFilter(value as typeof statusFilter);
+                setPage(0);
+              }}
+              options={[
+                { value: "all", label: "Tất cả trạng thái" },
+                ...statusOptions.map((status) => ({
+                  value: status,
+                  label: tOrderStatus(status),
+                })),
+              ]}
+            />
+            <FilterSelect
+              label="TT thanh toán"
+              value={paymentStatusFilter}
+              onChange={(value) => {
+                setPaymentStatusFilter(value as typeof paymentStatusFilter);
+                setPage(0);
+              }}
+              options={[
+                { value: "all", label: "Tất cả TT thanh toán" },
+                ...paymentStatusOptions.map((status) => ({
+                  value: status,
+                  label: tPaymentStatus(status),
+                })),
+              ]}
+            />
+            <FilterSelect
+              label="Phương thức"
+              value={paymentMethodFilter}
+              disabled={paymentMethods.length === 0}
+              onChange={(value) => {
+                setPaymentMethodFilter(value);
+                setPage(0);
+              }}
+              options={[
+                { value: "all", label: "Mọi phương thức" },
+                ...paymentMethods.map((method) => ({
+                  value: method,
+                  label: tPaymentMethod(method),
+                })),
+              ]}
+            />
+            <div className="space-y-1.5">
+              <Label htmlFor="orderFromDate" className="text-xs text-keyshop-muted">
+                Từ ngày
+              </Label>
+              <Input
+                id="orderFromDate"
+                type="date"
+                value={fromDate}
+                onChange={(event) => {
+                  setFromDate(event.target.value);
+                  setPage(0);
+                }}
+                className="admin-filter-select h-10"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="orderToDate" className="text-xs text-keyshop-muted">
+                Đến ngày
+              </Label>
+              <Input
+                id="orderToDate"
+                type="date"
+                value={toDate}
+                onChange={(event) => {
+                  setToDate(event.target.value);
+                  setPage(0);
+                }}
+                className="admin-filter-select h-10"
+              />
+            </div>
+          </>
+        }
+      />
 
       {loading ? (
         <AdminLoading label="Đang tải đơn hàng..." />
       ) : error ? (
         <AdminError message={error} onRetry={refetch} />
+      ) : orders.length === 0 ? (
+        <EmptyState
+          icon={ShoppingBag}
+          title="Chưa có đơn hàng"
+          description="Đơn hàng từ cửa hàng sẽ hiển thị tại đây."
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          icon={ShoppingBag}
+          title="Không tìm thấy đơn hàng"
+          description="Thử đổi từ khóa hoặc bộ lọc."
+          actionLabel="Xóa bộ lọc"
+          onAction={clearFilters}
+        />
+      ) : viewMode === "kanban" ? (
+        <OrdersKanbanBoard
+          orders={filtered}
+          savingOrderId={savingOrderId}
+          onSavingChange={setSavingOrderId}
+          onUpdated={refetch}
+        />
       ) : (
         <section className="admin-card overflow-hidden p-0">
           <div className="admin-table-wrap overflow-x-auto">
@@ -119,7 +322,6 @@ export default function OrdersView() {
                   <th>Trạng thái đơn</th>
                   <th>Trạng thái thanh toán</th>
                   <th>Ngày</th>
-                  <th />
                 </tr>
               </thead>
               <tbody>
@@ -132,30 +334,18 @@ export default function OrdersView() {
                           <button
                             type="button"
                             className="rounded-lg p-1.5 hover:bg-white/5"
-                            onClick={() =>
-                              setOpenOrder(expanded ? null : order.orderId)
-                            }
+                            onClick={() => setOpenOrder(expanded ? null : order.orderId)}
                           >
-                            {expanded ? (
-                              <ChevronUp className="h-4 w-4" />
-                            ) : (
-                              <ChevronDown className="h-4 w-4" />
-                            )}
+                            {expanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                           </button>
                         </td>
                         <td>
-                          <code className="text-xs text-keyshop-blue">
-                            {order.orderId}
-                          </code>
-                          <p className="text-xs text-keyshop-muted">
-                            {order.paymentId}
-                          </p>
+                          <code className="text-xs text-keyshop-blue">{order.orderId}</code>
+                          <p className="text-xs text-keyshop-muted">{order.paymentId}</p>
                         </td>
                         <td>
                           <p className="font-medium text-white">{order.name}</p>
-                          <p className="text-xs text-keyshop-muted">
-                            {order.email}
-                          </p>
+                          <p className="text-xs text-keyshop-muted">{order.email}</p>
                         </td>
                         <td className="text-sm">{order.phone}</td>
                         <td>{tPaymentMethod(order.paymentMethod)}</td>
@@ -163,10 +353,7 @@ export default function OrdersView() {
                           {formatCurrency(order.total, order.currency)}
                         </td>
                         <td>
-                          <StatusBadge
-                            label={tOrderStatus(order.status)}
-                            tone={orderStatusTone(order.status)}
-                          />
+                          <StatusBadge label={tOrderStatus(order.status)} tone={orderStatusTone(order.status)} />
                         </td>
                         <td>
                           <StatusBadge
@@ -174,32 +361,34 @@ export default function OrdersView() {
                             tone={paymentStatusTone(order.paymentStatus)}
                           />
                         </td>
-                        <td className="text-sm text-keyshop-muted">
-                          {formatDateTime(order.createdAt)}
-                        </td>
-                        <td>
-                          <Button type="button" variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </td>
+                        <td className="text-sm text-keyshop-muted">{formatDateTime(order.createdAt)}</td>
                       </tr>
                       {expanded && (
                         <tr className="bg-white/[0.02]">
-                          <td colSpan={10} className="p-4">
+                          <td colSpan={9} className="p-4">
                             <div className="grid gap-4 lg:grid-cols-2">
                               <div className="rounded-xl border border-keyshop-line p-4">
-                                <p className="text-xs font-medium uppercase text-keyshop-muted">
-                                  Địa chỉ giao hàng
+                                <p className="text-xs font-medium uppercase text-keyshop-muted">Sản phẩm trong đơn</p>
+                                <div className="mt-3 space-y-2">
+                                  {order.items.map((item) => (
+                                    <div key={`${order.orderId}-${item.productId}`} className="flex justify-between gap-3 text-sm">
+                                      <span className="text-white">
+                                        {item.name} × {item.quantity}
+                                      </span>
+                                      <span className="text-keyshop-muted">
+                                        {formatCurrency(item.lineTotal, item.currency)}
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                                <p className="mt-3 text-xs text-keyshop-muted">
+                                  Địa chỉ: {order.address || "—"}
                                 </p>
-                                <p className="mt-2 text-sm text-white">
-                                  {order.address || "—"}
-                                </p>
-                                {order.couponCode && (
-                                  <p className="mt-2 text-xs text-keyshop-muted">
-                                    Mã giảm giá:{" "}
-                                    <code>{order.couponCode}</code>
+                                {order.couponCode ? (
+                                  <p className="mt-1 text-xs text-keyshop-muted">
+                                    Mã giảm giá: <code>{order.couponCode}</code>
                                   </p>
-                                )}
+                                ) : null}
                               </div>
                               <div className="rounded-xl border border-keyshop-line p-4">
                                 <p className="mb-3 text-xs font-medium uppercase text-keyshop-muted">
@@ -207,7 +396,7 @@ export default function OrdersView() {
                                 </p>
                                 <select
                                   id={`status-${order.orderId}`}
-                                  className="h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                                  className="admin-filter-select"
                                   defaultValue={order.status}
                                 >
                                   {statusOptions.map((status) => (
@@ -230,9 +419,7 @@ export default function OrdersView() {
                                     }
                                   }}
                                 >
-                                  {savingOrderId === order.orderId
-                                    ? "Đang lưu..."
-                                    : "Lưu trạng thái"}
+                                  {savingOrderId === order.orderId ? "Đang lưu..." : "Lưu trạng thái"}
                                 </Button>
                               </div>
                             </div>

@@ -2,12 +2,18 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { canAccessRoute, isStaffRole } from "@/lib/auth/permissions";
+
 const protectedPrefixes = [
   "/dashboard",
+  "/reports",
   "/products",
   "/categories",
   "/orders",
+  "/tickets",
+  "/audit",
   "/users",
+  "/staff",
   "/banners",
   "/blogs",
   "/coupons",
@@ -30,7 +36,7 @@ export async function middleware(request: NextRequest) {
   const token = await readSessionToken(request);
 
   if (pathname.startsWith("/auth/login")) {
-    if (token?.role === "ADMIN") {
+    if (isStaffRole(token?.role as string | undefined)) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
@@ -51,10 +57,14 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(signInUrl);
   }
 
-  if (token.role !== "ADMIN") {
+  if (!isStaffRole(token.role as string | undefined)) {
     const signInUrl = new URL("/auth/login", request.url);
     signInUrl.searchParams.set("error", "AdminAccessRequired");
     return NextResponse.redirect(signInUrl);
+  }
+
+  if (!canAccessRoute(token.role as string | undefined, pathname)) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   return NextResponse.next();
@@ -65,14 +75,22 @@ export const config = {
     "/auth/login",
     "/dashboard",
     "/dashboard/:path*",
+    "/reports",
+    "/reports/:path*",
     "/products",
     "/products/:path*",
     "/categories",
     "/categories/:path*",
     "/orders",
     "/orders/:path*",
+    "/tickets",
+    "/tickets/:path*",
+    "/audit",
+    "/audit/:path*",
     "/users",
     "/users/:path*",
+    "/staff",
+    "/staff/:path*",
     "/banners",
     "/banners/:path*",
     "/blogs",

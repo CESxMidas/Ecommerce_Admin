@@ -9,6 +9,7 @@ import type {
   AdminOrder,
   AdminOrderItem,
   AdminProduct,
+  AdminStaff,
   AdminUser,
   AdminUserDetail,
   BannerPlacement,
@@ -17,6 +18,7 @@ import type {
   OrderStatus,
   PaymentStatus,
   ProductType,
+  StaffRole,
   UserRole,
 } from "@/types/admin";
 
@@ -195,6 +197,33 @@ export function normalizeUsers(raw: unknown): AdminUser[] {
   return asArray<unknown>(raw).map(normalizeUser);
 }
 
+export function normalizeStaff(raw: unknown): AdminStaff {
+  const doc = asRecord(raw);
+
+  return {
+    id: asString(doc.id ?? doc._id),
+    name: asString(doc.name),
+    email: asString(doc.email),
+    avatar: resolveMediaUrl(asString(doc.avatar), ""),
+    role: asString(doc.role, "STAFF") as StaffRole,
+    verifyEmail: Boolean(doc.verifyEmail ?? doc.verify_email),
+    authProvider: asString(doc.authProvider, "local") as AdminStaff["authProvider"],
+    status: asString(doc.status, "Active") as AdminStaff["status"],
+    createdAt: doc.createdAt
+      ? new Date(asString(doc.createdAt)).toISOString()
+      : new Date().toISOString(),
+    lastLoginAt: doc.lastLoginAt
+      ? new Date(asString(doc.lastLoginAt)).toISOString()
+      : doc.last_login_date
+        ? new Date(asString(doc.last_login_date)).toISOString()
+        : null,
+  };
+}
+
+export function normalizeStaffList(raw: unknown): AdminStaff[] {
+  return asArray<unknown>(raw).map(normalizeStaff);
+}
+
 export function normalizeUserDetail(raw: unknown): AdminUserDetail {
   const doc = asRecord(raw);
 
@@ -284,7 +313,7 @@ export function normalizeDashboardStats(raw: unknown): AdminDashboardStats {
     orders: asNumber(doc.orders),
     categories: asNumber(doc.categories),
     coupons: asNumber(doc.coupons),
-    revenue: asNumber(doc.revenue),
+    ...(doc.revenue != null ? { revenue: asNumber(doc.revenue) } : {}),
   };
 }
 
@@ -312,8 +341,12 @@ export function buildChartFromOrders(orders: AdminOrder[]): AdminChartPoint[] {
 
     const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
     const current = buckets.get(key) ?? { revenue: 0, orders: 0 };
-    current.revenue += order.total;
     current.orders += 1;
+
+    if (order.paymentStatus === "paid") {
+      current.revenue += order.total;
+    }
+
     buckets.set(key, current);
   });
 

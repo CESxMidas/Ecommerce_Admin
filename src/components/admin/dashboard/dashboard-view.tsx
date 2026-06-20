@@ -35,8 +35,9 @@ import StatCard from "@/components/admin/stat-card";
 import StatusBadge, { orderStatusTone } from "@/components/admin/status-badge";
 import StockBar from "@/components/admin/stock-bar";
 import { Button } from "@/components/ui/button";
-import { tActive, tOrderStatus, tPaymentMethod } from "@/constants/vi";
+import { tActive, tOrderStatus, tPaymentMethod, tRole } from "@/constants/vi";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
+import { hasPermission } from "@/lib/auth/permissions";
 import { fetchDashboardData } from "@/lib/services/admin-service";
 import {
   formatCompactCurrency,
@@ -64,6 +65,11 @@ export default function DashboardView() {
   );
 
   const adminName = session?.user?.name || "Quản trị viên";
+  const role = session?.user?.role;
+  const canViewRevenue = hasPermission(role, "dashboard.revenue");
+  const canManageProducts = hasPermission(role, "products.manage");
+  const canManageCoupons = hasPermission(role, "coupons.manage");
+  const canManageBanners = hasPermission(role, "banners.manage");
   const todayLabel = formatTodayVi();
 
   const insights = useMemo(() => {
@@ -111,11 +117,11 @@ export default function DashboardView() {
   }, [stats, recentOrders, allProducts, coupons]);
 
   const quickLinks = [
-    { href: "/orders", label: "Xử lý đơn hàng" },
-    { href: "/products/new", label: "Đăng sản phẩm mới" },
-    { href: "/banners", label: "Cập nhật banner" },
-    { href: "/coupons", label: "Tạo mã khuyến mãi" },
-  ];
+    { href: "/orders", label: "Xử lý đơn hàng", show: true },
+    { href: "/products/new", label: "Đăng sản phẩm mới", show: canManageProducts },
+    { href: "/banners", label: "Cập nhật banner", show: canManageBanners },
+    { href: "/coupons", label: "Tạo mã khuyến mãi", show: canManageCoupons },
+  ].filter((link) => link.show);
 
   if (loading) {
     return (
@@ -149,13 +155,28 @@ export default function DashboardView() {
                 Xin chào, {adminName}
               </h2>
               <p className="mt-2 max-w-xl text-sm text-keyshop-muted sm:text-base">
-                Cửa hàng đang có{" "}
-                <span className="text-white">{formatNumber(stats.products)}</span>{" "}
-                sản phẩm,{" "}
-                <span className="text-white">{formatNumber(stats.orders)}</span>{" "}
-                đơn hàng và{" "}
-                <span className="text-white">{formatNumber(stats.users)}</span>{" "}
-                khách hàng. Dưới đây là tình hình kinh doanh hôm nay.
+                {canViewRevenue ? (
+                  <>
+                    Cửa hàng đang có{" "}
+                    <span className="text-white">{formatNumber(stats.products)}</span>{" "}
+                    sản phẩm,{" "}
+                    <span className="text-white">{formatNumber(stats.orders)}</span>{" "}
+                    đơn hàng và{" "}
+                    <span className="text-white">{formatNumber(stats.users)}</span>{" "}
+                    khách hàng. Dưới đây là tình hình kinh doanh hôm nay.
+                  </>
+                ) : (
+                  <>
+                    Hôm nay shop có{" "}
+                    <span className="text-white">{formatNumber(stats.orders)}</span>{" "}
+                    đơn hàng và{" "}
+                    <span className="text-white">{formatNumber(stats.products)}</span>{" "}
+                    sản phẩm đang bán. Ưu tiên xử lý đơn và bổ sung kho key.
+                  </>
+                )}
+              </p>
+              <p className="mt-2 text-xs text-keyshop-muted">
+                Vai trò: <span className="text-white">{tRole(role || "STAFF")}</span>
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {quickLinks.map((link) => (
@@ -169,27 +190,27 @@ export default function DashboardView() {
                 ))}
               </div>
             </div>
-            <Button asChild className="w-full shrink-0 sm:w-auto">
-              <Link href="/products/new">+ Thêm sản phẩm</Link>
-            </Button>
+            {canManageProducts ? (
+              <Button asChild className="w-full shrink-0 sm:w-auto">
+                <Link href="/products/new">+ Thêm sản phẩm</Link>
+              </Button>
+            ) : null}
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-            <StatCard
-              title="Doanh thu"
-              value={formatCompactCurrency(stats.revenue)}
-              valueTitle={formatCurrency(stats.revenue)}
-              hint="Tổng doanh thu từ đơn hàng (VND)"
-              change="+28.4%"
-              changeType="up"
-              icon={DollarSign}
-            />
+          <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${canViewRevenue ? "xl:grid-cols-4" : "xl:grid-cols-3"}`}>
+            {canViewRevenue && stats.revenue != null ? (
+              <StatCard
+                title="Doanh thu"
+                value={formatCompactCurrency(stats.revenue)}
+                valueTitle={formatCurrency(stats.revenue)}
+                hint="Tổng đơn đã thanh toán (paymentStatus = paid)"
+                icon={DollarSign}
+              />
+            ) : null}
             <StatCard
               title="Đơn hàng"
               value={formatNumber(stats.orders)}
-              hint="So với tháng trước"
-              change="+14.2%"
-              changeType="up"
+              hint="Tổng số đơn trong hệ thống"
               icon={ShoppingBag}
               iconClassName="bg-keyshop-green/15 text-keyshop-green"
             />
@@ -197,16 +218,12 @@ export default function DashboardView() {
               title="Người dùng"
               value={formatNumber(stats.users)}
               hint="Khách đã đăng ký"
-              change="-2.1%"
-              changeType="down"
               icon={Users}
             />
             <StatCard
               title="Sản phẩm"
               value={formatNumber(stats.products)}
               hint={`${stats.categories} danh mục đang mở`}
-              change="+6.8%"
-              changeType="up"
               icon={Package}
             />
           </div>
@@ -250,6 +267,7 @@ export default function DashboardView() {
         ))}
       </section>
 
+      {canManageProducts ? (
       <section className="admin-card overflow-hidden p-0">
         <div className="border-b border-keyshop-line p-6">
           <AdminPageHeader
@@ -345,6 +363,7 @@ export default function DashboardView() {
           onPageChange={setProductPage}
         />
       </section>
+      ) : null}
 
       <section className="admin-card overflow-hidden p-0">
         <div className="border-b border-keyshop-line p-6">
@@ -466,10 +485,11 @@ export default function DashboardView() {
         </div>
       </section>
 
+      {canViewRevenue ? (
       <section className="admin-card">
         <AdminPageHeader
           title="Phân tích kinh doanh"
-          description="Doanh thu (VND) và số đơn theo tháng — tính từ đơn hàng thật"
+          description="Doanh thu từ đơn đã thanh toán và số đơn theo tháng"
         />
         <div className="mt-6 h-[360px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -528,6 +548,55 @@ export default function DashboardView() {
           </ResponsiveContainer>
         </div>
       </section>
+      ) : (
+      <section className="admin-card">
+        <AdminPageHeader
+          title="Hoạt động đơn hàng"
+          description="Số đơn theo tháng — dữ liệu vận hành (không hiển thị doanh thu)"
+        />
+        <div className="mt-6 h-[360px] w-full">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData}>
+              <CartesianGrid
+                stroke="rgba(255,255,255,0.05)"
+                strokeDasharray="3 3"
+                vertical={false}
+              />
+              <XAxis
+                dataKey="name"
+                tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <YAxis
+                tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 12 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "rgba(15,23,42,0.96)",
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  borderRadius: 12,
+                  color: "#fff",
+                }}
+                formatter={(value) => [`${formatNumber(Number(value ?? 0))} đơn`, "Đơn hàng"]}
+                labelFormatter={(label) => `Tháng ${String(label).replace("T", "")}`}
+              />
+              <Legend />
+              <Line
+                type="monotone"
+                dataKey="orders"
+                name="Đơn hàng"
+                stroke="#22c55e"
+                strokeWidth={3}
+                dot={false}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+      )}
     </div>
   );
 }

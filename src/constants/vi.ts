@@ -73,7 +73,31 @@ export function tCouponActive(isActive: boolean) {
 }
 
 export function tRole(role: string) {
-  return role === "ADMIN" ? "Quản trị viên" : "Khách hàng";
+  switch (role) {
+    case "OWNER":
+    case "ADMIN":
+      return "Chủ shop";
+    case "MANAGER":
+      return "Quản lý";
+    case "STAFF":
+      return "Nhân viên";
+    default:
+      return "Khách hàng";
+  }
+}
+
+export function staffRoleTone(role: string): "info" | "success" | "warning" | "neutral" {
+  switch (role) {
+    case "OWNER":
+    case "ADMIN":
+      return "info";
+    case "MANAGER":
+      return "success";
+    case "STAFF":
+      return "warning";
+    default:
+      return "neutral";
+  }
 }
 
 export function tVerified(verified: boolean) {
@@ -152,4 +176,42 @@ export const MONTH_SHORT_VI = [
 
 export function tMonthShort(index: number) {
   return MONTH_SHORT_VI[index] ?? `T${index + 1}`;
+}
+
+const TICKET_STATUS_VI: Record<string, string> = {
+  open: "Mới",
+  pending: "Chờ khách",
+  resolved: "Đã xử lý",
+  closed: "Đóng",
+};
+
+const TICKET_PRIORITY_VI: Record<string, string> = {
+  low: "Thấp",
+  normal: "Bình thường",
+  high: "Cao",
+};
+
+export function tTicketStatus(status: string) {
+  return TICKET_STATUS_VI[status] ?? status;
+}
+
+export function tTicketPriority(priority: string) {
+  return TICKET_PRIORITY_VI[priority] ?? priority;
+}
+
+export function ticketStatusTone(
+  status: string,
+): "success" | "warning" | "danger" | "neutral" | "info" {
+  if (status === "resolved") return "success";
+  if (status === "closed") return "neutral";
+  if (status === "pending") return "warning";
+  return "info";
+}
+
+export function ticketPriorityTone(
+  priority: string,
+): "success" | "warning" | "danger" | "neutral" | "info" {
+  if (priority === "high") return "danger";
+  if (priority === "low") return "neutral";
+  return "info";
 }

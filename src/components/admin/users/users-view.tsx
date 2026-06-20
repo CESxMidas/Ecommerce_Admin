@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { Edit2, Eye, Shield, Upload, UserCircle, Users } from "lucide-react";
+import { Edit2, Eye, Upload, UserCircle, Users } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import AdminError from "@/components/admin/admin-error";
@@ -18,7 +18,6 @@ import UserEditDialog from "@/components/admin/users/user-edit-dialog";
 import { Button } from "@/components/ui/button";
 import {
   tAuthProvider,
-  tRole,
   tUserStatus,
   tVerified,
   userStatusTone,
@@ -26,10 +25,9 @@ import {
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import { bulkSetUsersStatus, fetchAdminUsers } from "@/lib/services/admin-service";
 import { exportUsersToCsv } from "@/lib/utils/user-export";
-import type { AdminUser, UserRole } from "@/types/admin";
+import type { AdminUser } from "@/types/admin";
 import { formatDateTime } from "@/lib/utils/format";
 
-type RoleFilter = "all" | UserRole;
 type StatusFilter = "all" | AdminUser["status"];
 type VerifyFilter = "all" | "verified" | "unverified";
 type ProviderFilter = "all" | AdminUser["authProvider"];
@@ -39,7 +37,6 @@ export default function UsersView() {
   const users = data ?? [];
 
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [verifyFilter, setVerifyFilter] = useState<VerifyFilter>("all");
   const [providerFilter, setProviderFilter] = useState<ProviderFilter>("all");
@@ -59,7 +56,6 @@ export default function UsersView() {
         user.name.toLowerCase().includes(query) ||
         user.email.toLowerCase().includes(query);
 
-      const matchesRole = roleFilter === "all" || user.role === roleFilter;
       const matchesStatus = statusFilter === "all" || user.status === statusFilter;
       const matchesVerify =
         verifyFilter === "all" ||
@@ -69,13 +65,12 @@ export default function UsersView() {
 
       return (
         matchesSearch &&
-        matchesRole &&
         matchesStatus &&
         matchesVerify &&
         matchesProvider
       );
     });
-  }, [users, search, roleFilter, statusFilter, verifyFilter, providerFilter]);
+  }, [users, search, statusFilter, verifyFilter, providerFilter]);
 
   const pageItems = filtered.slice(page * pageSize, page * pageSize + pageSize);
   const pageUserIds = pageItems.map((user) => user.id);
@@ -84,7 +79,6 @@ export default function UsersView() {
 
   const activeFilterCount = [
     search.trim().length > 0,
-    roleFilter !== "all",
     statusFilter !== "all",
     verifyFilter !== "all",
     providerFilter !== "all",
@@ -92,7 +86,6 @@ export default function UsersView() {
 
   function clearFilters() {
     setSearch("");
-    setRoleFilter("all");
     setStatusFilter("all");
     setVerifyFilter("all");
     setProviderFilter("all");
@@ -183,19 +176,6 @@ export default function UsersView() {
         onClearFilters={clearFilters}
         filters={
           <>
-            <FilterSelect
-              label="Vai trò"
-              value={roleFilter}
-              onChange={(value) => {
-                setRoleFilter(value as RoleFilter);
-                setPage(0);
-              }}
-              options={[
-                { value: "all", label: "Tất cả vai trò" },
-                { value: "USER", label: "Khách hàng" },
-                { value: "ADMIN", label: "Quản trị viên" },
-              ]}
-            />
             <FilterSelect
               label="Trạng thái"
               value={statusFilter}
@@ -308,7 +288,6 @@ export default function UsersView() {
                     />
                   </th>
                   <th>Người dùng</th>
-                  <th>Vai trò</th>
                   <th>Trạng thái</th>
                   <th>Nguồn đăng nhập</th>
                   <th>Xác minh</th>
@@ -357,12 +336,6 @@ export default function UsersView() {
                     </td>
                     <td>
                       <StatusBadge
-                        label={tRole(user.role)}
-                        tone={user.role === "ADMIN" ? "info" : "neutral"}
-                      />
-                    </td>
-                    <td>
-                      <StatusBadge
                         label={tUserStatus(user.status)}
                         tone={userStatusTone(user.status)}
                       />
@@ -398,11 +371,7 @@ export default function UsersView() {
                           aria-label="Quản lý người dùng"
                           onClick={() => openEditDialog(user)}
                         >
-                          {user.role === "ADMIN" ? (
-                            <Shield className="h-4 w-4" />
-                          ) : (
-                            <Edit2 className="h-4 w-4" />
-                          )}
+                          <Edit2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </td>

@@ -7,6 +7,7 @@ import {
   REMEMBER_ME_MAX_AGE_SECONDS,
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/auth/constants";
+import { isStaffRole } from "@/lib/auth/permissions";
 import type { AuthUser } from "@/types/api";
 
 function getServerApiUrl() {
@@ -39,7 +40,7 @@ async function loginWithCredentials(email: string, password: string) {
     throw new Error(data?.message || "Đăng nhập thất bại");
   }
 
-  if (data.role !== "ADMIN") {
+  if (!isStaffRole(data.role)) {
     throw new Error(ADMIN_ACCESS_REQUIRED);
   }
 
