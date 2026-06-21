@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useMemo, useState } from "react";
@@ -15,16 +16,28 @@ import {
   Tag,
   Users,
 } from "lucide-react";
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+
+const DashboardRevenueChart = dynamic(
+  () =>
+    import("@/components/admin/dashboard/dashboard-charts").then(
+      (mod) => mod.DashboardRevenueChart,
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="mt-6 h-[360px] animate-pulse rounded-xl bg-white/5" />,
+  },
+);
+
+const DashboardOrdersChart = dynamic(
+  () =>
+    import("@/components/admin/dashboard/dashboard-charts").then(
+      (mod) => mod.DashboardOrdersChart,
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="mt-6 h-[360px] animate-pulse rounded-xl bg-white/5" />,
+  },
+);
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import AdminError from "@/components/admin/admin-error";
@@ -491,62 +504,7 @@ export default function DashboardView() {
           title="Phân tích kinh doanh"
           description="Doanh thu từ đơn đã thanh toán và số đơn theo tháng"
         />
-        <div className="mt-6 h-[360px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid
-                stroke="rgba(255,255,255,0.05)"
-                strokeDasharray="3 3"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="name"
-                tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "rgba(15,23,42,0.96)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 12,
-                  color: "#fff",
-                }}
-                formatter={(value, name) => {
-                  const numeric = Number(value ?? 0);
-                  const label = String(name ?? "");
-                  if (label === "Doanh thu") {
-                    return [formatCurrency(numeric), label];
-                  }
-                  return [`${formatNumber(numeric)} đơn`, label];
-                }}
-                labelFormatter={(label) => `Tháng ${String(label).replace("T", "")}`}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="revenue"
-                name="Doanh thu"
-                stroke="#3b82f6"
-                strokeWidth={3}
-                dot={false}
-              />
-              <Line
-                type="monotone"
-                dataKey="orders"
-                name="Đơn hàng"
-                stroke="#22c55e"
-                strokeWidth={3}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <DashboardRevenueChart data={chartData} />
       </section>
       ) : (
       <section className="admin-card">
@@ -554,47 +512,7 @@ export default function DashboardView() {
           title="Hoạt động đơn hàng"
           description="Số đơn theo tháng — dữ liệu vận hành (không hiển thị doanh thu)"
         />
-        <div className="mt-6 h-[360px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={chartData}>
-              <CartesianGrid
-                stroke="rgba(255,255,255,0.05)"
-                strokeDasharray="3 3"
-                vertical={false}
-              />
-              <XAxis
-                dataKey="name"
-                tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <YAxis
-                tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 12 }}
-                axisLine={false}
-                tickLine={false}
-              />
-              <Tooltip
-                contentStyle={{
-                  background: "rgba(15,23,42,0.96)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  borderRadius: 12,
-                  color: "#fff",
-                }}
-                formatter={(value) => [`${formatNumber(Number(value ?? 0))} đơn`, "Đơn hàng"]}
-                labelFormatter={(label) => `Tháng ${String(label).replace("T", "")}`}
-              />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="orders"
-                name="Đơn hàng"
-                stroke="#22c55e"
-                strokeWidth={3}
-                dot={false}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
+        <DashboardOrdersChart data={chartData} />
       </section>
       )}
     </div>

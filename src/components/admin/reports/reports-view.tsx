@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import {
   BarChart3,
@@ -10,16 +11,17 @@ import {
   TrendingDown,
   TrendingUp,
 } from "lucide-react";
-import {
-  CartesianGrid,
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+
+const ReportsRevenueChart = dynamic(
+  () =>
+    import("@/components/admin/reports/reports-charts").then(
+      (mod) => mod.ReportsRevenueChart,
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="mt-6 h-[360px] animate-pulse rounded-xl bg-white/5" />,
+  },
+);
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import AdminError from "@/components/admin/admin-error";
@@ -202,61 +204,7 @@ export default function ReportsView() {
                 description="Không có đơn đã thanh toán trong khoảng thời gian này."
               />
             ) : (
-              <div className="mt-6 h-[360px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={chartData}>
-                    <CartesianGrid
-                      stroke="rgba(255,255,255,0.05)"
-                      strokeDasharray="3 3"
-                      vertical={false}
-                    />
-                    <XAxis
-                      dataKey="name"
-                      tick={{ fill: "rgba(255,255,255,0.6)", fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <YAxis
-                      tick={{ fill: "rgba(255,255,255,0.5)", fontSize: 12 }}
-                      axisLine={false}
-                      tickLine={false}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        background: "rgba(15,23,42,0.96)",
-                        border: "1px solid rgba(255,255,255,0.08)",
-                        borderRadius: 12,
-                        color: "#fff",
-                      }}
-                      formatter={(value, name) => {
-                        const numeric = Number(value ?? 0);
-                        const label = String(name ?? "");
-                        if (label === "Doanh thu") {
-                          return [formatCurrency(numeric), label];
-                        }
-                        return [`${formatNumber(numeric)} đơn`, label];
-                      }}
-                    />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="revenue"
-                      name="Doanh thu"
-                      stroke="#3b82f6"
-                      strokeWidth={3}
-                      dot={false}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="orders"
-                      name="Đơn hàng"
-                      stroke="#22c55e"
-                      strokeWidth={3}
-                      dot={false}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
+              <ReportsRevenueChart data={chartData} />
             )}
           </section>
 

@@ -24,10 +24,55 @@
     --input: 217 33% 17%;
     --ring: 217 91% 60%;
     --radius: 0.75rem;
+    --admin-scrollbar-size: 8px;
+    --admin-scrollbar-thumb: rgba(59, 130, 246, 0.5);
+    --admin-scrollbar-thumb-hover: rgba(96, 165, 250, 0.75);
+    --admin-scrollbar-track: rgba(255, 255, 255, 0.04);
+  }
+
+  html {
+    scrollbar-gutter: stable;
   }
 
   * {
     border-color: hsl(var(--border));
+    scrollbar-width: thin;
+    scrollbar-color: var(--admin-scrollbar-thumb) var(--admin-scrollbar-track);
+  }
+
+  *::-webkit-scrollbar {
+    width: var(--admin-scrollbar-size);
+    height: var(--admin-scrollbar-size);
+  }
+
+  *::-webkit-scrollbar-track {
+    margin: 3px;
+    background: var(--admin-scrollbar-track);
+    border-radius: 999px;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      rgba(96, 165, 250, 0.6),
+      var(--admin-scrollbar-thumb)
+    );
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(147, 197, 253, 0.85),
+      var(--admin-scrollbar-thumb-hover)
+    );
+    background-clip: padding-box;
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: transparent;
   }
 
   body {
@@ -173,5 +218,56 @@
 
   .auth-login-preview-stat {
     @apply flex flex-col gap-0.5 rounded-lg border border-keyshop-line bg-keyshop-bg/60 p-2.5;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .admin-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--admin-scrollbar-thumb) var(--admin-scrollbar-track);
+  }
+
+  .admin-scrollbar::-webkit-scrollbar {
+    width: var(--admin-scrollbar-size);
+    height: var(--admin-scrollbar-size);
+  }
+
+  .admin-scrollbar::-webkit-scrollbar-track {
+    margin: 3px;
+    background: var(--admin-scrollbar-track);
+    border-radius: 999px;
+  }
+
+  .admin-scrollbar::-webkit-scrollbar-thumb {
+    background: linear-gradient(
+      180deg,
+      rgba(96, 165, 250, 0.6),
+      var(--admin-scrollbar-thumb)
+    );
+    border: 2px solid transparent;
+    border-radius: 999px;
+    background-clip: padding-box;
+  }
+
+  .admin-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(
+      180deg,
+      rgba(147, 197, 253, 0.85),
+      var(--admin-scrollbar-thumb-hover)
+    );
+    background-clip: padding-box;
+  }
+
+  .admin-scrollbar::-webkit-scrollbar-corner {
+    background: transparent;
   }
 }

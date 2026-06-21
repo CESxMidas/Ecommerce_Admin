@@ -45,7 +45,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen((value) => !value)}
         />
-        <main className="p-4 md:p-6 lg:p-8">{children}</main>
+        <main className="admin-scrollbar min-h-[calc(100vh-4rem)] p-4 md:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

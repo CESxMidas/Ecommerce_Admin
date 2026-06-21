@@ -76,7 +76,7 @@ export default function AdminGlobalSearch() {
           {results.length === 0 ? (
             <p className="px-4 py-3 text-sm text-keyshop-muted">Không tìm thấy kết quả</p>
           ) : (
-            <ul className="max-h-80 overflow-y-auto py-1">
+            <ul className="admin-scrollbar max-h-80 overflow-y-auto py-1">
               {results.map((result) => (
                 <li key={`${result.type}-${result.id}`}>
                   <Link

@@ -1,26 +1,21 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 
-import { API_BASE_URL, API_ENDPOINTS } from "@/constants/apiEndpoints";
+import { API_ENDPOINTS } from "@/constants/apiEndpoints";
 import {
   ADMIN_ACCESS_REQUIRED,
   REMEMBER_ME_MAX_AGE_SECONDS,
   SESSION_MAX_AGE_SECONDS,
 } from "@/lib/auth/constants";
+import { getServerApiUrl } from "@/lib/auth/server-api";
+import { authCookies } from "@/lib/auth/cookies";
 import { isStaffRole } from "@/lib/auth/permissions";
 import type { AuthUser } from "@/types/api";
-
-function getServerApiUrl() {
-  return process.env.API_INTERNAL_URL
-    ? `${process.env.API_INTERNAL_URL}/api`
-    : API_BASE_URL.startsWith("http")
-      ? API_BASE_URL
-      : "http://localhost:888/api";
-}
 
 type LoginErrorBody = AuthUser & {
   message?: string;
   code?: string;
+  refreshToken?: string;
 };
 
 async function loginWithCredentials(email: string, password: string) {
@@ -73,6 +68,7 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             image: user.avatar || null,
             accessToken: user.token,
+            refreshToken: user.refreshToken,
             role: user.role,
             rememberMe: credentials.rememberMe === "true",
           };
@@ -95,9 +91,10 @@ export const authOptions: NextAuthOptions = {
     error: "/auth/login",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.accessToken = (user as { accessToken?: string }).accessToken;
+        token.refreshToken = (user as { refreshToken?: string }).refreshToken;
         token.role = (user as { role?: string }).role;
         token.userId = user.id;
 
@@ -113,6 +110,21 @@ export const authOptions: NextAuthOptions = {
         token.exp = Math.floor(Date.now() / 1000) + sessionLength;
       }
 
+      if (trigger === "update" && session) {
+        const update = session as {
+          accessToken?: string;
+          refreshToken?: string;
+        };
+
+        if (update.accessToken) {
+          token.accessToken = update.accessToken;
+        }
+
+        if (update.refreshToken) {
+          token.refreshToken = update.refreshToken;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
@@ -125,5 +137,6 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  cookies: authCookies,
   secret: process.env.NEXTAUTH_SECRET,
 };

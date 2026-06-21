@@ -8,6 +8,7 @@ export interface AuthUser {
   verify_email: boolean;
   role: UserRole;
   token: string;
+  refreshToken?: string;
 }
 
 export interface AdminStats {

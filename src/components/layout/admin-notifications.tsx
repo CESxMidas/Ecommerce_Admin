@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 
@@ -9,12 +10,17 @@ import { fetchAdminNotifications } from "@/lib/services/admin-service";
 import type { AdminAlert } from "@/types/admin";
 
 export default function AdminNotifications() {
+  const { status } = useSession();
   const [open, setOpen] = useState(false);
   const [alerts, setAlerts] = useState<AdminAlert[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (status !== "authenticated") {
+      return;
+    }
+
     let cancelled = false;
 
     fetchAdminNotifications()
@@ -34,7 +40,7 @@ export default function AdminNotifications() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [status]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -75,7 +81,7 @@ export default function AdminNotifications() {
           {alerts.length === 0 ? (
             <p className="px-4 py-6 text-sm text-keyshop-muted">Mọi thứ đang ổn định.</p>
           ) : (
-            <ul className="max-h-80 overflow-y-auto py-1">
+            <ul className="admin-scrollbar max-h-80 overflow-y-auto py-1">
               {alerts.map((alert) => (
                 <li key={alert.id}>
                   <Link

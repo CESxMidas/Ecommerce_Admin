@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 import { canAccessRoute, isStaffRole } from "@/lib/auth/permissions";
+import { sessionCookieName } from "@/lib/auth/cookies";
 
 const protectedPrefixes = [
   "/dashboard",
@@ -24,10 +25,7 @@ async function readSessionToken(request: NextRequest) {
   return getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
-    cookieName:
-      process.env.NODE_ENV === "production"
-        ? "__Secure-next-auth.session-token"
-        : "next-auth.session-token",
+    cookieName: sessionCookieName,
   });
 }
 

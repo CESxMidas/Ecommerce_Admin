@@ -1,6 +1,7 @@
 import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from "axios";
 
-import { API_BASE_URL, API_ENDPOINTS } from "@/constants/apiEndpoints";
+import { API_BASE_URL } from "@/constants/apiEndpoints";
+import { SESSION_REFRESH_PATH } from "@/lib/auth/session-refresh";
 
 export type ApiRequestConfig = AxiosRequestConfig & { skipAuth?: boolean };
 
@@ -19,6 +20,13 @@ const apiClient = axios.create({
 
 let accessToken: string | null = null;
 
+type SessionUpdater = (data: {
+  accessToken: string;
+  refreshToken?: string;
+}) => Promise<unknown>;
+
+let sessionUpdater: SessionUpdater | null = null;
+
 export function setAccessToken(token: string | null) {
   accessToken = token;
 }
@@ -29,6 +37,10 @@ export function getAccessToken() {
 
 export function clearAccessToken() {
   accessToken = null;
+}
+
+export function setSessionUpdater(updater: SessionUpdater | null) {
+  sessionUpdater = updater;
 }
 
 function getCookie(name: string) {
@@ -57,19 +69,21 @@ apiClient.interceptors.request.use((config: InternalApiRequestConfig) => {
 let refreshPromise: Promise<string> | null = null;
 
 async function refreshAccessToken() {
-  const { data } = await axios.post(
-    `${API_BASE_URL}${API_ENDPOINTS.auth.refresh}`,
-    {},
-    {
-      withCredentials: true,
-      headers: {
-        "X-CSRF-Token": decodeURIComponent(getCookie("csrfToken") || ""),
-      },
-    },
-  );
+  const { data } = await axios.post<{
+    token: string;
+    refreshToken?: string;
+  }>(SESSION_REFRESH_PATH, {}, { withCredentials: true });
 
   setAccessToken(data.token);
-  return data.token as string;
+
+  if (sessionUpdater) {
+    await sessionUpdater({
+      accessToken: data.token,
+      refreshToken: data.refreshToken,
+    });
+  }
+
+  return data.token;
 }
 
 apiClient.interceptors.response.use(
@@ -82,7 +96,8 @@ apiClient.interceptors.response.use(
       original &&
       !original._retry &&
       !original.url?.includes("/auth/login") &&
-      !original.url?.includes("/auth/refresh")
+      !original.url?.includes("/auth/refresh") &&
+      !original.url?.includes(SESSION_REFRESH_PATH)
     ) {
       original._retry = true;
 

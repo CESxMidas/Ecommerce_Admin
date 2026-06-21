@@ -78,7 +78,7 @@ export default function AdminSidebar({ open, onClose }: AdminSidebarProps) {
         )}
       </div>
 
-      <nav className="flex-1 overflow-y-auto p-3">
+      <nav className="admin-scrollbar flex-1 overflow-y-auto p-3">
         <ul className="space-y-1">
           {visibleNavItems.map((item) => {
             const Icon = item.icon;
