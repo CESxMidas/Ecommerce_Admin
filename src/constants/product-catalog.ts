@@ -111,7 +111,9 @@ export function resolveProductTypesFromCatalog(
   };
 }
 
-export function getRootCategories(categories: { categoryId: number; parentId?: number | null; sortOrder?: number }[]) {
+export function getRootCategories<
+  T extends { categoryId: number; parentId?: number | null; sortOrder?: number },
+>(categories: T[]): T[] {
   return categories
     .filter((category) => category.parentId == null)
     .sort((left, right) => (left.sortOrder ?? 0) - (right.sortOrder ?? 0));
