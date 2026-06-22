@@ -311,7 +311,13 @@ export default function BannersView() {
         </>
       )}
 
-      <BannerFormDialog open={dialogOpen} banner={editingBanner} onClose={closeDialog} onSaved={refetch} />
+      <BannerFormDialog
+        open={dialogOpen}
+        banner={editingBanner}
+        existingBanners={banners}
+        onClose={closeDialog}
+        onSaved={refetch}
+      />
     </div>
   );
 }

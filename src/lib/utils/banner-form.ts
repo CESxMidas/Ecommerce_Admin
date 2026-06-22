@@ -1,4 +1,15 @@
-import type { BannerPlacement } from "@/types/admin";
+import type { AdminBanner, BannerPlacement } from "@/types/admin";
+
+export function nextBannerSortOrder(
+  banners: AdminBanner[],
+  placement: BannerPlacement,
+): number {
+  const max = banners
+    .filter((banner) => banner.placement === placement)
+    .reduce((highest, banner) => Math.max(highest, banner.sortOrder ?? 0), -1);
+
+  return max + 1;
+}
 
 export type BannerFormValidationInput = {
   title: string;
