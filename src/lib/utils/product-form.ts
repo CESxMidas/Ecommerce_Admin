@@ -26,6 +26,14 @@ export function isPoolProductType(productType: ProductType, deliveryType: Delive
   );
 }
 
+export function isAccountPoolProductType(productType: ProductType, deliveryType: DeliveryType) {
+  return productType === "account" && deliveryType === "account_credentials";
+}
+
+export function usesManagedPool(productType: ProductType, deliveryType: DeliveryType) {
+  return isPoolProductType(productType, deliveryType) || isAccountPoolProductType(productType, deliveryType);
+}
+
 export function computeStockBarMax(stock: number) {
   if (stock <= 0) return 100;
   return Math.max(100, Math.ceil(stock * 1.25));
@@ -146,4 +154,15 @@ export function parseKeyImportFileContent(content: string) {
   }
 
   return keys;
+}
+
+export function parseAccountImportText(text: string) {
+  return text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
+
+export function parseAccountImportFileContent(content: string) {
+  return parseAccountImportText(content);
 }

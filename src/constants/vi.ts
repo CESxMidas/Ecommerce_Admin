@@ -19,9 +19,9 @@ export const PAYMENT_STATUS_VI: Record<string, string> = {
 };
 
 export const PRODUCT_TYPE_VI: Record<string, string> = {
-  license_key: "Mã license",
+  license_key: "Key bản quyền",
   redeem_code: "Mã nạp",
-  account: "Tài khoản",
+  account: "Tài khoản Pro",
   manual_service: "Dịch vụ thủ công",
   hardware: "Phần cứng",
 };

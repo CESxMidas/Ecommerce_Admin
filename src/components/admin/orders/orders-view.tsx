@@ -178,7 +178,7 @@ export default function OrdersView() {
                 onClick={() => setViewMode("kanban")}
               >
                 <LayoutGrid className="h-4 w-4" />
-                Kanban
+                Cột
               </Button>
             </div>
             <Button type="button" variant="outline" onClick={handleExport}>

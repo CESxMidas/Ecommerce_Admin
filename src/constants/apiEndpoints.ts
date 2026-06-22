@@ -40,6 +40,13 @@ export const API_ENDPOINTS = {
       `/admin/products/${productId}/keys/import`,
     revokeProductKey: (productId: string, keyId: string) =>
       `/admin/products/${productId}/keys/${keyId}`,
+    productAccountStats: (productId: string) =>
+      `/admin/products/${productId}/accounts/stats`,
+    productAccounts: (productId: string) => `/admin/products/${productId}/accounts`,
+    importProductAccounts: (productId: string) =>
+      `/admin/products/${productId}/accounts/import`,
+    revokeProductAccount: (productId: string, accountId: string) =>
+      `/admin/products/${productId}/accounts/${accountId}`,
     categories: "/admin/categories",
     users: "/admin/users",
     staff: "/admin/staff",

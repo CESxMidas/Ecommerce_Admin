@@ -564,3 +564,61 @@ export async function revokeProductKey(productId: string, keyId: string) {
   );
   return data as { message: string; key: string };
 }
+
+export type AccountPoolStats = KeyPoolStats;
+
+export type AccountPoolEntry = {
+  _id: string;
+  username: string;
+  password: string;
+  note?: string;
+  status: string;
+  orderId?: string | null;
+  soldAt?: string | null;
+  createdAt: string;
+};
+
+export async function fetchProductAccountStats(
+  productId: string,
+): Promise<AccountPoolStats> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.productAccountStats(productId));
+  return data as AccountPoolStats;
+}
+
+export async function fetchProductAccounts(
+  productId: string,
+  params?: { status?: string; page?: number; limit?: number },
+): Promise<{
+  items: AccountPoolEntry[];
+  total: number;
+  page: number;
+  totalPages: number;
+}> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.productAccounts(productId), {
+    params,
+  });
+  return data as {
+    items: AccountPoolEntry[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+}
+
+export async function importProductAccounts(
+  productId: string,
+  payload: { accounts?: string[]; text?: string },
+): Promise<{ imported: number; skippedDuplicates: number; available: number }> {
+  const { data } = await apiClient.post(
+    API_ENDPOINTS.admin.importProductAccounts(productId),
+    payload,
+  );
+  return data as { imported: number; skippedDuplicates: number; available: number };
+}
+
+export async function revokeProductAccount(productId: string, accountId: string) {
+  const { data } = await apiClient.delete(
+    API_ENDPOINTS.admin.revokeProductAccount(productId, accountId),
+  );
+  return data as { message: string; username: string };
+}

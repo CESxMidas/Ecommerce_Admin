@@ -14,6 +14,7 @@ import {
   Star,
   Trash2,
   Upload,
+  UserRound,
 } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
@@ -32,6 +33,12 @@ import {
   tDeliveryType,
   tProductType,
 } from "@/constants/vi";
+import {
+  getCatalogLabel,
+  matchesCatalogFilter,
+  PRODUCT_CATALOG_OPTIONS,
+  type ProductCatalogKind,
+} from "@/constants/product-catalog";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import {
   bulkSetProductsActive,
@@ -40,19 +47,10 @@ import {
   fetchProducts,
 } from "@/lib/services/admin-service";
 import { exportProductsToCsv } from "@/lib/utils/product-export";
-import { computeStockBarMax, isPoolProductType } from "@/lib/utils/product-form";
-import type { ProductType } from "@/types/admin";
+import { computeStockBarMax, isAccountPoolProductType, isPoolProductType } from "@/lib/utils/product-form";
 
 const STOREFRONT_URL =
   process.env.NEXT_PUBLIC_STOREFRONT_URL || "http://localhost:3000";
-
-const productTypeOptions: ProductType[] = [
-  "license_key",
-  "redeem_code",
-  "account",
-  "manual_service",
-  "hardware",
-];
 
 export default function ProductsListView() {
   const router = useRouter();
@@ -62,7 +60,7 @@ export default function ProductsListView() {
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
-  const [typeFilter, setTypeFilter] = useState<"all" | ProductType>("all");
+  const [typeFilter, setTypeFilter] = useState<"all" | ProductCatalogKind>("all");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [page, setPage] = useState(0);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -84,8 +82,7 @@ export default function ProductsListView() {
         statusFilter === "all" ||
         (statusFilter === "active" ? product.isActive : !product.isActive);
 
-      const matchesType =
-        typeFilter === "all" || product.productType === typeFilter;
+      const matchesType = matchesCatalogFilter(product.productType, typeFilter);
 
       const matchesCategory =
         categoryFilter === "all" ||
@@ -243,9 +240,9 @@ export default function ProductsListView() {
               }}
               options={[
                 { value: "all", label: "Tất cả loại" },
-                ...productTypeOptions.map((type) => ({
-                  value: type,
-                  label: tProductType(type),
+                ...PRODUCT_CATALOG_OPTIONS.map((option) => ({
+                  value: option.value,
+                  label: option.label,
                 })),
               ]}
             />
@@ -351,7 +348,11 @@ export default function ProductsListView() {
               </thead>
               <tbody>
                 {pageItems.map((product) => {
-                  const poolProduct = isPoolProductType(
+                  const keyPoolProduct = isPoolProductType(
+                    product.productType,
+                    product.deliveryType,
+                  );
+                  const accountPoolProduct = isAccountPoolProductType(
                     product.productType,
                     product.deliveryType,
                   );
@@ -393,10 +394,13 @@ export default function ProductsListView() {
                       <td>
                         <div className="text-xs">
                           <p className="text-white">
-                            {tProductType(product.productType)}
+                            {getCatalogLabel(product.productType)}
                           </p>
                           <p className="text-keyshop-muted">
-                            {tDeliveryType(product.deliveryType)}
+                            {product.productType === "license_key" ||
+                            product.productType === "redeem_code"
+                              ? tProductType(product.productType)
+                              : tDeliveryType(product.deliveryType)}
                           </p>
                         </div>
                       </td>
@@ -404,13 +408,17 @@ export default function ProductsListView() {
                         <div className="w-28">
                           <StockBar value={product.stock} max={stockMax} />
                           <p className="mt-1 text-xs text-keyshop-muted">
-                            {poolProduct
+                            {keyPoolProduct
                               ? product.stock === 0
                                 ? "Hết key"
                                 : `Còn ${product.stock} key`
-                              : product.stock === 0
-                                ? "Hết hàng"
-                                : `Còn ${product.stock}`}
+                              : accountPoolProduct
+                                ? product.stock === 0
+                                  ? "Hết tài khoản"
+                                  : `Còn ${product.stock} tài khoản`
+                                : product.stock === 0
+                                  ? "Hết hàng"
+                                  : `Còn ${product.stock}`}
                           </p>
                         </div>
                       </td>
@@ -440,7 +448,7 @@ export default function ProductsListView() {
                       </td>
                       <td>
                         <div className="flex items-center gap-1">
-                          {poolProduct ? (
+                          {keyPoolProduct ? (
                             <Button
                               type="button"
                               variant="ghost"
@@ -451,6 +459,20 @@ export default function ProductsListView() {
                             >
                               <Link href={`/products/${product.productId}/keys`}>
                                 <KeyRound className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          ) : null}
+                          {accountPoolProduct ? (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8"
+                              aria-label="Kho tài khoản"
+                              asChild
+                            >
+                              <Link href={`/products/${product.productId}/accounts`}>
+                                <UserRound className="h-4 w-4" />
                               </Link>
                             </Button>
                           ) : null}

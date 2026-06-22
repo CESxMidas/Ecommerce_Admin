@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { LifeBuoy, MessageSquare } from "lucide-react";
+import { useSearchParams } from "next/navigation";
+import { LifeBuoy, MessageSquare, UserCheck } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import AdminError from "@/components/admin/admin-error";
@@ -24,12 +25,24 @@ import { fetchTickets } from "@/lib/services/admin-service";
 import type { AdminTicket } from "@/types/admin";
 import { formatDateTime } from "@/lib/utils/format";
 
-type StatusFilter = "all" | AdminTicket["status"];
+type QueueTab = "waiting_customer" | "responded";
 type PriorityFilter = "all" | AdminTicket["priority"];
 
+const QUEUE_STATUS: Record<QueueTab, AdminTicket["status"]> = {
+  waiting_customer: "open",
+  responded: "pending",
+};
+
+function parseQueueTab(value: string | null): QueueTab {
+  return value === "responded" ? "responded" : "waiting_customer";
+}
+
 export default function TicketsView() {
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
+  const [queueTab, setQueueTab] = useState<QueueTab>(() =>
+    parseQueueTab(searchParams.get("queue")),
+  );
   const [priorityFilter, setPriorityFilter] = useState<PriorityFilter>("all");
   const [page, setPage] = useState(0);
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
@@ -38,45 +51,55 @@ export default function TicketsView() {
   const { data, loading, error, refetch } = useAdminFetch(
     () =>
       fetchTickets({
-        status: statusFilter === "all" ? undefined : statusFilter,
         priority: priorityFilter === "all" ? undefined : priorityFilter,
         q: search.trim() || undefined,
       }),
-    [statusFilter, priorityFilter, search],
+    [priorityFilter, search],
   );
 
   const tickets = data ?? [];
 
+  const waitingCustomerCount = tickets.filter((ticket) => ticket.status === "open").length;
+  const respondedCount = tickets.filter((ticket) => ticket.status === "pending").length;
+
+  const queueTickets = useMemo(
+    () => tickets.filter((ticket) => ticket.status === QUEUE_STATUS[queueTab]),
+    [tickets, queueTab],
+  );
+
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return tickets;
+    if (!query) return queueTickets;
 
-    return tickets.filter(
+    return queueTickets.filter(
       (ticket) =>
         ticket.subject.toLowerCase().includes(query) ||
         ticket.userName.toLowerCase().includes(query) ||
         ticket.userEmail.toLowerCase().includes(query) ||
         ticket.orderId.toLowerCase().includes(query),
     );
-  }, [tickets, search]);
+  }, [queueTickets, search]);
 
   const pageItems = filtered.slice(page * pageSize, page * pageSize + pageSize);
 
-  const activeFilterCount = [
-    search.trim().length > 0,
-    statusFilter !== "all",
-    priorityFilter !== "all",
-  ].filter(Boolean).length;
-
-  const openCount = tickets.filter((ticket) =>
-    ["open", "pending"].includes(ticket.status),
+  const activeFilterCount = [search.trim().length > 0, priorityFilter !== "all"].filter(
+    Boolean,
   ).length;
 
   function clearFilters() {
     setSearch("");
-    setStatusFilter("all");
     setPriorityFilter("all");
     setPage(0);
+  }
+
+  function setQueue(tab: QueueTab) {
+    setQueueTab(tab);
+    setPage(0);
+  }
+
+  function handleTicketUpdated() {
+    refetch();
+    window.dispatchEvent(new CustomEvent("admin-notifications-refresh"));
   }
 
   return (
@@ -86,16 +109,77 @@ export default function TicketsView() {
         description="Xem và trả lời ticket từ khách hàng trên storefront"
       />
 
-      <div className="admin-card p-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-keyshop-blue/15 text-keyshop-blue">
-            <MessageSquare className="h-5 w-5" />
+      <div className="grid gap-4 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={() => setQueue("waiting_customer")}
+          className={`admin-card p-4 text-left transition-colors ${
+            queueTab === "waiting_customer"
+              ? "ring-2 ring-keyshop-blue/60"
+              : "hover:bg-white/[0.02]"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-keyshop-blue/15 text-keyshop-blue">
+              <MessageSquare className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm text-keyshop-muted">Chờ khách</p>
+              <p className="text-xl font-semibold text-white">{waitingCustomerCount}</p>
+              <p className="mt-0.5 text-xs text-keyshop-muted">Ticket mới, cần shop phản hồi</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-keyshop-muted">Ticket đang mở</p>
-            <p className="text-xl font-semibold text-white">{openCount}</p>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setQueue("responded")}
+          className={`admin-card p-4 text-left transition-colors ${
+            queueTab === "responded"
+              ? "ring-2 ring-keyshop-blue/60"
+              : "hover:bg-white/[0.02]"
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400">
+              <UserCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <p className="text-sm text-keyshop-muted">Đã phản hồi</p>
+              <p className="text-xl font-semibold text-white">{respondedCount}</p>
+              <p className="mt-0.5 text-xs text-keyshop-muted">Shop đã trả lời, chờ khách phản hồi</p>
+            </div>
           </div>
-        </div>
+        </button>
+      </div>
+
+      <div className="flex rounded-xl border border-keyshop-line p-1 w-fit">
+        <Button
+          type="button"
+          size="sm"
+          variant={queueTab === "waiting_customer" ? "default" : "ghost"}
+          onClick={() => setQueue("waiting_customer")}
+        >
+          Chờ khách
+          {waitingCustomerCount > 0 ? (
+            <span className="ml-1.5 rounded-full bg-white/20 px-1.5 text-[11px]">
+              {waitingCustomerCount}
+            </span>
+          ) : null}
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={queueTab === "responded" ? "default" : "ghost"}
+          onClick={() => setQueue("responded")}
+        >
+          Đã phản hồi
+          {respondedCount > 0 ? (
+            <span className="ml-1.5 rounded-full bg-white/20 px-1.5 text-[11px]">
+              {respondedCount}
+            </span>
+          ) : null}
+        </Button>
       </div>
 
       <SearchToolbar
@@ -106,41 +190,24 @@ export default function TicketsView() {
           setPage(0);
         }}
         resultCount={filtered.length}
-        totalCount={tickets.length}
+        totalCount={queueTickets.length}
         activeFilterCount={activeFilterCount}
         onClearFilters={clearFilters}
         filters={
-          <>
-            <FilterSelect
-              label="Trạng thái"
-              value={statusFilter}
-              onChange={(value) => {
-                setStatusFilter(value as StatusFilter);
-                setPage(0);
-              }}
-              options={[
-                { value: "all", label: "Tất cả trạng thái" },
-                { value: "open", label: "Mới" },
-                { value: "pending", label: "Chờ khách" },
-                { value: "resolved", label: "Đã xử lý" },
-                { value: "closed", label: "Đóng" },
-              ]}
-            />
-            <FilterSelect
-              label="Ưu tiên"
-              value={priorityFilter}
-              onChange={(value) => {
-                setPriorityFilter(value as PriorityFilter);
-                setPage(0);
-              }}
-              options={[
-                { value: "all", label: "Tất cả mức ưu tiên" },
-                { value: "high", label: "Cao" },
-                { value: "normal", label: "Bình thường" },
-                { value: "low", label: "Thấp" },
-              ]}
-            />
-          </>
+          <FilterSelect
+            label="Ưu tiên"
+            value={priorityFilter}
+            onChange={(value) => {
+              setPriorityFilter(value as PriorityFilter);
+              setPage(0);
+            }}
+            options={[
+              { value: "all", label: "Tất cả mức ưu tiên" },
+              { value: "high", label: "Cao" },
+              { value: "normal", label: "Bình thường" },
+              { value: "low", label: "Thấp" },
+            ]}
+          />
         }
       />
 
@@ -157,10 +224,18 @@ export default function TicketsView() {
       ) : filtered.length === 0 ? (
         <EmptyState
           icon={LifeBuoy}
-          title="Không tìm thấy ticket"
-          description="Thử đổi từ khóa hoặc bộ lọc."
-          actionLabel="Xóa bộ lọc"
-          onAction={clearFilters}
+          title={
+            queueTab === "waiting_customer"
+              ? "Không có ticket chờ phản hồi"
+              : "Không có ticket đã phản hồi"
+          }
+          description={
+            queueTab === "waiting_customer"
+              ? "Mọi ticket mới sẽ hiển thị ở đây."
+              : "Ticket shop đã trả lời sẽ hiển thị ở đây."
+          }
+          actionLabel={activeFilterCount > 0 ? "Xóa bộ lọc" : undefined}
+          onAction={activeFilterCount > 0 ? clearFilters : undefined}
         />
       ) : (
         <section className="admin-card overflow-hidden p-0">
@@ -234,7 +309,7 @@ export default function TicketsView() {
         open={Boolean(selectedTicketId)}
         ticketId={selectedTicketId}
         onClose={() => setSelectedTicketId(null)}
-        onUpdated={refetch}
+        onUpdated={handleTicketUpdated}
       />
     </div>
   );

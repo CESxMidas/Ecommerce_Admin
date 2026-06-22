@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ImagePlus, KeyRound, Loader2, Save, Trash2, X } from "lucide-react";
+import { ArrowLeft, ImagePlus, KeyRound, Loader2, Save, Trash2, UserRound, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -11,7 +11,17 @@ import AdminError from "@/components/admin/admin-error";
 import AdminLoading from "@/components/admin/admin-loading";
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import ProductReviewsPanel from "@/components/admin/products/product-reviews-panel";
-import { tDeliveryType, tProductType } from "@/constants/vi";
+import { tDeliveryType } from "@/constants/vi";
+import {
+  DIGITAL_KEY_VARIANTS,
+  getCatalogKindFromProduct,
+  getCatalogAllowedCategoryIds,
+  getDefaultCategoryIdForCatalog,
+  getRootCategories,
+  PRODUCT_CATALOG_OPTIONS,
+  resolveProductTypesFromCatalog,
+  type ProductCatalogKind,
+} from "@/constants/product-catalog";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import {
   createProduct,
@@ -24,7 +34,9 @@ import {
 import {
   defaultDeliveryType,
   getDeliveryTypeMismatchMessage,
+  isAccountPoolProductType,
   isPoolProductType,
+  usesManagedPool,
   slugify,
   validateProductForm,
 } from "@/lib/utils/product-form";
@@ -32,21 +44,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { DeliveryType, ProductType } from "@/types/admin";
-
-const productTypes: ProductType[] = [
-  "license_key",
-  "redeem_code",
-  "account",
-  "manual_service",
-  "hardware",
-];
-
-const deliveryTypes: DeliveryType[] = [
-  "instant_key",
-  "account_credentials",
-  "manual_delivery",
-  "physical",
-];
 
 type ProductFormState = {
   name: string;
@@ -56,6 +53,8 @@ type ProductFormState = {
   price: string;
   discountPrice: string;
   stock: string;
+  catalogKind: ProductCatalogKind;
+  keyVariant: "license_key" | "redeem_code";
   productType: ProductType;
   deliveryType: DeliveryType;
   keyPrefix: string;
@@ -76,6 +75,8 @@ const emptyForm: ProductFormState = {
   price: "",
   discountPrice: "",
   stock: "0",
+  catalogKind: "digital_key",
+  keyVariant: "license_key",
   productType: "license_key",
   deliveryType: "instant_key",
   keyPrefix: "",
@@ -93,6 +94,10 @@ type ProductFormViewProps = {
 };
 
 function productToForm(product: Awaited<ReturnType<typeof fetchProduct>>): ProductFormState {
+  const catalogKind = getCatalogKindFromProduct(product);
+  const resolvedCatalogKind: ProductCatalogKind =
+    catalogKind === "manual_service" ? "digital_key" : catalogKind;
+
   return {
     name: product.name,
     slug: product.slug,
@@ -102,6 +107,8 @@ function productToForm(product: Awaited<ReturnType<typeof fetchProduct>>): Produ
     discountPrice:
       product.discountPrice != null ? String(product.discountPrice) : "",
     stock: String(product.stock ?? 0),
+    catalogKind: resolvedCatalogKind,
+    keyVariant: product.productType === "redeem_code" ? "redeem_code" : "license_key",
     productType: product.productType,
     deliveryType: product.deliveryType,
     keyPrefix: product.keyPrefix,
@@ -112,6 +119,21 @@ function productToForm(product: Awaited<ReturnType<typeof fetchProduct>>): Produ
     seoDescription: product.seoDescription,
     thumbnail: product.thumbnail,
     images: product.images.filter(Boolean),
+  };
+}
+
+function applyCatalogSelection(
+  catalogKind: ProductCatalogKind,
+  keyVariant: "license_key" | "redeem_code",
+) {
+  const resolved = resolveProductTypesFromCatalog(catalogKind, keyVariant);
+
+  return {
+    catalogKind,
+    keyVariant,
+    productType: resolved.productType,
+    deliveryType: resolved.deliveryType,
+    requiresOnlinePayment: catalogKind !== "hardware",
   };
 }
 
@@ -143,9 +165,38 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
   }, [product]);
 
   const poolEnabled = useMemo(
+    () => usesManagedPool(form.productType, form.deliveryType),
+    [form.deliveryType, form.productType],
+  );
+  const keyPoolEnabled = useMemo(
     () => isPoolProductType(form.productType, form.deliveryType),
     [form.deliveryType, form.productType],
   );
+  const accountPoolEnabled = useMemo(
+    () => isAccountPoolProductType(form.productType, form.deliveryType),
+    [form.deliveryType, form.productType],
+  );
+  const isLegacyManualService = product?.productType === "manual_service";
+  const selectedCatalog = PRODUCT_CATALOG_OPTIONS.find(
+    (option) => option.value === form.catalogKind,
+  );
+  const categoryGroups = useMemo(() => {
+    if (!categories?.length) {
+      return [];
+    }
+
+    const allowedIds = getCatalogAllowedCategoryIds(categories, form.catalogKind);
+
+    return getRootCategories(categories)
+      .filter((root) => allowedIds.has(root.categoryId))
+      .map((root) => ({
+        root,
+        children: categories.filter(
+          (category) =>
+            category.parentId === root.categoryId && allowedIds.has(category.categoryId),
+        ),
+      }));
+  }, [categories, form.catalogKind]);
 
   const deliveryMismatch = useMemo(
     () => getDeliveryTypeMismatchMessage(form.productType, form.deliveryType),
@@ -161,6 +212,38 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
 
       if (key === "name" && !slugTouched) {
         next.slug = slugify(String(value));
+      }
+
+      if (key === "catalogKind") {
+        const catalogKind = value as ProductCatalogKind;
+        Object.assign(next, applyCatalogSelection(catalogKind, next.keyVariant));
+
+        if (categories?.length) {
+          const defaultCategoryId = getDefaultCategoryIdForCatalog(
+            categories,
+            catalogKind,
+            next.keyVariant,
+          );
+          if (defaultCategoryId != null) {
+            next.categoryId = String(defaultCategoryId);
+          }
+        }
+      }
+
+      if (key === "keyVariant") {
+        const keyVariant = value as "license_key" | "redeem_code";
+        Object.assign(next, applyCatalogSelection(next.catalogKind, keyVariant));
+
+        if (categories?.length) {
+          const defaultCategoryId = getDefaultCategoryIdForCatalog(
+            categories,
+            next.catalogKind,
+            keyVariant,
+          );
+          if (defaultCategoryId != null) {
+            next.categoryId = String(defaultCategoryId);
+          }
+        }
       }
 
       if (key === "productType") {
@@ -286,6 +369,11 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
         return;
       }
 
+      if (isAccountPoolProductType(created.productType, created.deliveryType)) {
+        router.push(`/products/${created.productId}/accounts`);
+        return;
+      }
+
       router.push("/products");
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Lưu thất bại");
@@ -322,11 +410,19 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
         }
         actions={
           <div className="flex flex-wrap gap-2">
-            {isEdit && poolEnabled ? (
+            {isEdit && keyPoolEnabled ? (
               <Button type="button" variant="outline" asChild>
                 <Link href={`/products/${productId}/keys`}>
                   <KeyRound className="h-4 w-4" />
                   Kho key
+                </Link>
+              </Button>
+            ) : null}
+            {isEdit && accountPoolEnabled ? (
+              <Button type="button" variant="outline" asChild>
+                <Link href={`/products/${productId}/accounts`}>
+                  <UserRound className="h-4 w-4" />
+                  Kho tài khoản
                 </Link>
               </Button>
             ) : null}
@@ -422,7 +518,7 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="stock">
-                  {poolEnabled ? "Tồn kho (từ kho key)" : "Tồn kho"}
+                  {poolEnabled ? "Tồn kho (từ kho số)" : "Tồn kho"}
                 </Label>
                 <Input
                   id="stock"
@@ -435,16 +531,25 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
                 />
                 {poolEnabled ? (
                   <p className="text-xs text-keyshop-muted">
-                    Tồn kho tự sync theo key khả dụng.{" "}
+                    Tồn kho tự sync theo {keyPoolEnabled ? "key" : "tài khoản"} khả dụng.{" "}
                     {isEdit ? (
-                      <Link
-                        href={`/products/${productId}/keys`}
-                        className="text-keyshop-blue hover:underline"
-                      >
-                        Quản lý kho key
-                      </Link>
+                      keyPoolEnabled ? (
+                        <Link
+                          href={`/products/${productId}/keys`}
+                          className="text-keyshop-blue hover:underline"
+                        >
+                          Quản lý kho key
+                        </Link>
+                      ) : (
+                        <Link
+                          href={`/products/${productId}/accounts`}
+                          className="text-keyshop-blue hover:underline"
+                        >
+                          Quản lý kho tài khoản
+                        </Link>
+                      )
                     ) : (
-                      "Sau khi tạo, import key vào kho."
+                      `Sau khi tạo, import ${keyPoolEnabled ? "key" : "tài khoản"} vào kho.`
                     )}
                   </p>
                 ) : null}
@@ -453,41 +558,67 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
           </section>
 
           <section className="admin-card space-y-5">
-            <h2 className="text-lg font-semibold text-white">Giao hàng số</h2>
+            <h2 className="text-lg font-semibold text-white">Phân loại sản phẩm</h2>
+            <p className="text-sm text-keyshop-muted">
+              Chọn một trong ba loại chính. Hình thức giao hàng được gán tự động theo loại.
+            </p>
+            {isLegacyManualService ? (
+              <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-sm text-amber-100">
+                Sản phẩm này thuộc loại cũ &quot;Dịch vụ thủ công&quot;. Bạn có thể chuyển sang
+                một trong ba loại bên dưới khi cập nhật.
+              </p>
+            ) : null}
+            <div className="grid gap-4 sm:grid-cols-3">
+              {PRODUCT_CATALOG_OPTIONS.map((option) => {
+                const active = form.catalogKind === option.value;
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => updateField("catalogKind", option.value)}
+                    className={`rounded-xl border p-4 text-left transition ${
+                      active
+                        ? "border-keyshop-blue bg-keyshop-blue/10 ring-1 ring-keyshop-blue/40"
+                        : "border-keyshop-line bg-white/[0.02] hover:border-keyshop-blue/40"
+                    }`}
+                  >
+                    <p className="font-medium text-white">{option.label}</p>
+                    <p className="mt-1 text-xs text-keyshop-muted">{option.description}</p>
+                  </button>
+                );
+              })}
+            </div>
             <div className="grid gap-4 sm:grid-cols-2">
+              {form.catalogKind === "digital_key" ? (
+                <div className="space-y-2">
+                  <Label htmlFor="keyVariant">Dạng key</Label>
+                  <select
+                    id="keyVariant"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
+                    value={form.keyVariant}
+                    onChange={(event) =>
+                      updateField(
+                        "keyVariant",
+                        event.target.value as "license_key" | "redeem_code",
+                      )
+                    }
+                  >
+                    {DIGITAL_KEY_VARIANTS.map((variant) => (
+                      <option key={variant.value} value={variant.value}>
+                        {variant.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : null}
               <div className="space-y-2">
-                <Label htmlFor="productType">Loại sản phẩm</Label>
-                <select
-                  id="productType"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  value={form.productType}
-                  onChange={(event) =>
-                    updateField("productType", event.target.value as ProductType)
-                  }
-                >
-                  {productTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {tProductType(type)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="deliveryType">Hình thức giao hàng</Label>
-                <select
-                  id="deliveryType"
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
-                  value={form.deliveryType}
-                  onChange={(event) =>
-                    updateField("deliveryType", event.target.value as DeliveryType)
-                  }
-                >
-                  {deliveryTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {tDeliveryType(type)}
-                    </option>
-                  ))}
-                </select>
+                <Label>Hình thức giao hàng (tự động)</Label>
+                <div className="flex h-10 items-center rounded-md border border-input bg-background/60 px-3 text-sm text-keyshop-muted">
+                  {selectedCatalog
+                    ? tDeliveryType(selectedCatalog.deliveryType)
+                    : tDeliveryType(form.deliveryType)}
+                </div>
               </div>
               {poolEnabled ? (
                 <div className="space-y-2 sm:col-span-2">
@@ -502,6 +633,12 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
                     Key thật được import vào kho — tiền tố chỉ để tham khảo trên admin.
                   </p>
                 </div>
+              ) : null}
+              {form.catalogKind === "account_pro" ? (
+                <p className="text-xs text-keyshop-muted sm:col-span-2">
+                  Tồn kho tài khoản Pro sẽ được quản lý riêng (đang phát triển). Hiện tại nhập số
+                  lượng tồn kho thủ công.
+                </p>
               ) : null}
               {deliveryMismatch ? (
                 <p className="text-sm text-amber-300 sm:col-span-2">{deliveryMismatch}</p>
@@ -570,6 +707,10 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
 
           <section className="admin-card space-y-4">
             <h2 className="text-lg font-semibold text-white">Danh mục</h2>
+            <p className="text-sm text-keyshop-muted">
+              Chỉ hiển thị danh mục thuộc loại{" "}
+              <strong className="text-white">{selectedCatalog?.label}</strong>.
+            </p>
             <select
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 text-sm"
               value={form.categoryId}
@@ -578,12 +719,18 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
               required
             >
               <option value="">— Chọn danh mục —</option>
-              {categories?.map((category) => (
-                <option key={category.categoryId} value={String(category.categoryId)}>
-                  {category.parentName
-                    ? `${category.parentName} › ${category.name}`
-                    : category.name}
-                </option>
+              {categoryGroups.map(({ root, children }) => (
+                <optgroup key={root.categoryId} label={root.name}>
+                  {children.length === 0 ? (
+                    <option value={String(root.categoryId)}>{root.name}</option>
+                  ) : (
+                    children.map((category) => (
+                      <option key={category.categoryId} value={String(category.categoryId)}>
+                        {category.name}
+                      </option>
+                    ))
+                  )}
+                </optgroup>
               ))}
             </select>
           </section>

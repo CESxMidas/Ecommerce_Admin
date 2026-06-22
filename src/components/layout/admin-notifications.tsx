@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Bell } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,31 +16,43 @@ export default function AdminNotifications() {
   const [unreadCount, setUnreadCount] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const loadNotifications = useCallback(async () => {
+    if (status !== "authenticated") {
+      return;
+    }
+
+    try {
+      const data = await fetchAdminNotifications();
+      setAlerts(data.alerts);
+      setUnreadCount(data.unreadCount);
+    } catch {
+      setAlerts([]);
+      setUnreadCount(0);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    loadNotifications();
+  }, [loadNotifications]);
+
   useEffect(() => {
     if (status !== "authenticated") {
       return;
     }
 
-    let cancelled = false;
+    const interval = window.setInterval(loadNotifications, 60_000);
+    const onFocus = () => loadNotifications();
+    const onRefresh = () => loadNotifications();
 
-    fetchAdminNotifications()
-      .then((data) => {
-        if (!cancelled) {
-          setAlerts(data.alerts);
-          setUnreadCount(data.unreadCount);
-        }
-      })
-      .catch(() => {
-        if (!cancelled) {
-          setAlerts([]);
-          setUnreadCount(0);
-        }
-      });
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("admin-notifications-refresh", onRefresh);
 
     return () => {
-      cancelled = true;
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+      window.removeEventListener("admin-notifications-refresh", onRefresh);
     };
-  }, [status]);
+  }, [loadNotifications, status]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -60,7 +72,12 @@ export default function AdminNotifications() {
         variant="ghost"
         size="icon"
         aria-label="Thông báo"
-        onClick={() => setOpen((value) => !value)}
+        onClick={() => {
+          setOpen((value) => !value);
+          if (!open) {
+            loadNotifications();
+          }
+        }}
       >
         <Bell className="h-5 w-5" />
         {unreadCount > 0 ? (
