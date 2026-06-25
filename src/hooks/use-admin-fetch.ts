@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 type UseAdminFetchResult<T> = {
   data: T | null;
   loading: boolean;
@@ -50,7 +51,7 @@ export function useAdminFetch<T>(
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Không tải được dữ liệu");
+          setError(getApiErrorMessage(err, "Không tải được dữ liệu"));
           setData(null);
         }
       })

@@ -1,6 +1,7 @@
 "use client";
 
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import StatusBadge, { orderStatusTone, paymentStatusTone } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
@@ -61,7 +62,7 @@ export default function OrdersKanbanBoard({
       toast.success("Đã cập nhật trạng thái đơn hàng");
       onUpdated();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Cập nhật thất bại");
+      toast.error(getApiErrorMessage(err, "Cập nhật thất bại"));
     } finally {
       onSavingChange(null);
     }

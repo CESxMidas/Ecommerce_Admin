@@ -3,6 +3,7 @@
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import { createCoupon, updateCoupon } from "@/lib/services/admin-service";
 import { toDateInputValue, validateCouponForm } from "@/lib/utils/coupon-form";
@@ -120,7 +121,7 @@ export default function CouponFormDialog({
       onSaved();
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Lưu thất bại");
+      toast.error(getApiErrorMessage(err, "Lưu thất bại"));
     } finally {
       setSaving(false);
     }

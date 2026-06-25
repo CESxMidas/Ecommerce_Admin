@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import {
   Edit2,
   ExternalLink,
@@ -142,7 +143,7 @@ export default function ProductsListView() {
       setSelectedIds((current) => current.filter((id) => id !== productId));
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Xóa thất bại");
+      toast.error(getApiErrorMessage(err, "Xóa thất bại"));
     } finally {
       setDeletingId(null);
     }
@@ -163,7 +164,7 @@ export default function ProductsListView() {
       setSelectedIds([]);
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác hàng loạt thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác hàng loạt thất bại"));
     } finally {
       setBulkLoading(false);
     }

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { Eye, EyeOff, KeyRound, Loader2, ShieldCheck } from "lucide-react";
 
 import { ADMIN_ACCESS_REQUIRED } from "@/lib/auth/constants";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -80,7 +81,7 @@ export default function LoginForm() {
         return;
       }
 
-      toast.error(result.error);
+      toast.error(getApiErrorMessage(result.error, "Đăng nhập thất bại"));
       return;
     }
 

@@ -3,6 +3,7 @@
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import { resetStaffPassword } from "@/lib/services/admin-service";
 import { Button } from "@/components/ui/button";
@@ -53,7 +54,7 @@ export default function StaffResetPasswordDialog({
       onSaved();
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Đặt lại mật khẩu thất bại");
+      toast.error(getApiErrorMessage(err, "Đặt lại mật khẩu thất bại"));
     } finally {
       setSaving(false);
     }

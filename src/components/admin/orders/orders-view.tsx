@@ -3,6 +3,7 @@
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { ChevronDown, ChevronUp, LayoutGrid, List, ShoppingBag, Upload } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
@@ -139,7 +140,7 @@ export default function OrdersView() {
       toast.success("Đã cập nhật trạng thái đơn hàng");
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Cập nhật thất bại");
+      toast.error(getApiErrorMessage(err, "Cập nhật thất bại"));
     } finally {
       setSavingOrderId(null);
     }

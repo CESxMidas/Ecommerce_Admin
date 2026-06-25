@@ -3,6 +3,7 @@
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import StatusBadge from "@/components/admin/status-badge";
 import { updateUser } from "@/lib/services/admin-service";
@@ -50,7 +51,7 @@ export default function UserEditDialog({
       onSaved();
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Cập nhật thất bại");
+      toast.error(getApiErrorMessage(err, "Cập nhật thất bại"));
     } finally {
       setSaving(false);
     }

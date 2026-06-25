@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { Edit2, KeyRound, Plus, Shield, UserCog, Users } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
@@ -157,7 +158,7 @@ export default function StaffView() {
       setSelectedIds([]);
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác hàng loạt thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác hàng loạt thất bại"));
     } finally {
       setBulkLoading(false);
     }

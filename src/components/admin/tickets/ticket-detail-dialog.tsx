@@ -3,6 +3,7 @@
 import { Loader2, Send, User, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import StatusBadge from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
@@ -104,7 +105,7 @@ export default function TicketDetailDialog({
       })
       .catch((err: unknown) => {
         if (!cancelled) {
-          toast.error(err instanceof Error ? err.message : "Không tải được ticket");
+          toast.error(getApiErrorMessage(err, "Không tải được ticket"));
         }
       })
       .finally(() => {
@@ -148,7 +149,7 @@ export default function TicketDetailDialog({
       toast.success("Đã cập nhật trạng thái");
       onUpdated();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Cập nhật thất bại");
+      toast.error(getApiErrorMessage(err, "Cập nhật thất bại"));
     } finally {
       setSaving(false);
     }
@@ -164,7 +165,7 @@ export default function TicketDetailDialog({
       toast.success("Đã cập nhật độ ưu tiên");
       onUpdated();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Cập nhật thất bại");
+      toast.error(getApiErrorMessage(err, "Cập nhật thất bại"));
     } finally {
       setSaving(false);
     }
@@ -188,7 +189,7 @@ export default function TicketDetailDialog({
       toast.success("Đã gửi phản hồi");
       onUpdated();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Gửi phản hồi thất bại");
+      toast.error(getApiErrorMessage(err, "Gửi phản hồi thất bại"));
     } finally {
       setSaving(false);
     }

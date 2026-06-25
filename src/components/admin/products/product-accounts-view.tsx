@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { ArrowLeft, Trash2, Upload, UserRound } from "lucide-react";
 
 import AdminError from "@/components/admin/admin-error";
@@ -139,7 +140,7 @@ export default function ProductAccountsView({ productId }: ProductAccountsViewPr
       refetchAccounts();
       refetchProduct();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Import thất bại");
+      toast.error(getApiErrorMessage(err, "Import thất bại"));
     } finally {
       setImporting(false);
     }
@@ -155,7 +156,7 @@ export default function ProductAccountsView({ productId }: ProductAccountsViewPr
       refetchAccounts();
       refetchProduct();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thu hồi thất bại");
+      toast.error(getApiErrorMessage(err, "Thu hồi thất bại"));
     }
   }
 

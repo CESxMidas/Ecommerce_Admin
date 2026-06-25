@@ -5,6 +5,7 @@ import { ChevronDown, Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import {
   createBanner,
@@ -128,7 +129,7 @@ export default function BannerFormDialog({
       updateField("image", result.url);
       toast.success("Đã tải ảnh lên");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload thất bại");
+      toast.error(getApiErrorMessage(err, "Upload thất bại"));
     } finally {
       setUploading(false);
     }
@@ -175,7 +176,7 @@ export default function BannerFormDialog({
       onSaved();
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Lưu thất bại");
+      toast.error(getApiErrorMessage(err, "Lưu thất bại"));
     } finally {
       setSaving(false);
     }

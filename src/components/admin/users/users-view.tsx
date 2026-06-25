@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { Edit2, Eye, Upload, UserCircle, Users } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
@@ -134,7 +135,7 @@ export default function UsersView() {
       setSelectedIds([]);
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác hàng loạt thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác hàng loạt thất bại"));
     } finally {
       setBulkLoading(false);
     }

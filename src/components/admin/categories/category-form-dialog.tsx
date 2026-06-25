@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import {
   createCategory,
@@ -124,7 +125,7 @@ export default function CategoryFormDialog({
       updateField("image", result.url);
       toast.success("Đã tải ảnh lên");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload thất bại");
+      toast.error(getApiErrorMessage(err, "Upload thất bại"));
     } finally {
       setUploading(false);
     }
@@ -175,7 +176,7 @@ export default function CategoryFormDialog({
       onSaved();
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Lưu thất bại");
+      toast.error(getApiErrorMessage(err, "Lưu thất bại"));
     } finally {
       setSaving(false);
     }

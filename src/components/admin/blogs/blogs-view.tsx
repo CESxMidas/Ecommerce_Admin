@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { Edit2, FileText, Plus, Trash2, Upload } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
@@ -131,7 +132,7 @@ export default function BlogsView() {
       setSelectedIds((current) => current.filter((id) => id !== blog.id));
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Ngừng xuất bản thất bại");
+      toast.error(getApiErrorMessage(err, "Ngừng xuất bản thất bại"));
     } finally {
       setDeletingId(null);
     }
@@ -157,7 +158,7 @@ export default function BlogsView() {
       setSelectedIds([]);
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác hàng loạt thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác hàng loạt thất bại"));
     } finally {
       setBulkLoading(false);
     }

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import {
   Edit2,
   FolderTree,
@@ -159,7 +160,7 @@ export default function CategoriesView() {
       setSelectedIds((current) => current.filter((id) => id !== category.categoryId));
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Ngừng hiển thị thất bại");
+      toast.error(getApiErrorMessage(err, "Ngừng hiển thị thất bại"));
     } finally {
       setDeletingId(null);
     }
@@ -185,7 +186,7 @@ export default function CategoriesView() {
       setSelectedIds([]);
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác hàng loạt thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác hàng loạt thất bại"));
     } finally {
       setBulkLoading(false);
     }

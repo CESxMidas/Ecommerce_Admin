@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 import { Edit2, Plus, Ticket, Trash2, Upload } from "lucide-react";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
@@ -119,7 +120,7 @@ export default function CouponsView() {
       setSelectedIds((current) => current.filter((id) => id !== coupon.id));
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thất bại");
+      toast.error(getApiErrorMessage(err, "Thất bại"));
     } finally {
       setDeletingId(null);
     }
@@ -136,7 +137,7 @@ export default function CouponsView() {
       setSelectedIds([]);
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác hàng loạt thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác hàng loạt thất bại"));
     } finally {
       setBulkLoading(false);
     }

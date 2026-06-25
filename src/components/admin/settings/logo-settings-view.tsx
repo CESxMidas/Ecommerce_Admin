@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ImagePlus, Loader2, Save } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import AdminPageHeader from "@/components/admin/admin-page-header";
 import AdminError from "@/components/admin/admin-error";
@@ -60,7 +61,7 @@ export default function LogoSettingsView() {
       }
       toast.success(type === "logo" ? "Đã tải logo" : "Đã tải favicon");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Tải ảnh thất bại");
+      toast.error(getApiErrorMessage(err, "Tải ảnh thất bại"));
     } finally {
       setUploading(false);
     }
@@ -84,7 +85,7 @@ export default function LogoSettingsView() {
       toast.success("Đã lưu cài đặt");
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Lưu thất bại");
+      toast.error(getApiErrorMessage(err, "Lưu thất bại"));
     } finally {
       setSaving(false);
     }

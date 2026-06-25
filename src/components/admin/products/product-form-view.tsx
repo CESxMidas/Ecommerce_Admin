@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ImagePlus, KeyRound, Loader2, Save, Trash2, UserRound, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import AdminError from "@/components/admin/admin-error";
 import AdminLoading from "@/components/admin/admin-loading";
@@ -281,7 +282,7 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
       }
       toast.success("Đã tải ảnh lên");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload thất bại");
+      toast.error(getApiErrorMessage(err, "Upload thất bại"));
     } finally {
       setUploading(false);
     }
@@ -376,7 +377,7 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
 
       router.push("/products");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Lưu thất bại");
+      toast.error(getApiErrorMessage(err, "Lưu thất bại"));
     } finally {
       setSaving(false);
     }

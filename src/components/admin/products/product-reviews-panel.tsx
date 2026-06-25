@@ -2,6 +2,7 @@
 
 import { Eye, EyeOff, Star, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import AdminError from "@/components/admin/admin-error";
 import AdminLoading from "@/components/admin/admin-loading";
@@ -32,7 +33,7 @@ export default function ProductReviewsPanel({ productId }: ProductReviewsPanelPr
       toast.success(isHidden ? "Đã ẩn đánh giá" : "Đã hiện đánh giá");
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Thao tác thất bại");
+      toast.error(getApiErrorMessage(err, "Thao tác thất bại"));
     }
   }
 
@@ -44,7 +45,7 @@ export default function ProductReviewsPanel({ productId }: ProductReviewsPanelPr
       toast.success("Đã xóa đánh giá");
       refetch();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Xóa thất bại");
+      toast.error(getApiErrorMessage(err, "Xóa thất bại"));
     }
   }
 
