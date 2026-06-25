@@ -12,12 +12,20 @@ import PaginationBar from "@/components/admin/pagination-bar";
 import SearchToolbar from "@/components/admin/search-toolbar";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
 import { fetchAuditLogs } from "@/lib/services/admin-service";
-import { tRole } from "@/constants/vi";
+import {
+  AUDIT_ENTITY_FILTER_OPTIONS,
+  tAuditAction,
+  tAuditEntityType,
+  tRole,
+} from "@/constants/vi";
 import { formatDateTime } from "@/lib/utils/format";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function AuditView() {
   const [search, setSearch] = useState("");
   const [entityFilter, setEntityFilter] = useState("all");
+  const [actorFilter, setActorFilter] = useState("");
   const [page, setPage] = useState(0);
   const pageSize = 20;
 
@@ -28,26 +36,32 @@ export default function AuditView() {
         limit: pageSize,
         q: search.trim() || undefined,
         entityType: entityFilter === "all" ? undefined : entityFilter,
+        actor: actorFilter.trim() || undefined,
       }),
-    [page, search, entityFilter],
+    [page, search, entityFilter, actorFilter],
   );
 
   const items = data?.items ?? [];
   const totalItems = data?.total ?? 0;
   const totalPages = data?.totalPages ?? 1;
 
-  const activeFilterCount = [search.trim().length > 0, entityFilter !== "all"].filter(
-    Boolean,
-  ).length;
+  const activeFilterCount = [
+    search.trim().length > 0,
+    entityFilter !== "all",
+    actorFilter.trim().length > 0,
+  ].filter(Boolean).length;
 
-  const entityOptions = useMemo(() => {
-    const unique = new Set(items.map((item) => item.entityType));
-    return Array.from(unique).sort();
+  const actorSuggestions = useMemo(() => {
+    const names = new Set(
+      items.map((item) => item.actorName).filter(Boolean) as string[],
+    );
+    return Array.from(names).sort();
   }, [items]);
 
   function clearFilters() {
     setSearch("");
     setEntityFilter("all");
+    setActorFilter("");
     setPage(0);
   }
 
@@ -70,24 +84,41 @@ export default function AuditView() {
         activeFilterCount={activeFilterCount}
         onClearFilters={clearFilters}
         filters={
-          <FilterSelect
-            label="Loại đối tượng"
-            value={entityFilter}
-            onChange={(value) => {
-              setEntityFilter(value);
-              setPage(0);
-            }}
-            options={[
-              { value: "all", label: "Tất cả loại" },
-              ...entityOptions.map((value) => ({ value, label: value })),
-              { value: "order", label: "order" },
-              { value: "ticket", label: "ticket" },
-              { value: "review", label: "review" },
-            ].filter(
-              (option, index, array) =>
-                array.findIndex((item) => item.value === option.value) === index,
-            )}
-          />
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <FilterSelect
+              label="Loại đối tượng"
+              value={entityFilter}
+              onChange={(value) => {
+                setEntityFilter(value);
+                setPage(0);
+              }}
+              options={AUDIT_ENTITY_FILTER_OPTIONS.map((option) => ({
+                value: option.value,
+                label: option.label,
+              }))}
+            />
+            <div className="min-w-[200px] flex-1 space-y-1.5">
+              <Label htmlFor="audit-actor-filter" className="text-xs text-keyshop-muted">
+                Nhân viên thực hiện
+              </Label>
+              <Input
+                id="audit-actor-filter"
+                list="audit-actor-suggestions"
+                placeholder="Tên hoặc email..."
+                value={actorFilter}
+                onChange={(event) => {
+                  setActorFilter(event.target.value);
+                  setPage(0);
+                }}
+                className="h-10"
+              />
+              <datalist id="audit-actor-suggestions">
+                {actorSuggestions.map((name) => (
+                  <option key={name} value={name} />
+                ))}
+              </datalist>
+            </div>
+          </div>
         }
       />
 
@@ -117,7 +148,7 @@ export default function AuditView() {
               <tbody>
                 {items.map((entry) => (
                   <tr key={entry.id}>
-                    <td className="text-sm text-keyshop-muted whitespace-nowrap">
+                    <td className="whitespace-nowrap text-sm text-keyshop-muted">
                       {formatDateTime(entry.createdAt)}
                     </td>
                     <td>
@@ -126,9 +157,11 @@ export default function AuditView() {
                         {entry.actorRole ? tRole(entry.actorRole) : ""}
                       </p>
                     </td>
-                    <td className="text-sm text-keyshop-muted">{entry.action}</td>
+                    <td className="text-sm text-white">
+                      {tAuditAction(entry.action)}
+                    </td>
                     <td className="text-sm text-keyshop-muted">
-                      {entry.entityType}
+                      {tAuditEntityType(entry.entityType)}
                       {entry.entityId ? ` · ${entry.entityId}` : ""}
                     </td>
                     <td className="text-sm text-white">{entry.summary}</td>

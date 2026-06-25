@@ -358,6 +358,48 @@ export interface AdminAuditLog {
   createdAt: string;
 }
 
+export type ContentEntityType =
+  | "product"
+  | "category"
+  | "banner"
+  | "blog"
+  | "coupon";
+
+export type ContentRevisionStatus =
+  | "draft"
+  | "pending_review"
+  | "approved"
+  | "rejected"
+  | "cancelled"
+  | "superseded";
+
+export type ContentChangeType = "create" | "update" | "deactivate";
+
+export interface AdminContentRevision {
+  id: string;
+  entityType: ContentEntityType;
+  entityId: string;
+  entityLabel: string;
+  status: ContentRevisionStatus;
+  changeType: ContentChangeType;
+  payload: Record<string, unknown>;
+  baseRevision: string | null;
+  summary: string;
+  submitNote: string;
+  reviewNote: string;
+  submittedBy: string | null;
+  submittedByName: string;
+  submittedByRole: string;
+  submittedAt: string | null;
+  reviewedBy: string | null;
+  reviewedByName: string;
+  reviewedByRole: string;
+  reviewedAt: string | null;
+  approvedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AdminSearchResult {
   type: "product" | "order" | "user";
   id: string;

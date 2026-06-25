@@ -5,6 +5,7 @@ import { ChevronDown, Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import {
@@ -12,6 +13,10 @@ import {
   updateBanner,
   uploadAdminImage,
 } from "@/lib/services/admin-service";
+import {
+  requiresApprovalWorkflow,
+  submitContentChangeForApproval,
+} from "@/lib/auth/content-workflow";
 import { nextBannerSortOrder, validateBannerForm } from "@/lib/utils/banner-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,6 +80,8 @@ export default function BannerFormDialog({
   onClose,
   onSaved,
 }: BannerFormDialogProps) {
+  const { data: session } = useSession();
+  const needsApproval = requiresApprovalWorkflow(session?.user?.role);
   const isEdit = Boolean(banner);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -166,8 +173,19 @@ export default function BannerFormDialog({
     setSaving(true);
     try {
       if (isEdit && banner) {
-        await updateBanner(banner.id, payload);
-        toast.success("Đã cập nhật banner");
+        if (needsApproval) {
+          await submitContentChangeForApproval({
+            entityType: "banner",
+            entityId: banner.id,
+            payload,
+            changeType: "update",
+            summary: `Cập nhật banner: ${payload.title}`,
+          });
+          toast.success("Đã gửi thay đổi chờ chủ shop duyệt");
+        } else {
+          await updateBanner(banner.id, payload);
+          toast.success("Đã cập nhật banner");
+        }
       } else {
         await createBanner(payload);
         toast.success("Đã tạo banner");

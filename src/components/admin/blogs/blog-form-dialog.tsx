@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import {
@@ -11,6 +12,10 @@ import {
   updateBlog,
   uploadAdminImage,
 } from "@/lib/services/admin-service";
+import {
+  requiresApprovalWorkflow,
+  submitContentChangeForApproval,
+} from "@/lib/auth/content-workflow";
 import {
   DEFAULT_BLOG_CATEGORIES,
   toDateInputValue,
@@ -65,6 +70,8 @@ export default function BlogFormDialog({
   onClose,
   onSaved,
 }: BlogFormDialogProps) {
+  const { data: session } = useSession();
+  const needsApproval = requiresApprovalWorkflow(session?.user?.role);
   const isEdit = Boolean(blog);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -142,8 +149,19 @@ export default function BlogFormDialog({
     setSaving(true);
     try {
       if (isEdit && blog) {
-        await updateBlog(blog.id, payload);
-        toast.success("Đã cập nhật bài viết");
+        if (needsApproval) {
+          await submitContentChangeForApproval({
+            entityType: "blog",
+            entityId: blog.id,
+            payload,
+            changeType: "update",
+            summary: `Cập nhật bài viết: ${title}`,
+          });
+          toast.success("Đã gửi thay đổi chờ chủ shop duyệt");
+        } else {
+          await updateBlog(blog.id, payload);
+          toast.success("Đã cập nhật bài viết");
+        }
       } else {
         await createBlog(payload);
         toast.success("Đã tạo bài viết");

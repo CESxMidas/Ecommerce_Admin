@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   BarChart3,
+  ClipboardCheck,
   FileText,
   History,
   Image,
@@ -72,6 +73,12 @@ export const adminNavItems: AdminNavItem[] = [
     href: "/tickets",
     icon: LifeBuoy,
     permission: "tickets.manage",
+  },
+  {
+    label: "Duyệt nội dung",
+    href: "/content-review",
+    icon: ClipboardCheck,
+    permission: "content.review_queue",
   },
   {
     label: "Khách hàng",

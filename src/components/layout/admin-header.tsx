@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { LogOut, Menu, UserCircle } from "lucide-react";
 import { useState } from "react";
@@ -81,6 +82,14 @@ export default function AdminHeader({
                     </p>
                   ) : null}
                 </div>
+                <Link
+                  href="/profile"
+                  className="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-keyshop-muted transition-colors hover:bg-white/5 hover:text-white"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <UserCircle className="h-4 w-4" />
+                  Hồ sơ của tôi
+                </Link>
                 <button
                   type="button"
                   className="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-keyshop-muted transition-colors hover:bg-white/5 hover:text-white"

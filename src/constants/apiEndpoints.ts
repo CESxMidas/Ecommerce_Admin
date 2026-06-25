@@ -8,6 +8,10 @@ export const API_ENDPOINTS = {
     refresh: "/auth/refresh",
     logout: "/auth/logout",
   },
+  user: {
+    profile: "/user/profile",
+    password: "/user/profile/password",
+  },
   products: {
     list: "/products",
     detail: (id: string) => `/products/${id}`,
@@ -61,5 +65,11 @@ export const API_ENDPOINTS = {
     ticketReplies: (id: string) => `/admin/tickets/${id}/replies`,
     review: (id: string) => `/admin/reviews/${id}`,
     productReviews: (productId: string) => `/admin/products/${productId}/reviews`,
+    contentRevisions: "/admin/content-revisions",
+    contentRevision: (id: string) => `/admin/content-revisions/${id}`,
+    contentRevisionSubmit: (id: string) => `/admin/content-revisions/${id}/submit`,
+    contentRevisionApprove: (id: string) => `/admin/content-revisions/${id}/approve`,
+    contentRevisionReject: (id: string) => `/admin/content-revisions/${id}/reject`,
+    contentRevisionCancel: (id: string) => `/admin/content-revisions/${id}/cancel`,
   },
 } as const;

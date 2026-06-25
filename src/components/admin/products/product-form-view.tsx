@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft, ImagePlus, KeyRound, Loader2, Save, Trash2, UserRound, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import AdminError from "@/components/admin/admin-error";
@@ -24,6 +25,10 @@ import {
   type ProductCatalogKind,
 } from "@/constants/product-catalog";
 import { useAdminFetch } from "@/hooks/use-admin-fetch";
+import {
+  requiresApprovalWorkflow,
+  submitContentChangeForApproval,
+} from "@/lib/auth/content-workflow";
 import {
   createProduct,
   fetchCategories,
@@ -140,6 +145,8 @@ function applyCatalogSelection(
 
 export default function ProductFormView({ productId }: ProductFormViewProps) {
   const router = useRouter();
+  const { data: session } = useSession();
+  const needsApproval = requiresApprovalWorkflow(session?.user?.role);
   const isEdit = Boolean(productId);
 
   const {
@@ -356,6 +363,19 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
     setSaving(true);
     try {
       if (isEdit && productId) {
+        if (needsApproval) {
+          await submitContentChangeForApproval({
+            entityType: "product",
+            entityId: productId,
+            payload,
+            changeType: "update",
+            summary: `Cập nhật sản phẩm: ${name}`,
+          });
+          toast.success("Đã gửi thay đổi chờ chủ shop duyệt");
+          router.push("/products");
+          return;
+        }
+
         await updateProduct(productId, payload);
         toast.success("Đã cập nhật sản phẩm");
         router.push("/products");
@@ -406,7 +426,9 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
         ]}
         description={
           isEdit
-            ? "Cập nhật thông tin sản phẩm trên cửa hàng"
+            ? needsApproval
+              ? "Thay đổi sẽ gửi chờ chủ shop duyệt trước khi hiển thị trên cửa hàng"
+              : "Cập nhật thông tin sản phẩm trên cửa hàng"
             : "Nhập thông tin sản phẩm mới"
         }
         actions={
@@ -702,7 +724,7 @@ export default function ProductFormView({ productId }: ProductFormViewProps) {
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              {saving ? "Đang lưu..." : isEdit ? "Cập nhật" : "Lưu sản phẩm"}
+              {saving ? "Đang lưu..." : isEdit ? (needsApproval ? "Gửi duyệt" : "Cập nhật") : "Lưu sản phẩm"}
             </Button>
           </section>
 

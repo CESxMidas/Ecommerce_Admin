@@ -35,8 +35,11 @@ import type {
   AdminStaff,
   AdminTicket,
   AdminAuditLog,
+  AdminContentRevision,
   AdminSearchResult,
   AdminAlert,
+  ContentChangeType,
+  ContentEntityType,
   AdminUser,
   AdminUserDetail,
   AdminUserDetailData,
@@ -163,12 +166,88 @@ export async function replyTicket(
   return data as AdminTicket;
 }
 
+export async function fetchContentRevisions(params?: {
+  page?: number;
+  limit?: number;
+  queue?: "pending";
+  status?: string;
+  entityType?: string;
+  entityId?: string;
+  submittedBy?: string;
+}): Promise<{
+  items: AdminContentRevision[];
+  total: number;
+  page: number;
+  totalPages: number;
+}> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.contentRevisions, { params });
+  return data as {
+    items: AdminContentRevision[];
+    total: number;
+    page: number;
+    totalPages: number;
+  };
+}
+
+export async function fetchContentRevision(id: string): Promise<AdminContentRevision> {
+  const { data } = await apiClient.get(API_ENDPOINTS.admin.contentRevision(id));
+  return data as AdminContentRevision;
+}
+
+export async function createContentRevision(payload: {
+  entityType: ContentEntityType;
+  entityId: string;
+  changeType?: ContentChangeType;
+  payload: Record<string, unknown>;
+  summary?: string;
+  submitNote?: string;
+}): Promise<AdminContentRevision> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.contentRevisions, payload);
+  return data as AdminContentRevision;
+}
+
+export async function submitContentRevision(
+  id: string,
+  submitNote?: string,
+): Promise<AdminContentRevision> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.contentRevisionSubmit(id), {
+    submitNote,
+  });
+  return data as AdminContentRevision;
+}
+
+export async function approveContentRevision(
+  id: string,
+  reviewNote?: string,
+): Promise<{ revision: AdminContentRevision; applied: boolean }> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.contentRevisionApprove(id), {
+    reviewNote,
+  });
+  return data as { revision: AdminContentRevision; applied: boolean };
+}
+
+export async function rejectContentRevision(
+  id: string,
+  reviewNote: string,
+): Promise<AdminContentRevision> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.contentRevisionReject(id), {
+    reviewNote,
+  });
+  return data as AdminContentRevision;
+}
+
+export async function cancelContentRevision(id: string): Promise<AdminContentRevision> {
+  const { data } = await apiClient.post(API_ENDPOINTS.admin.contentRevisionCancel(id));
+  return data as AdminContentRevision;
+}
+
 export async function fetchAuditLogs(params?: {
   page?: number;
   limit?: number;
   q?: string;
   action?: string;
   entityType?: string;
+  actor?: string;
 }): Promise<{
   items: AdminAuditLog[];
   total: number;

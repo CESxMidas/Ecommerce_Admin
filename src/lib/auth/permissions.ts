@@ -21,7 +21,11 @@ export type Permission =
   | "settings.manage"
   | "tickets.manage"
   | "reviews.manage"
-  | "audit.view";
+  | "audit.view"
+  | "profile.view"
+  | "content.submit"
+  | "content.approve"
+  | "content.review_queue";
 
 const PERMISSIONS: Record<Permission, Array<StaffRole | "OWNER">> = {
   "dashboard.view": ["OWNER", "MANAGER", "STAFF"],
@@ -41,6 +45,10 @@ const PERMISSIONS: Record<Permission, Array<StaffRole | "OWNER">> = {
   "tickets.manage": ["OWNER", "MANAGER", "STAFF"],
   "reviews.manage": ["OWNER", "MANAGER"],
   "audit.view": ["OWNER"],
+  "profile.view": ["OWNER", "MANAGER", "STAFF"],
+  "content.submit": ["OWNER", "MANAGER", "STAFF"],
+  "content.approve": ["OWNER"],
+  "content.review_queue": ["OWNER", "MANAGER"],
 };
 
 export function normalizeStaffRole(role?: string | null): StaffRole | "USER" | null {
@@ -95,6 +103,8 @@ export const ROUTE_PERMISSIONS: Array<{ prefix: string; permission: Permission }
   { prefix: "/users", permission: "customers.view" },
   { prefix: "/staff", permission: "staff.manage" },
   { prefix: "/settings", permission: "settings.manage" },
+  { prefix: "/profile", permission: "profile.view" },
+  { prefix: "/content-review", permission: "content.review_queue" },
 ];
 
 export function filterNavByRole<T extends { permission?: Permission; href?: string }>(

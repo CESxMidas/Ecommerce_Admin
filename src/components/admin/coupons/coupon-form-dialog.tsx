@@ -3,9 +3,14 @@
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import { createCoupon, updateCoupon } from "@/lib/services/admin-service";
+import {
+  requiresApprovalWorkflow,
+  submitContentChangeForApproval,
+} from "@/lib/auth/content-workflow";
 import { toDateInputValue, validateCouponForm } from "@/lib/utils/coupon-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -61,6 +66,8 @@ export default function CouponFormDialog({
   onClose,
   onSaved,
 }: CouponFormDialogProps) {
+  const { data: session } = useSession();
+  const needsApproval = requiresApprovalWorkflow(session?.user?.role);
   const isEdit = Boolean(coupon);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [saving, setSaving] = useState(false);
@@ -111,8 +118,19 @@ export default function CouponFormDialog({
     setSaving(true);
     try {
       if (isEdit && coupon) {
-        await updateCoupon(coupon.id, payload);
-        toast.success("Đã cập nhật mã giảm giá");
+        if (needsApproval) {
+          await submitContentChangeForApproval({
+            entityType: "coupon",
+            entityId: coupon.id,
+            payload,
+            changeType: "update",
+            summary: `Cập nhật mã giảm giá: ${payload.code}`,
+          });
+          toast.success("Đã gửi thay đổi chờ chủ shop duyệt");
+        } else {
+          await updateCoupon(coupon.id, payload);
+          toast.success("Đã cập nhật mã giảm giá");
+        }
       } else {
         await createCoupon(payload);
         toast.success("Đã tạo mã giảm giá");

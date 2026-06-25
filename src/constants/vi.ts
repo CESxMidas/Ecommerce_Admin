@@ -215,3 +215,140 @@ export function ticketPriorityTone(
   if (priority === "low") return "neutral";
   return "info";
 }
+
+export const AUDIT_ENTITY_TYPE_VI: Record<string, string> = {
+  order: "Đơn hàng",
+  ticket: "Hỗ trợ",
+  review: "Đánh giá",
+  product: "Sản phẩm",
+  category: "Danh mục",
+  banner: "Banner",
+  blog: "Bài viết",
+  coupon: "Mã giảm giá",
+  settings: "Cài đặt",
+  product_keys: "Kho key",
+  product_accounts: "Kho tài khoản",
+  staff: "Nhân viên",
+  customer: "Khách hàng",
+  content_revision: "Duyệt nội dung",
+};
+
+export const AUDIT_ACTION_VI: Record<string, string> = {
+  "order.status_change": "Đổi trạng thái đơn",
+  "ticket.update": "Cập nhật ticket",
+  "ticket.reply": "Trả lời ticket",
+  "review.hide": "Ẩn đánh giá",
+  "review.unhide": "Hiện đánh giá",
+  "review.delete": "Xóa đánh giá",
+  "product.create": "Tạo sản phẩm",
+  "product.update": "Cập nhật sản phẩm",
+  "product.deactivate": "Ngừng sản phẩm",
+  "category.create": "Tạo danh mục",
+  "category.update": "Cập nhật danh mục",
+  "category.deactivate": "Ngừng danh mục",
+  "banner.create": "Tạo banner",
+  "banner.update": "Cập nhật banner",
+  "banner.deactivate": "Ngừng banner",
+  "blog.create": "Tạo bài viết",
+  "blog.update": "Cập nhật bài viết",
+  "blog.deactivate": "Ngừng bài viết",
+  "coupon.create": "Tạo mã giảm giá",
+  "coupon.update": "Cập nhật mã giảm giá",
+  "coupon.deactivate": "Ngừng mã giảm giá",
+  "settings.update": "Cập nhật cài đặt",
+  "keys.import": "Import key",
+  "keys.revoke": "Thu hồi key",
+  "accounts.import": "Import tài khoản",
+  "accounts.revoke": "Thu hồi tài khoản",
+  "staff.create": "Tạo nhân viên",
+  "staff.update": "Cập nhật nhân viên",
+  "staff.reset_password": "Đặt lại mật khẩu NV",
+  "customer.update": "Cập nhật khách hàng",
+  "content.submit_review": "Gửi duyệt nội dung",
+  "content.approve": "Duyệt nội dung",
+  "content.reject": "Từ chối nội dung",
+};
+
+export const AUDIT_ENTITY_FILTER_OPTIONS = [
+  { value: "all", label: "Tất cả loại" },
+  { value: "order", label: "Đơn hàng" },
+  { value: "ticket", label: "Hỗ trợ" },
+  { value: "review", label: "Đánh giá" },
+  { value: "product", label: "Sản phẩm" },
+  { value: "category", label: "Danh mục" },
+  { value: "banner", label: "Banner" },
+  { value: "blog", label: "Bài viết" },
+  { value: "coupon", label: "Mã giảm giá" },
+  { value: "settings", label: "Cài đặt" },
+  { value: "product_keys", label: "Kho key" },
+  { value: "product_accounts", label: "Kho tài khoản" },
+  { value: "staff", label: "Nhân viên" },
+  { value: "customer", label: "Khách hàng" },
+  { value: "content_revision", label: "Duyệt nội dung" },
+] as const;
+
+export const REVISION_STATUS_VI: Record<string, string> = {
+  draft: "Bản nháp",
+  pending_review: "Chờ duyệt",
+  approved: "Đã duyệt",
+  rejected: "Từ chối",
+  cancelled: "Đã hủy",
+  superseded: "Đã thay thế",
+};
+
+export const REVISION_CHANGE_TYPE_VI: Record<string, string> = {
+  create: "Tạo mới",
+  update: "Cập nhật",
+  deactivate: "Ngừng hiển thị",
+};
+
+export function tRevisionStatus(status: string) {
+  return REVISION_STATUS_VI[status] ?? status;
+}
+
+export function tRevisionChangeType(changeType: string) {
+  return REVISION_CHANGE_TYPE_VI[changeType] ?? changeType;
+}
+
+export const REVISION_ENTITY_FILTER_OPTIONS = [
+  { value: "all", label: "Tất cả loại" },
+  { value: "product", label: "Sản phẩm" },
+  { value: "category", label: "Danh mục" },
+  { value: "banner", label: "Banner" },
+  { value: "blog", label: "Bài viết" },
+  { value: "coupon", label: "Mã giảm giá" },
+] as const;
+
+export const REVISION_STATUS_FILTER_OPTIONS = [
+  { value: "pending", label: "Chờ duyệt" },
+  { value: "all", label: "Tất cả trạng thái" },
+  { value: "approved", label: "Đã duyệt" },
+  { value: "rejected", label: "Từ chối" },
+  { value: "draft", label: "Bản nháp" },
+] as const;
+
+export function revisionStatusTone(
+  status: string,
+): "success" | "warning" | "danger" | "info" | "neutral" {
+  switch (status) {
+    case "pending_review":
+      return "warning";
+    case "approved":
+      return "success";
+    case "rejected":
+      return "danger";
+    case "draft":
+      return "info";
+    default:
+      return "neutral";
+  }
+}
+
+export function tAuditEntityType(entityType: string) {
+  return AUDIT_ENTITY_TYPE_VI[entityType] ?? entityType;
+}
+
+export function tAuditAction(action: string) {
+  return AUDIT_ACTION_VI[action] ?? action;
+}
+

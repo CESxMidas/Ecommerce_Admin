@@ -19,6 +19,8 @@ const protectedPrefixes = [
   "/blogs",
   "/coupons",
   "/settings",
+  "/profile",
+  "/content-review",
 ];
 
 async function readSessionToken(request: NextRequest) {
@@ -97,5 +99,9 @@ export const config = {
     "/coupons/:path*",
     "/settings",
     "/settings/:path*",
+    "/profile",
+    "/profile/:path*",
+    "/content-review",
+    "/content-review/:path*",
   ],
 };

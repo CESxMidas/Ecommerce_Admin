@@ -4,6 +4,7 @@ import Image from "next/image";
 import { Loader2, Save, X } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useSession } from "next-auth/react";
 import { getApiErrorMessage } from "@/lib/utils/api-error";
 
 import {
@@ -11,6 +12,10 @@ import {
   updateCategory,
   uploadAdminImage,
 } from "@/lib/services/admin-service";
+import {
+  requiresApprovalWorkflow,
+  submitContentChangeForApproval,
+} from "@/lib/auth/content-workflow";
 import {
   getDescendantCategoryIds,
   slugify,
@@ -70,6 +75,8 @@ export default function CategoryFormDialog({
   onClose,
   onSaved,
 }: CategoryFormDialogProps) {
+  const { data: session } = useSession();
+  const needsApproval = requiresApprovalWorkflow(session?.user?.role);
   const isEdit = Boolean(category);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [slugTouched, setSlugTouched] = useState(false);
@@ -166,8 +173,19 @@ export default function CategoryFormDialog({
     setSaving(true);
     try {
       if (isEdit && category) {
-        await updateCategory(String(category.categoryId), payload);
-        toast.success("Đã cập nhật danh mục");
+        if (needsApproval) {
+          await submitContentChangeForApproval({
+            entityType: "category",
+            entityId: String(category.categoryId),
+            payload,
+            changeType: "update",
+            summary: `Cập nhật danh mục: ${name}`,
+          });
+          toast.success("Đã gửi thay đổi chờ chủ shop duyệt");
+        } else {
+          await updateCategory(String(category.categoryId), payload);
+          toast.success("Đã cập nhật danh mục");
+        }
       } else {
         await createCategory(payload);
         toast.success("Đã tạo danh mục");
